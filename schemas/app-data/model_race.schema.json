@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/model_race.schema.json",
+  "title": "model_race.json",
+  "description": "Forecast vs actual by (target, horizon). Row i of a panel has origin calendar[origin_idx0+i] and target calendar[origin_idx0+i+horizon]. license_class: series. Invariants checked outside the schema: len(actual) = len(yhat) = len(pi80_*) = n; origin_idx0 + n - 1 + horizon <= len(calendar) - 1; calendar strictly increasing. See data-model.md 5.3.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "model_race" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["calendar", "holdout_start_idx", "panels"],
+      "properties": {
+        "calendar": { "$ref": "envelope.schema.json#/$defs/isoDateArray" },
+        "holdout_start_idx": { "$ref": "envelope.schema.json#/$defs/index" },
+        "panels": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/panel" }
+        }
+      }
+    },
+    "panel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "horizon", "origin_idx0", "n", "actual", "series", "mz"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "horizon": { "$ref": "envelope.schema.json#/$defs/horizon" },
+        "origin_idx0": { "$ref": "envelope.schema.json#/$defs/index" },
+        "n": { "type": "integer", "minimum": 1 },
+        "actual": {
+          "description": "Realised target y at the target date, vol points.",
+          "$ref": "envelope.schema.json#/$defs/nullablePositiveArray"
+        },
+        "series": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/series" }
+        },
+        "mz": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/mz" }
+        }
+      }
+    },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "yhat"],
+      "properties": {
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "yhat": {
+          "description": "Conditional-mean forecast, vol points.",
+          "$ref": "envelope.schema.json#/$defs/nullablePositiveArray"
+        },
+        "pi80_lo": { "$ref": "envelope.schema.json#/$defs/nullableNumberArray" },
+        "pi80_hi": { "$ref": "envelope.schema.json#/$defs/nullableNumberArray" }
+      }
+    },
+    "mz": {
+      "description": "Mincer-Zarnowitz y = alpha + beta*yhat; wald_p tests alpha=0 and beta=1 jointly (HAC, lag h-1).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "period", "n", "alpha", "beta", "wald_p"],
+      "properties": {
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "period": { "$ref": "envelope.schema.json#/$defs/period" },
+        "n": { "type": "integer", "minimum": 0 },
+        "alpha": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "beta": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "wald_p": { "$ref": "envelope.schema.json#/$defs/nullableProbability" }
+      }
+    }
+  }
+}

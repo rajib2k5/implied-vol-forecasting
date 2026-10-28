@@ -1,0 +1,51 @@
+# The milestone process: how one milestone gets from "build" to "paused for the learner".
+# Source of truth: the approved project plan (Learning format; Verification) and the working rules in the global CLAUDE.md (delegate, adversarial review, verify before you believe).
+# Rendered by the shared diagram toolkit (tools/diagrams/) once it is vendored; until then process.mmd is hand-kept in sync.
+#
+# Lanes are the actors. Only the orchestrator commits and pushes; the implementer never does.
+# type:  process (a step) | decision (a gate with labelled exits) | external (input from outside the loop) | ui (the learner is involved)
+kind: flow
+title: implied-vol-forecasting milestone process
+direction: TB
+
+lanes:
+  - {id: orchestrator, label: Orchestrator}
+  - {id: implementer, label: "Implementer (subagent)"}
+  - {id: reviewers, label: "Reviewers (adversarial, verifier, security)"}
+  - {id: learner, label: Learner}
+
+nodes:
+  - {id: brief, label: "Milestone brief", lane: orchestrator, type: external, note: "from the approved plan: scope, rules, files the milestone may touch"}
+  - {id: build, label: "Build the milestone", lane: implementer, type: process, note: "src/ivf, tests with hand-worked values, configs, app views"}
+  - {id: tests, label: "pytest + mutation check", lane: implementer, type: process, note: "break the code, watch the test fail, restore; report the counts"}
+  - {id: nb_check, label: "build_notebooks.py --check", lane: implementer, type: process, note: "notebooks in sync with src/ivf"}
+  - {id: app_verify, label: "app: npm run verify", lane: implementer, type: process, note: "lint, tests, coverage thresholds, build"}
+  - {id: walkthrough, label: "Milestone walkthrough + concepts", lane: implementer, type: process, note: "docs/milestones/NN-<topic>.md and docs/concepts/*.md"}
+  - {id: questions, label: "Predict-first + explain-it-back", lane: implementer, type: process, note: "5-8 interview questions; predict-first goes before the results"}
+  - {id: review, label: "Adversarial review", lane: reviewers, type: process, note: "evidence-gated-validation; numbered claims; default verdict is broken; Opus"}
+  - {id: refuted, label: "Any claim refuted?", lane: orchestrator, type: decision, note: "the orchestrator checks a refutation itself before acting"}
+  - {id: fix, label: "Fix", lane: implementer, type: process, note: "name the refuted claim in the commit message"}
+  - {id: remeasure, label: "Verifier re-measures the numbers", lane: reviewers, type: process, note: "counts, coverage, timings, report tables; AGREE or DISAGREE"}
+  - {id: first_push, label: "First push of this repo?", lane: orchestrator, type: decision, note: "the security review is a first-push gate"}
+  - {id: security, label: "Security review", lane: reviewers, type: process, note: "secrets, licence-restricted data, vendor files; findings are fixed first"}
+  - {id: push, label: "Commit and push", lane: orchestrator, type: process, note: "only the orchestrator commits and pushes"}
+  - {id: pause, label: "PAUSE for the learner", lane: learner, type: ui, note: "one-paragraph recap; waits for continue or a steer"}
+
+edges:
+  - {from: brief, to: build, label: "delegate"}
+  - {from: build, to: tests, label: "code and tests"}
+  - {from: tests, to: nb_check, label: "counts reported"}
+  - {from: nb_check, to: app_verify, label: "in sync"}
+  - {from: app_verify, to: walkthrough, label: "gates green"}
+  - {from: walkthrough, to: questions}
+  - {from: questions, to: review, label: "numbered claims"}
+  - {from: review, to: refuted, label: "verdict per claim"}
+  - {from: refuted, to: fix, label: "yes, checked first"}
+  - {from: fix, to: review, label: "re-review"}
+  - {from: refuted, to: remeasure, label: "no"}
+  - {from: remeasure, to: first_push, label: "numbers agree"}
+  - {from: first_push, to: security, label: "yes"}
+  - {from: first_push, to: push, label: "no"}
+  - {from: security, to: push, label: "clean"}
+  - {from: push, to: pause, label: "recap"}
+  - {from: pause, to: brief, label: "continue: next milestone"}

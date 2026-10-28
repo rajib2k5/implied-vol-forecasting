@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/manifest.schema.json",
+  "title": "manifest.json",
+  "description": "Read first by the app: run identity, protocol, the list of data files present (with license class and hash), and the display registries. See docs/architecture/data-model.md section 5.1.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "manifest" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "notice", "protocol", "files", "models", "targets"],
+      "properties": {
+        "run_id": { "type": "string", "pattern": "^[0-9a-f]{12}$(?!\\n)" },
+        "notice": {
+          "description": "Synthetic disclaimer or Cboe/Yahoo attribution and non-redistribution notice.",
+          "type": "string",
+          "minLength": 1
+        },
+        "protocol": { "$ref": "#/$defs/protocol" },
+        "files": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fileEntry" }
+        },
+        "models": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/model" }
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/target" }
+        }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_hash", "train_start", "dev_start", "holdout_start", "data_end", "horizons", "fold_len", "min_cell_n", "holdout_looks", "vix_regime_edges"],
+      "properties": {
+        "protocol_hash": { "$ref": "envelope.schema.json#/$defs/hex64" },
+        "train_start": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "dev_start": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "holdout_start": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "data_end": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "horizons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "envelope.schema.json#/$defs/horizon" }
+        },
+        "fold_len": { "type": "integer", "minimum": 1 },
+        "min_cell_n": { "type": "integer", "minimum": 1 },
+        "holdout_looks": { "type": "integer", "minimum": 0 },
+        "vix_regime_edges": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    },
+    "fileEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset", "path", "sha256", "bytes", "license_class"],
+      "properties": {
+        "dataset": {
+          "allOf": [
+            { "$ref": "envelope.schema.json#/$defs/id" },
+            { "not": { "const": "manifest" } }
+          ]
+        },
+        "path": { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.json$(?!\\n)" },
+        "sha256": { "$ref": "envelope.schema.json#/$defs/hex64" },
+        "bytes": {
+          "description": "Size budget: 2 MiB per file.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2097152
+        },
+        "license_class": {
+          "description": "series = a daily series; aggregate = not a daily series (e.g. the error surface). Real files of either class are written only outside the repo and never committed; the only real-data-derived numbers ever committed are ADR 0001 D2's publication set P, in reports/*.agg.csv (amended M0, review D). Closed enum.",
+          "enum": ["series", "aggregate"]
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "label", "family", "targets"],
+      "properties": {
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "label": { "type": "string", "minLength": 1 },
+        "family": { "$ref": "envelope.schema.json#/$defs/id" },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "envelope.schema.json#/$defs/id" }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "label", "units", "horizons"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "label": { "type": "string", "minLength": 1 },
+        "units": { "const": "vol_points" },
+        "horizons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "envelope.schema.json#/$defs/horizon" }
+        }
+      }
+    }
+  }
+}

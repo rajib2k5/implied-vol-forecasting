@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.git
+.env
+.env.*
+.env.local
+# Real market data must never enter the build context (ADR 0001 D2). It lives outside the repo;
+# this is the second layer, in case a copy lands under public/ (the first is the gitignore).
+public/data/real

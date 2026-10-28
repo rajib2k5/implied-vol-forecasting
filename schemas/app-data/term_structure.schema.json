@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/term_structure.schema.json",
+  "title": "term_structure.json",
+  "description": "3D VIX term-structure ribbon (tenor x date x level). Columnar: levels[j][i] is tenor j on dates[i]. license_class: series. Invariants not expressible here (checked by exporter and app loader): every inner array has length len(dates); dates strictly increasing; tenors sorted by tenor_days. See data-model.md 5.2.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "term_structure" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dates", "tenors", "levels", "vix_vix3m", "backwardation"],
+      "properties": {
+        "dates": { "$ref": "envelope.schema.json#/$defs/isoDateArray" },
+        "tenors": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/tenor" }
+        },
+        "levels": {
+          "description": "Outer index = tenor, inner index = date; vol points; null where the index has no history yet.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "envelope.schema.json#/$defs/nullablePositiveArray" }
+        },
+        "vix_vix3m": {
+          "description": "VIX / VIX3M; null before VIX3M exists.",
+          "$ref": "envelope.schema.json#/$defs/nullablePositiveArray"
+        },
+        "backwardation": {
+          "description": "vix_vix3m > 1, computed in Python (the app only colours it).",
+          "type": "array",
+          "items": { "type": ["boolean", "null"] }
+        }
+      }
+    },
+    "tenor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "tenor_days", "label"],
+      "properties": {
+        "symbol": { "type": "string", "pattern": "^[A-Z][A-Z0-9]*$(?!\\n)" },
+        "tenor_days": { "type": "integer", "minimum": 1 },
+        "label": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

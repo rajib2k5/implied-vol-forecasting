@@ -1,0 +1,84 @@
+%% Hand-synced with specs/data-flow.yaml until tools/diagrams/ is vendored (M1); edit both. (amended M0, review B)
+%% implied-vol-forecasting data flow (one datum, CSV row to JSON column)
+%% Shapes: source stadium, store cylinder, process box, model subroutine, artifact parallelogram, ui rounded, decision diamond, external hexagon.
+flowchart TB
+    subgraph ingest["1. Ingest: raw to tidy"]
+        csv_row(["<b>CBOE CSV row</b><br/><i>one session of one index, e.g. VIX; some files are close-only</i>"])
+        spx_row(["<b>price_daily row (^GSPC)</b><br/><i>yfinance; a price index, not dividend-adjusted</i>"])
+        vxx_row(["<b>price_daily row (VXX, SVXY)</b><br/><i>yfinance; split-adjusted close</i>"])
+        raw_file[("<b>raw/#123;sha256#125;.csv</b><br/><i>bytes as downloaded; one line appended to provenance.jsonl</i>")]
+        iv_row[/"<b>iv_index_daily row</b><br/><i>tidy panel row: symbol, date, close in vol points, raw_sha256</i>"/]
+    end
+    subgraph features["2. Features and targets (data ≤ t)"]
+        cal_row[/"<b>calendar row</b><br/><i>date, t_idx, period; a session only if VIX and ^GSPC both closed</i>"/]
+        feature_row[/"<b>feature row at origin t</b><br/><i>log_vix, har_w, har_m, r_spx, rv21_back, vov21, vix_vix3m, iv_rv_spread</i>"/]
+        target_row[/"<b>target_value row</b><br/><i>y(d) in vol points and v = (y/100)^2</i>"/]
+        regime_row[/"<b>regime_label row</b><br/><i>low, mid, high; contango, backwardation</i>"/]
+    end
+    subgraph walkforward["3. Walk-forward fold (params frozen)"]
+        fold_row[/"<b>fold assignment</b><br/><i>origin t in fold k; cutoff c_k = idx(holdout_start) + 63k</i>"/]
+        pair_ok{"<b>target_date ≤ cutoff?</b><br/><i>L2: label availability</i>"}
+        excluded[/"<b>pair left out of training</b><br/><i>its target is dated after the cutoff</i>"/]
+        scaler["<b>scaler, imputer, OLS moments</b><br/><i>fitted at the cutoff on training rows only</i>"]
+        fitted[["<b>fitted model, params frozen</b><br/><i>frozen for origins in [c_k, c_#123;k+1#125;); state updates daily with data ≤ t</i>"]]
+        forecast_row[/"<b>forecast row</b><br/><i>model, target, origin, horizon, target_date, yhat, v_hat</i>"/]
+    end
+    subgraph scoring["4. Scoring and backtest"]
+        loss_row[/"<b>loss row</b><br/><i>squared, absolute and pct error, QLIKE; transient, no stored table</i>"/]
+        test_cell[/"<b>DM / MZ cell</b><br/><i>n, statistic, p-value for a model pair or a model</i>"/]
+        metric_cell[/"<b>metric cell (model x horizon x regime)</b><br/><i>n, bias, rmse, mae, mape, qlike per target and period</i>"/]
+        n_check{"<b>n ≥ min_cell_n (20)?</b><br/><i>suppression rule, ADR D4 4.8</i>"}
+        blank[/"<b>blank cell</b><br/><i>value null, n kept</i>"/]
+        signal_row[/"<b>signal at origin t</b><br/><i>+1 long vol, -1 short vol, 0 flat</i>"/]
+        bt_row[/"<b>backtest_daily row</b><br/><i>gross_ret, cost, net_ret, equity, drawdown</i>"/]
+    end
+    subgraph delivery["5. Export and render"]
+        json_col[/"<b>JSON column array</b><br/><i>one array per column; NaN and suppressed cells become null</i>"/]
+        app_draw("<b>app: typed array / three.js buffer</b><br/><i>indexes, decimates and colours; computes nothing</i>")
+    end
+    csv_row -->|"download, SHA-256 (idempotent)"| raw_file
+    raw_file -->|"parse: close #62; 0 in vol points"| iv_row
+    iv_row -->|"keep dates where VIX closed"| cal_row
+    spx_row -->|"and ^GSPC closed"| cal_row
+    iv_row -->|"log: ln V_t; HAR means over t-4..t, t-21..t (L1)"| feature_row
+    spx_row -->|"r_d = ln(P_d / P_d-1); RV over trailing 21 sessions (L1)"| feature_row
+    iv_row -->|"vix_level: y = V_d"| target_row
+    spx_row -->|"rv21: 100·sqrt((252/21)·Σ r²) over 21 sessions"| target_row
+    iv_row -->|"fixed cut-offs 15 and 25; VIX vs VIX3M (L5)"| regime_row
+    cal_row -->|"t+h is the h-th session after t"| fold_row
+    feature_row -->|"assign origin t to a 63-session fold"| fold_row
+    fold_row -->|"candidate pair (x_τ, y_τ+h)"| pair_ok
+    pair_ok -->|"yes: keep"| scaler
+    pair_ok -->|"no: drop"| excluded
+    scaler -->|"train-only scaler (L3); LSTM early-stop block + purge (L4)"| fitted
+    fitted -->|"h-session ahead, h = 1, 5, 21: target_date = T[idx(origin)+h]"| forecast_row
+    feature_row -->|"x_t: inputs dated ≤ t (L1)"| forecast_row
+    forecast_row -->|"e = y - yhat; QLIKE in variance space"| loss_row
+    target_row -->|"join on (target_id, target_date)"| loss_row
+    loss_row -->|"mean by model, horizon, period, regime (L6: tune on dev rows)"| metric_cell
+    regime_row -->|"regime at the origin (L5)"| metric_cell
+    loss_row -->|"DM: d = L_a - L_b, rectangular lag h-1 + HLN; MZ: y on yhat, NW lag h-1 (O5)"| test_cell
+    metric_cell -->|"count the rows"| n_check
+    n_check -->|"no: suppress"| blank
+    forecast_row -->|"sign(yhat - V_t) with a band"| signal_row
+    signal_row -->|"execute at close of t+1 (L7)"| bt_row
+    vxx_row -->|"adj_close return, usable segment; minus cost"| bt_row
+    n_check -->|"yes: round (RMSE 4 dp, QLIKE 6 dp)"| json_col
+    blank -->|"null in the cube"| json_col
+    test_cell -->|"p-values, 4 dp"| json_col
+    bt_row -->|"equity, drawdown, 6 dp"| json_col
+    json_col -->|"typed array; index, decimate"| app_draw
+    classDef artifact fill:#f3e5f5,stroke:#7b1fa2,color:#212121
+    classDef decision fill:#fff3e0,stroke:#e65100,color:#212121
+    classDef model fill:#e8f5e9,stroke:#2e7d32,color:#212121
+    classDef process fill:#f5f5f5,stroke:#616161,color:#212121
+    classDef source fill:#e3f2fd,stroke:#1565c0,color:#212121
+    classDef store fill:#fff8e1,stroke:#f9a825,color:#212121
+    classDef ui fill:#e0f7fa,stroke:#00838f,color:#212121
+    class iv_row,cal_row,feature_row,target_row,regime_row,fold_row,excluded,forecast_row,loss_row,test_cell,metric_cell,blank,signal_row,bt_row,json_col artifact
+    class pair_ok,n_check decision
+    class fitted model
+    class scaler process
+    class csv_row,spx_row,vxx_row source
+    class raw_file store
+    class app_draw ui

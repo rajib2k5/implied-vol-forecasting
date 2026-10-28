@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/equity_curves.schema.json",
+  "title": "equity_curves.json",
+  "description": "Strategy and benchmark equity curves on one date axis, regime ribbons as run-length segments, and per-period summary statistics (PSR/DSR). license_class: series. Invariants checked outside the schema: len(equity) = len(drawdown) = len(dates); 0 <= start_idx <= end_idx < len(dates); segments of one scheme do not overlap. See data-model.md 5.5.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "equity_curves" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dates", "holdout_start_idx", "cost_bps", "strategies", "regime_segments", "summary", "caveats"],
+      "properties": {
+        "dates": { "$ref": "envelope.schema.json#/$defs/isoDateArray" },
+        "holdout_start_idx": {
+          "anyOf": [
+            { "$ref": "envelope.schema.json#/$defs/index" },
+            { "type": "null" }
+          ]
+        },
+        "cost_bps": { "type": "number", "minimum": 0 },
+        "strategies": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/strategy" }
+        },
+        "regime_segments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/segment" }
+        },
+        "summary": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/summaryRow" }
+        },
+        "caveats": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy_id", "label", "kind", "model_id", "horizon", "equity", "drawdown"],
+      "properties": {
+        "strategy_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "label": { "type": "string", "minLength": 1 },
+        "kind": { "description": "Closed enum.", "enum": ["forecast", "benchmark"] },
+        "model_id": { "$ref": "envelope.schema.json#/$defs/nullableId" },
+        "horizon": {
+          "anyOf": [
+            { "$ref": "envelope.schema.json#/$defs/horizon" },
+            { "type": "null" }
+          ]
+        },
+        "equity": {
+          "description": "Growth of 1.0 after costs.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "drawdown": {
+          "description": "equity / running max - 1.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number", "minimum": -1, "maximum": 0 }
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "regime_id", "start_idx", "end_idx"],
+      "properties": {
+        "scheme": { "enum": ["vix_level", "term_structure"] },
+        "regime_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "start_idx": { "$ref": "envelope.schema.json#/$defs/index" },
+        "end_idx": { "description": "Inclusive.", "$ref": "envelope.schema.json#/$defs/index" }
+      }
+    },
+    "summaryRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy_id", "period", "n_days", "ann_return", "ann_vol", "sharpe_ann", "psr0", "dsr", "n_trials", "max_drawdown", "turnover_ann"],
+      "properties": {
+        "strategy_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "period": { "$ref": "envelope.schema.json#/$defs/period" },
+        "n_days": { "type": "integer", "minimum": 0 },
+        "ann_return": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "ann_vol": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "sharpe_ann": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "psr0": { "description": "PSR vs SR* = 0 (Bailey & Lopez de Prado 2012).", "$ref": "envelope.schema.json#/$defs/nullableProbability" },
+        "dsr": { "description": "Deflated Sharpe ratio, PSR at E[max SR over n_trials].", "$ref": "envelope.schema.json#/$defs/nullableProbability" },
+        "n_trials": { "type": "integer", "minimum": 1 },
+        "max_drawdown": {
+          "type": ["number", "null"],
+          "minimum": -1,
+          "maximum": 0
+        },
+        "turnover_ann": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" }
+      }
+    }
+  }
+}
