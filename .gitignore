@@ -1,0 +1,112 @@
+# Raw and derived market data never enter the repo. CBOE's terms allow
+# personal, non-commercial use only, so the CSVs stay outside the repo in
+# $VOL_DATA_DIR (default ~/data/vol-projects). These patterns catch copies
+# that land here by mistake.
+# Anchored with a leading slash: an unanchored `data/` would also ignore
+# app/src/data/ and app/public/data/synthetic/, the committed fixtures.
+/data/
+app/public/data/real/
+# Only the synthetic fixture folder under app/public/data/ is committed; any other
+# JSON there (or a *.real.json anywhere) is a real-data export in the wrong place.
+app/public/data/*
+!app/public/data/synthetic/
+*.real.json
+*.csv.gz
+*.parquet
+!tests/fixtures/**/*.parquet
+
+# Every CSV is ignored, wherever it lands and in any letter case (git has no
+# case-insensitive switch per pattern, hence the classes): a VIX_History.csv or
+# VIX_HISTORY.CSV saved by a notebook or dropped at the repo root is exactly the
+# leak the licence rules out.
+# Two exceptions, and only two (lower-case .csv only):
+#   * tests/fixtures/: small hand-made test inputs.
+#   * reports/*.agg.csv: committed aggregate tables, top level only (no regime
+#     sub-folders: D2 keeps regime cells local). They MUST end in
+#     .agg.csv, and ADR 0001 D2 governs what may go in them (only the
+#     publication set P: unitless, rounded numbers; one release per data_end).
+*.[cC][sS][vV]
+!tests/fixtures/**/*.csv
+!reports/*.agg.csv
+
+# Other data and cache formats a download or a notebook can leave behind
+*.tsv
+*.zip
+*.xlsx
+*.xls
+*.feather
+*.arrow
+*.npy
+*.npz
+*.joblib
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.sqlite
+*.sqlite-journal
+*.db
+*.duckdb
+# yfinance and requests caches
+.cache/
+py-yfinance/
+
+# JSON where a notebook or a quick export would drop vendor data (FRED's API
+# returns JSON). notebooks/ holds only .ipynb files and app/src/data/ only the
+# *.synthetic.json fixtures. A notebook saved WITH outputs needs no pattern:
+# tools/build_notebooks.py --check (pytest runs it) fails on a notebook that is
+# not exactly its spec, saved outputs included, and on any extra .ipynb.
+notebooks/**/*.json
+app/src/data/*.json
+!app/src/data/*.synthetic.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+credentials.json
+kaggle.json
+client_secret*.json
+token.json
+.git-credentials
+.aws/
+.envrc
+.netrc
+.npmrc
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+.pypirc
+secrets.toml
+# FRED_API_KEY.txt, fred-api-key, my_Api_Key.json: api_key or api-key in any case
+*[aA][pP][iI][-_][kK][eE][yY]*
+*apikey*
+
+# Node / app
+node_modules/
+app/dist/
+app/coverage/
+
+# Tool output
+graphify-out/
+.DS_Store
+
+# Local tool files: per-machine settings, not part of the project
+.claude/settings.local.json
+CLAUDE.local.md
+.mcp.json
+.vscode/
+.idea/

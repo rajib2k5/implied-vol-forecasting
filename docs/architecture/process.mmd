@@ -1,0 +1,52 @@
+%% Hand-synced with specs/process.yaml until tools/diagrams/ is vendored (M1); edit both. (amended M0, review B)
+%% implied-vol-forecasting milestone process
+%% Shapes: source stadium, store cylinder, process box, model subroutine, artifact parallelogram, ui rounded, decision diamond, external hexagon.
+flowchart TB
+    subgraph orchestrator["Orchestrator"]
+        brief{{"<b>Milestone brief</b><br/><i>from the approved plan: scope, rules, files the milestone may touch</i>"}}
+        refuted{"<b>Any claim refuted?</b><br/><i>the orchestrator checks a refutation itself before acting</i>"}
+        first_push{"<b>First push of this repo?</b><br/><i>the security review is a first-push gate</i>"}
+        push["<b>Commit and push</b><br/><i>only the orchestrator commits and pushes</i>"]
+    end
+    subgraph implementer["Implementer (subagent)"]
+        build["<b>Build the milestone</b><br/><i>src/ivf, tests with hand-worked values, configs, app views</i>"]
+        tests["<b>pytest + mutation check</b><br/><i>break the code, watch the test fail, restore; report the counts</i>"]
+        nb_check["<b>build_notebooks.py --check</b><br/><i>notebooks in sync with src/ivf</i>"]
+        app_verify["<b>app: npm run verify</b><br/><i>lint, tests, coverage thresholds, build</i>"]
+        walkthrough["<b>Milestone walkthrough + concepts</b><br/><i>docs/milestones/NN-#60;topic#62;.md and docs/concepts/*.md</i>"]
+        questions["<b>Predict-first + explain-it-back</b><br/><i>5-8 interview questions; predict-first goes before the results</i>"]
+        fix["<b>Fix</b><br/><i>name the refuted claim in the commit message</i>"]
+    end
+    subgraph reviewers["Reviewers (adversarial, verifier, security)"]
+        review["<b>Adversarial review</b><br/><i>evidence-gated-validation; numbered claims; default verdict is broken; Opus</i>"]
+        remeasure["<b>Verifier re-measures the numbers</b><br/><i>counts, coverage, timings, report tables; AGREE or DISAGREE</i>"]
+        security["<b>Security review</b><br/><i>secrets, licence-restricted data, vendor files; findings are fixed first</i>"]
+    end
+    subgraph learner["Learner"]
+        pause("<b>PAUSE for the learner</b><br/><i>one-paragraph recap; waits for continue or a steer</i>")
+    end
+    brief -->|"delegate"| build
+    build -->|"code and tests"| tests
+    tests -->|"counts reported"| nb_check
+    nb_check -->|"in sync"| app_verify
+    app_verify -->|"gates green"| walkthrough
+    walkthrough --> questions
+    questions -->|"numbered claims"| review
+    review -->|"verdict per claim"| refuted
+    refuted -->|"yes, checked first"| fix
+    fix -->|"re-review"| review
+    refuted -->|"no"| remeasure
+    remeasure -->|"numbers agree"| first_push
+    first_push -->|"yes"| security
+    first_push -->|"no"| push
+    security -->|"clean"| push
+    push -->|"recap"| pause
+    pause -->|"continue: next milestone"| brief
+    classDef decision fill:#fff3e0,stroke:#e65100,color:#212121
+    classDef external fill:#fce4ec,stroke:#ad1457,color:#212121
+    classDef process fill:#f5f5f5,stroke:#616161,color:#212121
+    classDef ui fill:#e0f7fa,stroke:#00838f,color:#212121
+    class refuted,first_push decision
+    class brief external
+    class build,tests,nb_check,app_verify,walkthrough,questions,review,fix,remeasure,security,push process
+    class pause ui

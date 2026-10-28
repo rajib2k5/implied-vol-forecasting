@@ -1,0 +1,53 @@
+[build-system]
+# uv's own build backend. It is what lets `uv sync` install `ivf` from src/
+# (the "src layout") so `import ivf` works in notebooks and tools, not only
+# under pytest's pythonpath.
+requires = ["uv_build>=0.11.25,<0.12"]
+build-backend = "uv_build"
+
+[project]
+name = "implied-vol-forecasting"
+version = "0.1.0"
+description = "Forecast implied volatility (VIX first) with ARIMA, HAR, GARCH and an LSTM, then trade the forecasts."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  # Pins from ADR 0002 (compute and numeric stack), unchanged.
+  "numpy==2.5.4",
+  "pandas==3.1.0",
+  "scipy==1.18.1",
+  "statsmodels==0.15.0",
+  "arch==8.0.0",
+  "pmdarima==2.1.1",
+  "torch==2.14.1",
+  "pyarrow==26.0.0",
+  "yfinance==1.7.0",
+  "requests==2.34.2",
+  "matplotlib==3.11.2",
+  "pytest==9.2.0",
+  "nbformat==5.11.1",
+  "nbconvert==7.17.2",
+  "ipykernel==7.4.0",
+  "jupyterlab==4.6.4",
+  # Added in milestone 0 because ivf/contract.py imports them directly.
+  # Both were already in the lock as dependencies of nbformat.
+  "jsonschema==4.26.0",
+  "referencing==0.37.0",
+]
+
+[tool.uv.build-backend]
+# The distribution is named implied-vol-forecasting; the import package is ivf.
+module-name = "ivf"
+
+# From ADR 0002. `explicit = true` means only packages named in
+# [tool.uv.sources] (here: torch) may come from the PyTorch index.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

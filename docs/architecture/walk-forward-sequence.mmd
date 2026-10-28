@@ -1,0 +1,37 @@
+%% Hand-written Mermaid (there is no YAML spec for this one yet; it can become a kind: sequence spec when the shared diagram toolkit is vendored).
+%% One walk-forward fold, per ADR 0001 D4 (4.5 walk-forward design, 4.7 no-look-ahead rules L1-L4, 4.1 information set).
+%% k is the fold number; c_k = idx(holdout_start) + 63k is its cutoff session; c_{k+1} is the next fold's cutoff; T is the master calendar.
+sequenceDiagram
+    autonumber
+    participant S as Splitter<br/>ivf.evaluation.splits
+    participant F as Feature builder<br/>ivf.features
+    participant C as Scaler and imputer
+    participant M as Model<br/>ivf.models
+    participant E as Evaluator<br/>ivf.evaluation
+
+    Note over S: Fold k. Expanding window from train_start.<br/>Cutoff c_k, origins t in [c_k, c_{k+1}), 63 sessions, same for every model.
+    S->>F: build features from data dated ≤ c_k (L1: trailing windows only)
+    F-->>S: feature rows x_τ for every session τ ≤ c_k
+    S->>S: keep pairs with τ + h ≤ c_k (L2)
+    S->>C: fit(rows used for gradient or OLS updates only) (L3: train only)
+    Note over C,M: LSTM: the early-stopping block is the last 252 training origins whose targets ≤ c_k.<br/>An h-session purge separates it from the inner-train rows (L4).
+    C-->>M: scaler moments, imputer values, clipping thresholds (frozen)
+    S->>M: fit(training pairs with target date ≤ c_k)
+    alt fit converged
+        M-->>S: fit row (converged, fallback none)
+    else fit failed
+        M-->>S: fit row (fallback previous_fold): reuse the previous fold's parameters, never drop rows
+    end
+    Note over M: Parameters are frozen for the whole fold.<br/>AIC order, MLE parameters and calibration OLS were re-estimated at c_k from data ≤ c_k.
+
+    loop each origin t in [c_k, c_{k+1}), once per session
+        S->>F: features through the close of t
+        F-->>M: x_t (data dated ≤ t, nothing from t+1)
+        M->>M: update state with data ≤ t (Kalman state, GARCH recursion, HAR regressors, LSTM input window)
+        M->>E: forecast(origin t, h in 1, 5, 21): yhat in vol points, v_hat, target_date = T at idx(t) + h
+    end
+
+    Note over E: Once the target date has passed, join the realised y(t+h) on (target_id, target_date).
+    E->>E: error e = y - yhat in level space, QLIKE = v/v_hat - ln(v/v_hat) - 1 in variance space
+    E-->>S: loss rows keyed (model, target, origin, horizon): same origin set for every model
+    Note over S,E: Next fold: c_{k+1} = c_k + 63. Truncation test: a run on data ≤ t must reproduce the full run's forecast at t.
