@@ -1,8 +1,58 @@
 # instrument_meta and tradable_segment (data-model.md section 1).
 # Milestone 1 needs only the S&P 500 price index, the underlying of VIX.
-# VXX and SVXY (role: tradable) and their segments arrive in milestone 6.
+# Milestone 6 adds VXX and SVXY (role: tradable). They are fetched by `python -m ivf.data fetch`
+# like ^GSPC, but only `underlying` tickers enter interim/price_daily (amended M6): the tradables
+# go to interim/tradable_daily via `python -m ivf.backtest prepare`, so M1-M5 tables do not move.
 instruments:
   - ticker: "^GSPC"
     role: underlying
     name: S&P 500 Index (a price index, not dividend-adjusted)
-tradable_segments: []
+  - ticker: "VXX"
+    role: tradable
+    name: iPath Series B S&P 500 VIX Short-Term Futures ETN (long volatility)
+  - ticker: "SVXY"
+    role: tradable
+    name: ProShares Short VIX Short-Term Futures ETF (short volatility)
+# A segment is a span of closes with one stable exposure: valid_from is its first close, valid_to its
+# last (null: open). A return dated d (close d-1 -> close d) belongs to a segment when both closes do,
+# so two segments may share their boundary close. Backtests run only on returns inside `usable`
+# segments of every ticker they hold (amended M6; dates checked against the fetched data by
+# `python -m ivf.backtest run`, which fails on a gap, an unadjusted split or an exposure mismatch).
+tradable_segments:
+  - ticker: "VXX"
+    valid_from: "2018-08-01"
+    valid_to: null
+    leverage: 1.0
+    usable: true
+    note: >-
+      Starts at the first close after the last stale print (open = high = low = close, or volume 0)
+      in the fetched dev data, 2018-07-31: the rule "a usable segment holds no stale print", added
+      after the first dev run on review A's finding (amended M6, default taken 2026-10-29, owner can
+      override); the first usable VXX return is dated 2018-08-02. Yahoo's VXX history starts 2018-01-25 (fetched 2026-10-29) and is the Series B ETN throughout:
+      it traded as VXXB until it took the VXX ticker on 2019-05-02 (MIAX 2019; the original Series A
+      VXX matured on 2019-01-30, Barclays 2026; sources in docs/concepts/00-background.md), and the
+      fetched closes show an ordinary move on both dates, no splice. The 2009-2019 Series A history is
+      absent. Series B's inception date itself: to verify. Reverse splits 2021-04-23, 2023-03-07,
+      2024-07-24 (1:4) are adjusted in the closes (the dev run checks the first two; 2024-07-24 is in
+      the holdout and is checked on the holdout path).
+  - ticker: "SVXY"
+    valid_from: "2011-10-04"
+    valid_to: "2018-02-27"
+    leverage: -1.0
+    usable: false
+    note: >-
+      -1x daily target until the close of 2018-02-27. Not usable: VXX (Yahoo) starts only 2018-01-25,
+      and the exposure differs from the later segment.
+  - ticker: "SVXY"
+    valid_from: "2018-02-27"
+    valid_to: null
+    leverage: -0.5
+    usable: true
+    note: >-
+      -0.5x daily target "effective as of close of business on February 27, 2018": ProShares' press
+      release of 2018-02-26 (Form 8-K Exhibit 99.1, ProShares 2018a in docs/concepts/00-background.md),
+      read on 2026-10-29. Its open end (valid_to null) rests on the issuer's documentation, not on
+      holdout data: the SVXY fund page (ProShares n.d., accessed 2026-10-28 in M0, in
+      docs/concepts/00-background.md) gives -0.5x as the current daily objective, and no later
+      change of objective appears in the issuer sources in the repo (the fund page was not re-read in
+      M6: to re-check before the look). On dev data the exposure check passes. The first return at -0.5x is dated 2018-02-28. Splits 2018-09-18 (1:4) and 2024-04-11 (2:1) are adjusted in the closes (checked).

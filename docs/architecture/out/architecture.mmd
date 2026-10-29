@@ -25,11 +25,11 @@ flowchart TB
         splits["ivf.evaluation.splits\nexpanding window, 63-session folds, shared by every model"]
         models[["ivf.models\nrw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S#38;P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); lstm_log on vix_level and rv21, 5-seed mean, retrained every 4th cutoff (M4); params frozen within a fold"]]
         evaluation["ivf.evaluation\npython -m ivf.evaluation report (M5)#58; RMSE, MAE, MAPE, QLIKE, bias by regime; DM (fixed-b primary) with Holm; MZ (Hansen-Hodrick); walk-forward calibration variant; dev only, holdout refused on real data"]
-        backtest["ivf.backtest\nVXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"]
+        backtest["ivf.backtest\nVXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR; the one holdout look (M6)#58; preflight, record, holdout refits (ivf.models.holdout), M5 holdout report, backtest"]
         ivf_reports["ivf.reports\ncommits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"]
     end
     subgraph storage["Storage"]
-        configs[("configs/*.yaml\nM1#58; protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2#58; models.yaml (model_def and the baseline settings); M3#58; its garch block (innovation rule, ARIMA-GARCH order); strategies arrive in M6. Committed")]
+        configs[("configs/*.yaml\nM1#58; protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2#58; models.yaml (model_def and the baseline settings); M3#58; its garch block (innovation rule, ARIMA-GARCH order); M6#58; backtest.yaml (pre-registered strategy_def rows, costs, trial-log location) and instruments.yaml's tradable_segments. Committed")]
         raw[("ROOT/raw/{source}/{symbol}/{sha256}.csv\nbytes as downloaded; never committed")]
         prov[("ROOT/raw/provenance.jsonl\nappend-only, one line per fetch, written even if unchanged")]
         synth_raw[("ROOT/synthetic/raw/\nCboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed")]

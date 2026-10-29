@@ -26,6 +26,7 @@ M2 = "02_baselines.ipynb"
 M3 = "03_garch.ipynb"
 M4 = "04_lstm.ipynb"
 M5 = "05_evaluation.ipynb"  # amended M5
+M6 = "06_backtest.ipynb"  # amended M6
 
 
 @pytest.fixture
@@ -51,10 +52,10 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 6 notebook(s)")  # amended M5: 05_evaluation.ipynb
+    assert result.stdout.startswith("ok: 7 notebook(s)")  # amended M6: 06_backtest.ipynb
 
 
-@pytest.mark.parametrize("name", [M0, M1, M2, M3, M4, M5])
+@pytest.mark.parametrize("name", [M0, M1, M2, M3, M4, M5, M6])
 def test_committed_bytes_equal_generated_bytes(name):
     assert (REPO / "notebooks" / name).read_bytes() == build_notebooks.generate()[name]
 
@@ -314,3 +315,19 @@ def test_m5_notebook_runs_top_to_bottom_on_synthetic_data(monkeypatch, capsys, n
 
     assert namespace["by_hand"] == pytest.approx(dm.dm_test(namespace["d"], 21, "rectangular").dm_stat, rel=1e-12)
     assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
+
+
+def test_m6_notebook_runs_top_to_bottom_on_synthetic_data(capsys, no_network):
+    # Synthetic only: the hand-worked book of section 1 (rule L7, costs per side), the segments, a dev
+    # backtest and the deflation; nothing on or after holdout_start is read (amended M6).
+    notebook = nbformat.reads(build_notebooks.generate()[M6].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert "data: SYNTHETIC" in out and "violations: []" in out and "holdout_looks 0" in out
+    assert "usable returns 2018-08-02 .. 2024-06-28" in out  # amended M6, review A: VXX after its stale prints
+    assert namespace["book"].net_ret.round(10).tolist() == [0.0989, -0.1, -0.002, -0.001, 0.0989]
+    assert namespace["DAILY"].date.max() < namespace["HS"] and max(namespace["SESSIONS"]) < namespace["HS"]

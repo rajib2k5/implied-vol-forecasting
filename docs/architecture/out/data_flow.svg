@@ -52,7 +52,7 @@
     <polygon points="1898,940 1893.5,931 1902.5,931" fill="#94A3B8"/>
   </g>
   <g id="edge_7">
-    <path d="M196 520L196 600Q196 608 204 608L387 608Q395 608 395 616L395 834Q395 842 403 842L1696 842Q1704 842 1704 850L1704 932" fill="none" stroke="#94A3B8" stroke-width="1.6" stroke-dasharray="6 5" stroke-linejoin="round"/>
+    <path d="M196 520L196 600Q196 608 204 608L388 608Q396 608 396 616L396 834Q396 842 404 842L1696 842Q1704 842 1704 850L1704 932" fill="none" stroke="#94A3B8" stroke-width="1.6" stroke-dasharray="6 5" stroke-linejoin="round"/>
     <polygon points="1704,940 1699.5,931 1708.5,931" fill="#94A3B8"/>
   </g>
   <g id="edge_8">
@@ -144,7 +144,7 @@
     <polygon points="2142,2232 2137.5,2223 2146.5,2223" fill="#64748B"/>
   </g>
   <g id="edge_30">
-    <path d="M631 2110L631 2138Q631 2146 639 2146L1992 2146Q2000 2146 2000 2154L2000 2224" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M681 2110L681 2138Q681 2146 689 2146L1992 2146Q2000 2146 2000 2154L2000 2224" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2000,2232 1995.5,2223 2004.5,2223" fill="#64748B"/>
   </g>
   <g id="edge_31">
@@ -164,7 +164,7 @@
     <polygon points="399,2926 394.5,2917 403.5,2917" fill="#64748B"/>
   </g>
   <g id="edge_35">
-    <path d="M577 520L577 552Q577 560 569 560L389 560Q381 560 381 568L381 846Q381 854 389 854L469 854Q477 854 477 862L477 2626Q477 2634 469 2634L273 2634Q265 2634 265 2642L265 2918" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M577 520L577 552Q577 560 569 560L390 560Q382 560 382 568L382 846Q382 854 390 854L469 854Q477 854 477 862L477 2626Q477 2634 469 2634L273 2634Q265 2634 265 2642L265 2918" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="265,2926 260.5,2917 269.5,2917" fill="#64748B"/>
   </g>
   <g id="edge_36">
@@ -206,10 +206,10 @@
     <text x="148" y="504" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">yfinance; a price index, not dividend-adjusted</text>
   </g>
   <g id="node_vxx_row">
-    <rect x="490" y="2041" width="282" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="489" y="2042" width="284" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="488" y="2044" width="286" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="490" y="2040" width="282" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="490" y="2041" width="382" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="489" y="2042" width="384" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="488" y="2044" width="386" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="490" y="2040" width="382" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
     <rect x="504" y="2060" width="30" height="30" rx="8" fill="#E0F2FE"/>
     <g transform="translate(511 2067)" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 1.5h5.5L13 5v9.5H4z"/>
@@ -217,8 +217,8 @@
       <path d="M6.5 8.5h4M6.5 11.5h4"/>
     </g>
     <text x="546" y="2060" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#0369A1">SOURCE</text>
-    <text x="546" y="2078" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">price_daily row (VXX, SVXY)</text>
-    <text x="546" y="2094" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">yfinance; split-adjusted close</text>
+    <text x="546" y="2078" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tradable_daily row (VXX, SVXY)</text>
+    <text x="546" y="2094" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">yfinance; split-adjusted close; own interim table (M6)</text>
   </g>
   <g id="node_synth_csv">
     <rect x="679" y="131" width="540" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>

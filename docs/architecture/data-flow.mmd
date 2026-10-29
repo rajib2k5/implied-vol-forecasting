@@ -5,7 +5,7 @@ flowchart TB
     subgraph ingest["1. Ingest: raw to tidy"]
         csv_row(["<b>CBOE CSV row</b><br/><i>one session of one index, e.g. VIX; some files are close-only</i>"])
         spx_row(["<b>price_daily row (^GSPC)</b><br/><i>yfinance; a price index, not dividend-adjusted</i>"])
-        vxx_row(["<b>price_daily row (VXX, SVXY)</b><br/><i>yfinance; split-adjusted close</i>"])
+        vxx_row(["<b>tradable_daily row (VXX, SVXY)</b><br/><i>yfinance; split-adjusted close</i>"])
         raw_file[("<b>raw/#123;sha256#125;.csv</b><br/><i>bytes as downloaded; one line appended to provenance.jsonl</i>")]
         iv_row[/"<b>iv_index_daily row</b><br/><i>tidy panel row: symbol, date, close in vol points, raw_sha256</i>"/]
     end

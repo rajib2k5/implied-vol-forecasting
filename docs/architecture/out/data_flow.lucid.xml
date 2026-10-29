@@ -29,8 +29,8 @@
         <mxCell id="node_spx_row" value="price_daily row (^GSPC)&#10;yfinance; a price index, not dividend-adjusted" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="92" y="450" width="340" height="70" as="geometry"/>
         </mxCell>
-        <mxCell id="node_vxx_row" value="price_daily row (VXX, SVXY)&#10;yfinance; split-adjusted close" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="490" y="2040" width="282" height="70" as="geometry"/>
+        <mxCell id="node_vxx_row" value="tradable_daily row (VXX, SVXY)&#10;yfinance; split-adjusted close; own interim table (M6)" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="490" y="2040" width="382" height="70" as="geometry"/>
         </mxCell>
         <mxCell id="node_synth_csv" value="synthetic CSV (seeded)&#10;ivf.data.synthetic: Cboe- and Yahoo-shaped files with known truth; no download" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="679" y="130" width="540" height="70" as="geometry"/>
@@ -159,8 +159,8 @@
           <mxGeometry x="0.9315" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="196" y="608"/>
-              <mxPoint x="395" y="608"/>
-              <mxPoint x="395" y="842"/>
+              <mxPoint x="396" y="608"/>
+              <mxPoint x="396" y="842"/>
               <mxPoint x="1704" y="842"/>
             </Array>
           </mxGeometry>
@@ -342,9 +342,9 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="edge_30" value="adj_close return, usable segment; minus cost" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2781;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_vxx_row" target="node_bt_row">
-          <mxGeometry x="0.9115" relative="1" as="geometry">
+          <mxGeometry x="0.9084" relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="631" y="2146"/>
+              <mxPoint x="681" y="2146"/>
               <mxPoint x="2000" y="2146"/>
             </Array>
           </mxGeometry>
@@ -384,11 +384,11 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="edge_35" value="M1 real export: tenor levels 2 dp, VIX/VIX3M 4 dp, flag from the unrounded ratio" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.2442;exitY=1;exitDx=0;exitDy=0;entryX=0.0138;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_json_col">
-          <mxGeometry x="0.8543" relative="1" as="geometry">
+          <mxGeometry x="0.8542" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="577" y="560"/>
-              <mxPoint x="381" y="560"/>
-              <mxPoint x="381" y="854"/>
+              <mxPoint x="382" y="560"/>
+              <mxPoint x="382" y="854"/>
               <mxPoint x="477" y="854"/>
               <mxPoint x="477" y="2634"/>
               <mxPoint x="265" y="2634"/>

@@ -1,0 +1,90 @@
+# Milestone 6: the forecast-driven VXX/SVXY backtest, PRE-REGISTERED.
+#
+# Written on 2026-10-29 before any backtest ran on real data (ADR 0001 4.6 and rule L6). Every value
+# below is a default taken on 2026-10-29; the owner can override any of them. An override after the
+# first real run is a new trial: give the changed strategy a NEW strategy_id and set the old one's
+# `retired: true` (never delete a row; data-model.md strategy_def, amended M6: it lives here, not in
+# configs/strategies.yaml). `python -m ivf.backtest run` counts every strategy ever run on a period
+# in the trial log, so DSR's n_trials includes retired rows automatically.
+registered_on: "2026-10-29"
+
+# Signal at the close of origin t; filled at the close of t+1; first earns the return t+1 -> t+2
+# (rule L7). No fill at the close the signal was computed from.
+lag_sessions: 2
+
+# Simple returns from split-adjusted closes (`adj_close`). Cash earns 0: no risk-free series is in the
+# repo, so Sharpe here is of the raw return (stated in docs/milestones/06-backtest.md).
+cash_rate_annual: 0.0
+
+costs:
+  # Per side, charged on |change in weight| at the fill close: an entry from cash is one side (1 x c),
+  # a switch VXX <-> SVXY is two sides (2 x c). Assumptions, not measurements (owner can override).
+  half_spread_bps: 4.0
+  commission_bps: 1.0
+  sensitivity_bps: [0.0, 5.0, 10.0, 20.0]
+
+# Which frozen model drives each track. The rule is applied mechanically to M5's dev `metric` table
+# (scheme all, regime all, forecast mean) of the newest run that has one; ties go to the first id
+# alphabetically. Excluded ids would make the rule degenerate: `vix_implied` forecasts rv21 as the
+# VIX itself and `rw` forecasts the 21-day VIX as today's VIX, so forecast - VIX = 0 and the rule
+# never trades. If `rw` wins the rv21 track, the trailing realised vol drives it; the step says so.
+tracks:
+  rv21:
+    target_id: rv21
+    horizon: 21
+    select_by: qlike
+    exclude: [vix_implied]
+  vix_level:
+    target_id: vix_level
+    horizon: 21
+    select_by: rmse
+    exclude: [rw]
+
+# The rule (PR/FAQ question 3, default taken 2026-10-29): d = forecast - VIX_t in vol points.
+# d > band: long VXX (+1); d < -band: long SVXY (-1); otherwise cash (0). A value exactly at
+# +-band is cash. No shorting, no leverage: 100% of equity in one ETP or none.
+primary: fvix_rv21_b2
+strategies:
+  - {strategy_id: fvix_rv21_b2, kind: forecast, track: rv21, band: 2.0, retired: false,
+     label: "rv21 forecast vs VIX, band 2 (PRIMARY)"}
+  - {strategy_id: fvix_rv21_b0, kind: forecast, track: rv21, band: 0.0, retired: false,
+     label: "rv21 forecast vs VIX, band 0"}
+  - {strategy_id: fvix_rv21_b1, kind: forecast, track: rv21, band: 1.0, retired: false,
+     label: "rv21 forecast vs VIX, band 1"}
+  - {strategy_id: fvix_rv21_b4, kind: forecast, track: rv21, band: 4.0, retired: false,
+     label: "rv21 forecast vs VIX, band 4"}
+  - {strategy_id: fvix_vix_b2, kind: forecast, track: vix_level, band: 2.0, retired: false,
+     label: "21-day VIX forecast vs VIX, band 2"}
+  - {strategy_id: bench_long_vxx, kind: benchmark, signal: 1, retired: false, label: "always long VXX"}
+  - {strategy_id: bench_long_svxy, kind: benchmark, signal: -1, retired: false, label: "always long SVXY"}
+  - {strategy_id: bench_cash, kind: benchmark, signal: 0, retired: false, label: "cash"}
+
+# DSR (docs/concepts/15-psr-dsr-and-trial-counting.md): PSR against SR* = 0 for every strategy; DSR
+# with N = every non-benchmark strategy ever run on the period (trial log), E[SR] = 0 under the null,
+# V[SR] = max(cross-trial variance of the per-day SRs, 1/T). Append-only, under the data root.
+trial_log: backtest/trial_log.jsonl
+
+# Splits to check against the adjusted closes (yfinance `splits`, 2026-10-29; issuer confirmation
+# still to verify, ADR 0001 4.1). An unadjusted split would show as a one-day move of the ratio.
+splits:
+  - {ticker: VXX, date: "2021-04-23", ratio: 0.25}
+  - {ticker: VXX, date: "2023-03-07", ratio: 0.25}
+  - {ticker: VXX, date: "2024-07-24", ratio: 0.25}
+  - {ticker: SVXY, date: "2018-09-18", ratio: 0.25}
+  - {ticker: SVXY, date: "2024-04-11", ratio: 2.0}
+
+# The exposure check: inside a segment, the OLS slope of SVXY's daily return on VXX's must be within
+# this distance of leverage(SVXY) / leverage(VXX).
+exposure_tolerance: 0.15
+
+# The holdout (one look, after M6 is reviewed; ADR 0001 4.6, amended M6). Confirmatory and
+# directional: the primary "held up" if its holdout Sharpe at the default cost is above 0 AND above
+# both always-long benchmarks'. PSR, DSR and the rest are descriptive (about 2.3 years of days).
+# Exposures of the real holdout before the look (amended M6, review A): the protocol's holdout_looks must
+# equal this for the look to run. Real 1: the M6 build printed holdout values before these settings
+# were written (ADR 0001 4.6, "As built in M6"); the look's outputs carry the caveat below.
+holdout_looks_before_look: {real: 1, synthetic: 0}
+holdout_caveat: >-
+  Second exposure: ETP returns on a few holdout dates and an SVXY-on-VXX slope over the holdout were
+  printed during the M6 build, before the M6 settings were written (ADR 0001 4.6, as built in M6).
+holdout_rule: "primary sharpe_ann > 0 and > max(bench_long_vxx, bench_long_svxy) at the default cost"

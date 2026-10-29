@@ -52,11 +52,11 @@ nodes:
   - {id: splits, label: ivf.evaluation.splits, lane: core, type: process, sublabel: "expanding window, 63-session folds, shared by every model"}
   - {id: models, label: ivf.models, lane: core, type: model, sublabel: "rw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S&P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); lstm_log on vix_level and rv21, 5-seed mean, retrained every 4th cutoff (M4); params frozen within a fold"}
   - {id: evaluation, label: ivf.evaluation, lane: core, type: process, sublabel: "python -m ivf.evaluation report (M5): RMSE, MAE, MAPE, QLIKE, bias by regime; DM (fixed-b primary) with Holm; MZ (Hansen-Hodrick); walk-forward calibration variant; dev only, holdout refused on real data"}
-  - {id: backtest, label: ivf.backtest, lane: core, type: process, sublabel: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"}
+  - {id: backtest, label: ivf.backtest, lane: core, type: process, sublabel: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR; the one holdout look (M6): preflight, record, holdout refits (ivf.models.holdout), M5 holdout report, backtest"}
   - {id: ivf_reports, label: ivf.reports, lane: core, type: process, sublabel: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
 
   # ---------------- Storage ----------------
-  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); M3: its garch block (innovation rule, ARIMA-GARCH order); strategies arrive in M6. Committed"}
+  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); M3: its garch block (innovation rule, ARIMA-GARCH order); M6: backtest.yaml (pre-registered strategy_def rows, costs, trial-log location) and instruments.yaml's tradable_segments. Committed"}
   - {id: raw, label: "ROOT/raw/{source}/{symbol}/{sha256}.csv", lane: storage, type: store, sublabel: "bytes as downloaded; never committed"}
   - {id: prov, label: "ROOT/raw/provenance.jsonl", lane: storage, type: store, sublabel: "append-only, one line per fetch, written even if unchanged"}
   - {id: synth_raw, label: "ROOT/synthetic/raw/", lane: storage, type: store, sublabel: "Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed"}

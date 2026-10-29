@@ -158,7 +158,10 @@ def test_the_committed_protocols_load_and_share_everything_but_data_end():
     assert real.train_start == date(1990, 1, 2) and real.holdout_start == date(2024, 7, 1)
     assert real.data_end is not None, "M1 freezes data_end in configs/protocol.yaml"
     assert synthetic.data_end == date(2026, 10, 26)
-    without_end = lambda p: {k: v for k, v in p.document.items() if k != "data_end"}  # noqa: E731
+    # amended M6, review A: holdout_looks differs on purpose. Real is 1 (holdout values were printed during the
+    # M6 build before its settings were written, ADR 0001 4.6); the synthetic market has no such exposure.
+    assert real.document["holdout_looks"] == 1 and synthetic.document["holdout_looks"] == 0
+    without_end = lambda p: {k: v for k, v in p.document.items() if k not in ("data_end", "holdout_looks")}  # noqa: E731
     assert without_end(real) == without_end(synthetic)
 
 
@@ -169,7 +172,8 @@ def test_the_registries_list_five_tenors_in_order_plus_vvix_and_the_sp500():
     ]
     assert {i.symbol: i.group for i in indices}["VVIX"] == "vol_of_vol"
     assert all(i.cboe_url == f"https://cdn.cboe.com/api/global/us_indices/daily_prices/{i.symbol}_History.csv" for i in indices)
-    assert [i.ticker for i in protocol.load_instruments()] == ["^GSPC"]
+    # amended M6: VXX and SVXY are tradables; only ^GSPC is an underlying (the one ticker in price_daily)
+    assert [(i.ticker, i.role) for i in protocol.load_instruments()] == [("^GSPC", "underlying"), ("VXX", "tradable"), ("SVXY", "tradable")]
 
 
 # --- the master calendar -----------------------------------------------------------------

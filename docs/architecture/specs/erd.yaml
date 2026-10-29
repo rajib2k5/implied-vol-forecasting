@@ -62,7 +62,7 @@ entities:
       - {name: milestone, type: i16}
       - {name: retired, type: bool}
   - id: strategy_def
-    label: strategy_def (configs/strategies.yaml)
+    label: strategy_def (configs/backtest.yaml, M6)
     # store: yaml
     columns:
       - {name: strategy_id, type: str, pk: true}

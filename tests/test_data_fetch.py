@@ -402,10 +402,11 @@ def test_fetch_command_fetches_every_registry_symbol_then_skips_them(tmp_path, m
 
     monkeypatch.setattr(fetch, "network_get", network)
     assert cli.main(["fetch"]) == 0
-    assert sorted(symbol for _, symbol in calls) == sorted(["VIX9D", "VIX", "VIX3M", "VIX6M", "VIX1Y", "VVIX", "^GSPC"])
+    # amended M6: the tradables VXX and SVXY are fetched like ^GSPC
+    assert sorted(symbol for _, symbol in calls) == sorted(["VIX9D", "VIX", "VIX3M", "VIX6M", "VIX1Y", "VVIX", "^GSPC", "VXX", "SVXY"])
     assert cli.main(["fetch"]) == 0  # all fresh now
-    assert len(calls) == 7
-    assert capsys.readouterr().out.count("skipped") == 7
+    assert len(calls) == 9
+    assert capsys.readouterr().out.count("skipped") == 9
 
 
 def test_one_failed_symbol_does_not_stop_the_others_but_sets_exit_5(tmp_path, monkeypatch):
@@ -421,7 +422,7 @@ def test_one_failed_symbol_does_not_stop_the_others_but_sets_exit_5(tmp_path, mo
     monkeypatch.setattr(fetch, "network_get", network)
     assert cli.main(["fetch"]) == 5
     fetched = {r.symbol for r in raw.read_provenance(tmp_path / "implied-vol-forecasting")}
-    assert fetched == {"VIX9D", "VIX", "VIX6M", "VIX1Y", "VVIX", "^GSPC"}
+    assert fetched == {"VIX9D", "VIX", "VIX6M", "VIX1Y", "VVIX", "^GSPC", "VXX", "SVXY"}  # amended M6: + the tradables
 
 
 def test_the_network_guard_itself_works():

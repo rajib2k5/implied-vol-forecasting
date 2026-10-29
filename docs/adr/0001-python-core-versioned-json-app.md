@@ -532,7 +532,12 @@ Synthetic runs use the same layout under `ROOT/synthetic/`.
   closes, because both had splits. Review C found VXX reverse splits on 2021-04-23, 2023-03-07 and
   2024-07-24, and SVXY splits on 2018-09-18 and 2024-04-11 (yfinance `splits`; issuer confirmation
   for SVXY pending); M6 verifies every date against the issuer before trusting adjusted closes
-  (amended M0, review C).
+  (amended M0, review C). **Amended M6:** every split date in the dev window is checked against the
+  fetched closes (no one-day move of half the split's size or more: the closes are split-adjusted);
+  SVXY's -0.5x date is verified against the issuer (ProShares 2018a: "effective as of close of
+  business on February 27, 2018"); the split dates themselves rest on yfinance and the M0 sources in
+  `docs/concepts/00-background.md`. VXX and SVXY go to their own interim table,
+  `interim/tradable_daily.parquet` (data-model.md, `tradable_segment`, as built in M6).
 
 #### 4.2 Targets (forecast for origin t at horizon h targets y(t+h))
 
@@ -756,7 +761,7 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
   `holdout_start` enters any output (targets and regimes come from the sessions before it; the frozen
   `data_end` check reads the full interim tables, as every step does; amended M5, review A: was "reads
   no interim row"). It refuses `--period holdout` on real data before reading anything, and runs that
-  path on the synthetic market only (tested). `holdout_looks` stays 0.
+  path on the synthetic market only (tested). `holdout_looks` stays 0 (amended M6, review A: now 1, see "A holdout exposure during the M6 build" below).
   **Holdout rule, pre-registered (amended M5, review A; O-M5-5; default taken 2026-10-29, owner can
   override).** Neither test is size-controlled at n ≈ 583 (4.8, "As built in M5"), so on the holdout
   every DM and MZ p-value is reported as **descriptive only** (`descriptive_only`, flagged "not
@@ -765,6 +770,55 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
   holdout loss than `rw` for the result to count as "held up" (`report.holdout_check`; none to confirm
   when `rw` is the dev best). No model choice may use holdout results. Implemented in the holdout path
   and tested on synthetic data, so M6's single look applies it mechanically.
+  **As built in M6 (amended M6, review A; defaults taken 2026-10-29, owner can override).** The look is
+  one command, run by the owner after M6 is reviewed, fixed and pushed: `python -m ivf.backtest run
+  --period holdout --one-look`. In order: (1) a **preflight** checks every precondition (protocol and
+  configs load, `data_end` frozen, `holdout_looks` equal to `holdout_looks_before_look` in
+  `configs/backtest.yaml`, no look record, a clean tree at a pushed commit, the frozen-`data_end`
+  check, a close on every session of the holdout window for both ETPs and segments covering it, every
+  model in the dev store buildable from its frozen spec, the LSTM's last dev retrain in the `fit`
+  table, a dev backtest in the trial log) and, if any fails, exits 2 and writes nothing; (2) it
+  creates `ROOT/backtest/holdout_look.json` create-only: **from that moment the look is spent**,
+  whatever happens next; (3) it refits every model of the dev store on the holdout folds
+  (`ivf.models.holdout`: specifications and hyper-parameters frozen; AIC orders, MLE parameters,
+  scaler moments and the LSTM on its `refit_every` schedule re-estimated at every cutoff from data
+  dated <= it, continuing the dev walk-forward) and writes `processed/run_id=<id>/period=holdout/`;
+  (4) runs M5's holdout report (DM and MZ descriptive only, the `*_cal` multipliers re-estimated at
+  every cutoff, the pre-registered `holdout_check`); (5) runs the backtest on the holdout window with
+  the dev-chosen models and no new trials (`holdout_rule`). The record's `status` is updated after
+  each stage and ends `complete` or `failed at <stage>: <error>` (a hard crash leaves `running
+  <stage>`). Without `--one-look`, real `--period holdout` is refused before anything is read.
+  **Amended M6, review B (defaults taken 2026-10-29, owner can override).** (a) The preflight also runs
+  the segment checks on the ETP closes to `data_end` (gaps, unadjusted splits, leverage), naming each
+  problem without a value, so an unadjusted holdout split stops the look before it is spent.
+  (b) `--preflight-only` runs the whole preflight, prints its problems or "preflight ok", writes
+  nothing and is never a look. (c) `--resume` continues a look whose record says `failed at <stage>`
+  from that stage, reusing what earlier stages stored, and only at the look's own commit, protocol,
+  backtest config and input snapshots; every attempt is appended to the record. A resumed look is
+  still the one look: the same frozen code on the same data. (d) A holdout fit that falls back
+  (`fallback` not `none`) fails the forecast stage. (e) The non-LSTM holdout chain starts at the
+  first dev fold, so ARIMA and GARCH warm starts are the dev chain's own, and the recomputed dev-fold
+  forecasts must equal the stored ones within 1e-12 vol points (same rows) before any holdout
+  forecast is used; the LSTM restarts at its last dev retrain. (f) The dev run's protocol may differ
+  from the current one only in `holdout_looks` (checked by re-hashing); both hashes go into every
+  meta and the record; the caveat goes into the holdout metas.
+  **A holdout exposure during the M6 build (amended M6, review A).** On 2026-10-29, between the VXX/SVXY
+  fetch (raw snapshots written 16:57:19 CDT) and 16:58:09 CDT, two inspection scripts printed, for
+  VXX and SVXY: their daily returns on the holdout dates 2024-07-23 and 2024-07-24 (beside dev dates);
+  every day of their full histories with an absolute return above 30%, which included one holdout
+  date (VXX, 2024-08-05), with its value; full-history row counts and last dates; the yfinance split
+  list (VXX 2024-07-24 included); the OLS slope of SVXY's daily return on VXX's over
+  2024-07-01..2026-10-28 (one number, with its count of returns); and counts of missing sessions over
+  2018-01-25..2026-10-28. No strategy was run on holdout data. Every M6 setting was written after
+  those prints (`sharpe.py` 17:00, `configs/backtest.yaml` 17:01:56, the engine and strategy 17:03-17:04,
+  the segments' exposure rule D7 17:12:02, the segments in `configs/instruments.yaml` 17:18). It is a
+  breach of the kind M1 had (4.6, "M1's EDA computes nothing on holdout rows"). **Rule (review A's,
+  default taken 2026-10-29, owner can override):** if any M6 setting was written after such a print,
+  `holdout_looks` goes to 1 with the reason, and the planned look is reported as the **second
+  exposure** (`holdout_caveat` in `configs/backtest.yaml`, carried into the look record). So
+  `configs/protocol.yaml` now has `holdout_looks: 1` (a new `protocol_hash`; the freeze record was
+  re-written for it, rule R1). The SVXY segment's open end rests on the issuer's documentation (the
+  fund page, ProShares n.d., giving -0.5x as the current objective), not on that slope.
 - **M1's EDA computes nothing on holdout rows (amended M1, review A).** Every EDA statistic uses
   sessions and interim rows strictly before `holdout_start`, so no origin and no target date is in
   the holdout (`ivf.data.process.eda_inputs`; `eda_report` refuses a holdout row). Its samples are
@@ -788,7 +842,7 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
 | L4 | The LSTM's early-stopping block is the last 252 training origins whose targets are ≤ cutoff. An h-session purge separates the last inner-train target from the first validation origin. *(amended M4)* Implemented in `lstm.split` with H = 21 on both tracks (the longest horizon, so ≥ every h): usable origins τ ≤ c − H; validation = the last 252 of them, `v0..c−H`; training τ ≤ v0 − H. The last training target is dated `v0`, so no validation target is trained on; `tests/test_lstm.py` poisons every value only the validation slice reads and gets the same weights bit for bit. |
 | L5 | Regime labels are computed from data ≤ their date, with thresholds fixed in config, not sample quantiles. That makes them usable as conditioning variables and as trading inputs. |
 | L6 | Hyper-parameters are chosen on dev rows with `target_date < holdout_start` (4.6). |
-| L7 | Backtest: a signal from origin t is executed at the close of t+1, so it first earns the return from t+1 to t+2. |
+| L7 | Backtest: a signal from origin t is executed at the close of t+1, so it first earns the return from t+1 to t+2. *(amended M6)* Implemented in `ivf.backtest.engine.positions` with `lag_sessions: 2` (`configs/backtest.yaml`; the loader refuses less); the row dated d holds the signal of origin d-2. A hand-worked test fails for lag 0 or 1. |
 | **Test** | **Truncation test.** Forecasts at origin t from a run on data truncated at t must equal the full run's forecasts at t (the LSTM to within tolerance). This one test catches most look-ahead bugs. It works only because the fold schedule is passed in, not derived from the data (4.5), and because forecasts are produced at origins whose target is not yet observed (4.5, "Evaluable origin"). It cannot catch a leak that is identical in both runs, such as a threshold chosen by looking at the full sample. (amended M0) |
 
 #### 4.8 Regimes, tests and suppression

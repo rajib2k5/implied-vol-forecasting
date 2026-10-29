@@ -120,14 +120,19 @@ def run_symbol(
     horizons: tuple[int, ...],
     holdout_start: date,
     min_train_sessions: int,
+    allow_holdout: bool = False,
 ) -> SymbolRun:
     """Fit and forecast every model on one symbol's closes ``y`` (aligned on ``dates``).
+
+    ``allow_holdout`` (amended M6) is passed only by the guarded one look
+    (``ivf.models.holdout``, after its look record exists): ``dates`` may then run to ``data_end``
+    and ``folds`` may be holdout folds, with the same fit-at-cutoff rules (L2) as dev.
 
     ``dates`` are the sessions the run may read (all before ``holdout_start``), a prefix of
     ``calendar_dates`` (𝒯). ``y`` may be shorter than ``dates`` (a truncated run): origins past
     its end are not forecast. ``folds`` are the dev folds from ``fold_schedule``.
     """
-    if any(d >= holdout_start for d in dates):
+    if not allow_holdout and any(d >= holdout_start for d in dates):
         raise HoldoutRowRefused(f"the baselines read nothing on or after holdout_start {holdout_start}")
     if list(calendar_dates[: len(dates)]) != list(dates):
         raise ValueError("dates must be a prefix of the master calendar")
@@ -141,7 +146,7 @@ def run_symbol(
     seconds = {m.model_id: 0.0 for m in models}
     fitted = skipped = not_forecastable = 0
     for fold in folds:
-        if fold.period != "dev":
+        if fold.period != "dev" and not allow_holdout:
             raise HoldoutRowRefused("milestone 2 runs dev folds only")
         c = fold.cutoff_idx
         if c >= n:
@@ -187,6 +192,7 @@ def run_rv21(
     models: list,
     holdout_start: date,
     min_train_sessions: int,
+    allow_holdout: bool = False,
 ) -> SymbolRun:
     """The rv21 track (milestone 3): every model of ``ivf.models.rv21`` on the same folds, at h = 21.
 
@@ -200,7 +206,7 @@ def run_rv21(
     """
     from ivf.models import rv21
 
-    if any(d >= holdout_start for d in dates):
+    if not allow_holdout and any(d >= holdout_start for d in dates):  # allow_holdout: the one look only (amended M6)
         raise HoldoutRowRefused(f"the rv21 track reads nothing on or after holdout_start {holdout_start}")
     if list(calendar_dates[: len(dates)]) != list(dates):
         raise ValueError("dates must be a prefix of the master calendar")
@@ -215,7 +221,7 @@ def run_rv21(
     seconds = {m.model_id: 0.0 for m in models}
     fitted = skipped = not_forecastable = 0
     for fold in folds:
-        if fold.period != "dev":
+        if fold.period != "dev" and not allow_holdout:
             raise HoldoutRowRefused("milestone 3 runs dev folds only")
         c = fold.cutoff_idx
         if c >= n:

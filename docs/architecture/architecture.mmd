@@ -17,11 +17,11 @@ flowchart TB
         splits["<b>ivf.evaluation.splits</b><br/><i>expanding window, 63-session folds, shared by every model</i>"]
         models[["<b>ivf.models</b><br/><i>rw, hist_mean, ARIMA, HAR, GARCH/GJR/EGARCH, ARIMA-GARCH, LSTM; params frozen within a fold</i>"]]
         evaluation["<b>ivf.evaluation</b><br/><i>RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes</i>"]
-        backtest["<b>ivf.backtest</b><br/><i>VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR</i>"]
+        backtest["<b>ivf.backtest</b><br/><i>VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR; the one holdout look (M6): preflight, record, holdout refits (ivf.models.holdout), M5 holdout report, backtest</i>"]
         ivf_reports["<b>ivf.reports</b><br/><i>commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree</i>"]
     end
     subgraph storage["Storage"]
-        configs[("<b>configs/*.yaml</b><br/><i>protocol, models, strategies, iv_indices, instruments; committed. Every stage reads protocol.yaml; ivf.models reads models.yaml; ivf.backtest reads strategies.yaml</i>")]
+        configs[("<b>configs/*.yaml</b><br/><i>protocol, models, backtest, iv_indices, instruments; committed. Every stage reads protocol.yaml; ivf.models reads models.yaml; ivf.backtest reads backtest.yaml and instruments.yaml (amended M6)</i>")]
         raw[("<b>ROOT/raw/#123;source#125;/#123;symbol#125;/#123;sha256#125;.csv</b><br/><i>bytes as downloaded; never committed</i>")]
         prov[("<b>ROOT/raw/provenance.jsonl</b><br/><i>append-only, one line per fetch, written even if unchanged</i>")]
         synth_raw[("<b>ROOT/synthetic/raw/</b><br/><i>Cboe-shaped CSVs and Yahoo-shaped tables; never committed</i>")]
