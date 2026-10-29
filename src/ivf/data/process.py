@@ -75,6 +75,23 @@ def _finite(value: float) -> float | None:
     return None if value is None or not math.isfinite(value) else float(value)
 
 
+def upsert_run_row(layout, run_row: dict) -> None:
+    """Add ``run_row`` to ``processed/runs.parquet``, replacing a row with the same ``run_id``.
+
+    Same inputs, same run_id: a re-run replaces its own row (ADR 0001 D3). Shared by ``eda``
+    and the milestone 2 ``baselines`` step, which run under the same run_id when the code,
+    the protocol and the raw inputs are the same.
+    """
+    runs_path = layout.processed / "runs.parquet"
+    new_row = pd.DataFrame([run_row])
+    if runs_path.exists():
+        previous = pd.read_parquet(runs_path)
+        runs = pd.concat([previous[previous["run_id"] != run_row["run_id"]], new_row], ignore_index=True)
+    else:
+        runs = new_row
+    _write(runs, runs_path)
+
+
 #: The EDA samples (amended M1, review A). ``pre_holdout`` is every session before holdout_start
 #: (burn-in and dev); the other two are the calendar's periods inside it. There is no holdout sample.
 EDA_SAMPLES = ("pre_holdout", "burn_in", "dev")
@@ -315,15 +332,7 @@ def run_eda(layout, *, synthetic: bool) -> int:
         "python_version": sys.version.split()[0],
         "platform": platform.platform(),
     }
-    runs_path = layout.processed / "runs.parquet"
-    new_row = pd.DataFrame([run_row])
-    if runs_path.exists():
-        # Same inputs, same run_id: a re-run replaces its own row (ADR 0001 D3).
-        previous = pd.read_parquet(runs_path)
-        runs = pd.concat([previous[previous["run_id"] != run_id], new_row], ignore_index=True)
-    else:
-        runs = new_row
-    _write(runs, runs_path)
+    upsert_run_row(layout, run_row)
     out = layout.eda / run_id / "eda_report.json"
     document = {"run_id": run_id, "data_mode": data_mode, "data_end": data_end.isoformat(), **eda_out}
     repo_guard.write_file(out, (json.dumps(document, indent=1, allow_nan=False) + "\n").encode("utf-8"), outside_repo=True)

@@ -648,6 +648,41 @@ lower bound, not the first origin. Anchoring folds on `holdout_start` puts the f
 2000-03-15, and those 50 sessions are burn-in. They are training data for the first fit, never
 forecast origins, and `calendar.period` labels them `burn_in`. (amended M0, review B)
 
+**As built in M2 (amended M2).** `ivf.evaluation.walkforward` and `ivf.models.baselines`; the
+walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
+- **Fold ids** count from the first dev cutoff: 0..96 are the dev folds, 97 onwards the holdout
+  folds. The `fold` table holds all of them (dates only) and `calendar.fold_id` is filled.
+- **The holdout stays unread in M2.** The baselines run dev folds only, on M1's `eda_inputs`
+  (sessions and interim rows strictly before `holdout_start`); the runner refuses a later date or
+  a holdout fold. A dev forecast whose target is on or after `holdout_start` is stored without a
+  target and is not scored, as an unobserved target would be. The holdout run is a later, single
+  look (4.6).
+- **Same rows, made explicit for the non-core indices.** An origin is forecastable when its
+  close and the 22 closes `t-21..t` are present (the `har_m` window, G2), and a symbol's fold is
+  fitted only when at least `min_train_sessions` (504) of its closes are dated ≤ the cutoff.
+  Both rules depend on the data, never on the model, so every model has the same rows; both are
+  counted in the run output. For VIX in dev neither removes anything (G3).
+- **Nulls in training rows (answers G3).** ARIMA's Kalman filter treats a missing close as a
+  missing observation; HAR drops a pair with a null in `t-21..t` or at `t+h`; the historical
+  means skip nulls and count what they used.
+- **Fallback** (`fit.fallback`): `none`, `previous_fold`, or, for `arima_log`'s first fold only,
+  `rw_log` (ARIMA(0,1,0), whose variance has a closed form).
+- **Log-space models** report `ŷ = exp(μ + s²/2)` as above and also store `exp(μ)` as
+  `yhat_naive`; the metric table scores both (`forecast = mean | median`) so the effect of the
+  back-transform on each loss is visible. Only `mean` is the model's forecast.
+- **ARIMA order** is re-selected at every cutoff on training data only: (p, q) ∈ {0,1,2}² by
+  AIC among converged fits, with **d = 0 and a constant** (an ARMA on ln IV, which reverts to its
+  mean); the unit-root case is the random walk's. (amended M2, review A: d was chosen by KPSS at
+  5%, which picked d = 1 on 17-52% of stationary AR(1) series with phi = 0.98 at fold sample sizes
+  and at all 97 real VIX cutoffs; KPSS remains an option, `d_rule: kpss`, not the default.)
+  **HAR** is direct, one OLS per horizon, with `s² = RSS/(n−4)`.
+- **L2 and window targets (open, M3).** L2 holds by construction in M2 because every value sits
+  on the row of the date it is observed. A window target stored on its origin's row (as M1's
+  `forward_rv21`) would not; `rv21` needs its own L2 test in M3. (amended M2, review A)
+- **Secondary targets.** The other implied-vol indices of `configs/iv_indices.yaml` are
+  forecast as `<symbol>_level` with the same calendar, folds and rules. They are not protocol
+  targets (adding one would change the frozen `protocol_hash`); owner decision O-M2-1.
+
 #### 4.6 Periods and the holdout
 
 | Parameter | Value |

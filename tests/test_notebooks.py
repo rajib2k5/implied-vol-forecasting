@@ -22,6 +22,7 @@ import build_notebooks  # noqa: E402
 
 M0 = "00_environment_and_contract.ipynb"
 M1 = "01_data_and_eda.ipynb"
+M2 = "02_baselines.ipynb"
 
 
 @pytest.fixture
@@ -47,7 +48,7 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 2 notebook(s)")
+    assert result.stdout.startswith("ok: 3 notebook(s)")
 
 
 @pytest.mark.parametrize("name", [M0, M1])
@@ -217,3 +218,29 @@ def test_m1_notebook_stops_when_check_reports_violated(monkeypatch, capsys, no_n
         exec(compile(code_cells[1].source, code_cells[1].id, "exec"), namespace)
     assert "gap policy: VIOLATED" in capsys.readouterr().out
     assert "FEATURES" not in namespace  # nothing after the check ran
+
+
+# --- milestone 2: the baselines notebook ------------------------------------------------------
+
+
+def test_m2_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch, capsys, no_network):
+    # Synthetic data, one fold: the notebook must fit every baseline, print the losses and the
+    # known-truth floor, and read nothing on or after holdout_start.
+    import matplotlib.pyplot as plt
+
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("IVF_NOTEBOOK_FOLDS", "1")
+    plt.switch_backend("Agg")
+    notebook = nbformat.reads(build_notebooks.generate()[M2].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert namespace["MODE"] == "synthetic" and "data: SYNTHETIC" in out
+    assert "97 dev folds; first cutoff 2000-03-15; last dev origin 2024-06-28" in out
+    assert out.count("ARIMA(") == 1 and "RMSE of the true conditional mean" in out
+    assert set(namespace["FC"].model_id) == {"rw", "hist_mean", "hist_mean_252", "arima_log", "har_log"}
+    assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
+    plt.close("all")
