@@ -36,7 +36,7 @@ entities:
       - {name: min_cell_n, type: i16}
       - {name: vix_regime_edges, type: "f64[]"}
       - {name: seed, type: i64}
-      - {name: lstm_members, type: i16_from_M4}   # amended M1: not a key of configs/protocol.yaml yet (ivf.protocol rejects it); added in M4, and adding it changes protocol_hash
+      - {name: lstm_members, type: i16_from_M4}   # amended M1: not a key of configs/protocol.yaml yet (ivf.protocol rejects it); added in M4, and adding it changes protocol_hash; amended M4: kept as lstm.members in configs/models.yaml instead, so protocol_hash is unchanged
       - {name: cost_bps, type: f64_from_M6}   # amended M1: not a key of configs/protocol.yaml yet; added in M6, and adding it changes protocol_hash
       - {name: race_context_sessions, type: i16}
       - {name: holdout_looks, type: i16}

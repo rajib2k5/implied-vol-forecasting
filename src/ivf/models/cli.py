@@ -1,13 +1,19 @@
-"""Command line for the models (milestone 2: the baselines; milestone 3: the GARCH family).
+"""Command line for the models (milestone 2: the baselines; milestone 3: the GARCH family; milestone 4: the LSTM).
 
     uv run python -m ivf.models baselines [--symbols VIX ...] [--models rw har_log ...] [--print-metrics]
     uv run python -m ivf.models garch [--models garch rw ...] [--print-metrics]
-    uv run python -m ivf.models --synthetic baselines|garch
+    uv run python -m ivf.models lstm [--workers 5] [--tracks vix_level rv21] [--print-metrics]
+    uv run python -m ivf.models --synthetic baselines|garch|lstm
 
 ``garch`` (milestone 3) runs two tracks on the same folds: **rv21** (h = 21: ``rw``, ``har_rv``,
 ``vix_implied``, ``garch``, ``gjr``, ``egarch``) and **vix_level** on VIX (h = 1, 5, 21: M2's five
 baselines and ``arima_garch_log``, so every VIX model is scored on the same rows in one run). Each
 track's expected model list comes from ``configs/models.yaml`` (``registry.models_for``).
+
+``lstm`` (milestone 4) runs ``lstm_log`` on both tracks with the same runner, then checks the same-rows
+rule against the run's **stored** forecast table with the full expected model list (milestone <= 4), so
+it must follow ``garch`` in the same code state (same run_id); it refuses to write otherwise. It adds
+``forecast_member`` (one row per seed, data-model.md) and one ``fit`` row per seed.
 
 Reads the interim tables (``ivf.data build-interim``), re-runs the data check against the frozen
 ``data_end`` and its freeze record exactly as ``eda`` does, and refuses to run if it fails. Then,
@@ -63,7 +69,7 @@ def _write(frame: pd.DataFrame, path) -> None:
     repo_guard.write_file(path, buffer.getvalue(), outside_repo=True)
 
 
-MERGED_TABLES = ("fit", "forecast", "metric")
+MERGED_TABLES = ("fit", "forecast", "metric", "forecast_member")  # amended M4: + forecast_member
 
 
 def _merge_write(frame: pd.DataFrame, path) -> None:
@@ -310,6 +316,129 @@ def run_garch(layout, *, synthetic: bool, model_ids=None, print_metrics: bool = 
     return EXIT_OK
 
 
+def member_table(forecast: pd.DataFrame) -> pd.DataFrame:
+    """``forecast_member`` (data-model.md, M4): one row per (forecast row, member), member 1..K, plug-in ``v_hat``."""
+    rows = forecast[forecast["member_yhat"].notna()] if "member_yhat" in forecast else forecast.iloc[:0]
+    key = ["model_id", "target_id", "origin_date", "horizon", "fold_id"]
+    if not len(rows):
+        return pd.DataFrame(columns=[*key, "member", "yhat", "v_hat"])
+    k = len(rows["member_yhat"].iloc[0])
+    out = rows.loc[rows.index.repeat(k), key].reset_index(drop=True)
+    out["member"] = np.tile(np.arange(1, k + 1, dtype=np.int16), len(rows))
+    out["yhat"] = np.concatenate(rows["member_yhat"].to_numpy())
+    out["v_hat"] = (out["yhat"] / 100) ** 2
+    return out
+
+
+def _lstm_summary(name: str, run, fits: pd.DataFrame, model, out) -> None:
+    """Counts and timings only (D2): refits, epochs, the seed spread as a relative size, no loss."""
+    import json
+
+    n_origins = run.forecasts["origin_date"].nunique() if len(run.forecasts) else 0
+    params = fits.drop_duplicates("fold_id")["params_json"].map(json.loads)
+    refits = int(params.map(lambda p: p["refit"]).sum())
+    trained = fits[[json.loads(p)["refit"] for p in fits["params_json"]]]
+    best = [m["best_epoch"] for p in params if p["refit"] for m in p["members"]]
+    fc = run.forecasts
+    spread = np.stack(fc["member_yhat"].to_numpy()).std(axis=1) / fc["yhat"].to_numpy() if len(fc) else np.array([np.nan])
+    print(f"  {name}: {run.folds_fitted} folds fitted ({refits} trained, {run.folds_fitted - refits} frozen), {n_origins} origins, "
+          f"{run.origins_not_forecastable} not forecastable, {len(fc)} forecast rows, {fc['n_members'].iloc[0] if len(fc) else 0} members", file=out)
+    print(f"    epochs_run min/median/max {trained['epochs_run'].min()}/{trained['epochs_run'].median():g}/{trained['epochs_run'].max()}; "
+          f"best epoch min/median/max {min(best)}/{float(np.median(best)):g}/{max(best)}; "
+          f"seed spread sd/yhat median {np.median(spread):.4f}, max {spread.max():.4f}; "
+          f"training {model.train_seconds:.1f} s (all members), {run.seconds['lstm_log']:.1f} s fit+forecast", file=out)
+
+
+def run_lstm(layout, *, synthetic: bool, tracks=("vix_level", "rv21"), workers: int = 5, print_metrics: bool = False, out=None) -> int:
+    """Milestone 4: ``lstm_log`` on the vix_level and rv21 tracks, dev folds only (module docstring)."""
+    from ivf.models import lstm, rv21
+
+    out = out or sys.stdout
+    started = datetime.now(timezone.utc)
+    clock = time.perf_counter()
+    repo_guard.require_data_root_outside_repo(layout.root)
+    proto = protocol_mod.load_protocol(protocol_mod.protocol_path(synthetic=synthetic))
+    data_end = proto.require_data_end()
+    defs, settings = registry.load_models()
+    lsettings = registry.load_lstm_settings()
+    expected = {t: registry.models_for(defs, t, 4) for t in ("vix_level", rv21.TARGET_ID)}
+    if any("lstm_log" not in m for m in expected.values()):
+        print("error: lstm_log is not registered for vix_level and rv21 in configs/models.yaml", file=sys.stderr)
+        return EXIT_INPUT
+    try:
+        iv, price, report = build_interim.read_interim(layout.root)
+    except build_interim.InterimError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_INPUT
+    result = check.frozen_check(proto, iv, price, report)
+    if not result.ok:
+        for violation in result.policy_violations:
+            print(f"error: {violation}", file=sys.stderr)
+        return EXIT_FAILED
+    git = contract.git_state()
+    data_mode = "synthetic" if synthetic else "real"
+    run_id = process.run_id_for(proto.protocol_hash, git, data_mode, [e["raw_sha256"] for e in report["files"]])
+    folder = layout.processed / f"run_id={run_id}"
+    stored = folder / "forecast.parquet"
+    if not stored.exists():
+        print(f"error: no forecast table for run_id {run_id}; run `garch` first in this code state (same-rows rule)", file=sys.stderr)
+        return EXIT_INPUT
+    cal = calendar.master_calendar(proto)
+    calendar_dates = list(cal["date"])
+    folds = walkforward.fold_schedule(calendar_dates, proto.dev_start, proto.holdout_start, proto.fold_len, data_end)
+    dev_folds = [f for f in folds if f.period == "dev"]
+    dates, _, iv_pre, price_pre = walkforward.pre_holdout_inputs(cal, iv, price, proto.holdout_start)
+    print(f"lstm: {len(dev_folds)} dev folds, {len(dates)} sessions before holdout_start {proto.holdout_start}; "
+          f"no row on or after it is read; {lsettings.members} members (seeds from protocol.seed, ADR 0001 D5), hidden {lsettings.hidden}, refit_every "
+          f"{lsettings.refit_every} sessions, {lstm.THREADS} thread per member, {workers} workers, torch {lstm.torch.__version__}", file=out)
+    vix = build.align(dates, iv_pre, "symbol", "VIX")
+    forecasts, fits = [], []
+    for track in tracks:
+        model = (lstm.LstmLog if track == "vix_level" else lstm.LstmRv)(lsettings, proto.document["seed"], dates, workers)
+        try:
+            if track == "vix_level":
+                run = walkforward.run_symbol("VIX", "vix_level", vix, dates, calendar_dates, dev_folds, [model], proto.horizons,
+                                             proto.holdout_start, settings.min_train_sessions)
+            else:
+                inputs = rv21.Rv21Inputs(build.log_returns(build.align(dates, price_pre, "ticker", rv21.SYMBOL)), vix)
+                run = walkforward.run_rv21(inputs, dates, calendar_dates, dev_folds, [model], proto.holdout_start, settings.min_train_sessions)
+        finally:
+            model.close()
+        _lstm_summary(f"{track} (h = {', '.join(map(str, sorted(run.forecasts['horizon'].unique())))})", run, run.fits, model, out)
+        forecasts.append(run.forecasts)
+        fits.append(run.fits)
+    forecast = pd.concat(forecasts, ignore_index=True)
+    fit = pd.concat(fits, ignore_index=True)
+    # The same-rows rule against what is stored: every expected model, the LSTM included, on the same origins.
+    mine = set(zip(forecast["model_id"], forecast["target_id"]))
+    old = pd.read_parquet(stored, columns=["model_id", "target_id", "origin_date", "horizon"])
+    old = old[[pair not in mine for pair in zip(old["model_id"], old["target_id"])]]
+    combined = pd.concat([old, forecast[old.columns]], ignore_index=True)
+    try:
+        for target_id in sorted(set(forecast["target_id"])):
+            walkforward.check_same_rows(combined[combined.target_id == target_id], expected[target_id])
+    except AssertionError as exc:
+        print(f"error: {exc}; run `garch` first in this code state", file=sys.stderr)
+        return EXIT_FAILED
+    log_models = {d.model_id for d in defs if d.fit_space == "log_level"}
+    metric = walkforward.metric_table(forecast, proto.holdout_start, proto.document["min_cell_n"], log_models)
+    n_scored = len(walkforward.scored(forecast, proto.holdout_start))
+    late = int((fit["train_last_target_date"] > fit["cutoff_date"]).sum())
+    members = member_table(forecast)
+    _write_tables(folder, run_id, {"fit": fit, "forecast": forecast[FORECAST_COLUMNS], "metric": metric, "forecast_member": members})
+    process.upsert_run_row(layout, _run_row(run_id, proto, data_mode, git, started))
+    print(f"run_id {run_id} ({data_mode}); {len(forecast)} forecast rows, {n_scored} scored, {len(members)} member rows, "
+          f"{len(fit)} fit rows ({late} with train_last_target_date after the cutoff), same rows as {expected}; "
+          f"{time.perf_counter() - clock:.1f} s", file=out)
+    print(f"tables merged into {folder} (local only, never commit real numbers: ADR 0001 D2)", file=out)
+    if print_metrics:
+        stored_metric = pd.read_parquet(folder / "metric.parquet")
+        shown = stored_metric[stored_metric.target_id.isin(set(forecast["target_id"]))]
+        shown = shown[["target_id", "horizon", "model_id", "forecast", "n", "rmse", "mae", "mape", "qlike", "bias"]]
+        print(shown.sort_values(["target_id", "horizon", "forecast", "rmse"]).to_string(index=False), file=out)
+    return EXIT_OK
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m ivf.models", description=__doc__.split("\n\n")[0])
     parser.add_argument("--synthetic", action="store_true", help="use ROOT/synthetic and the synthetic protocol")
@@ -321,10 +450,16 @@ def main(argv: list[str] | None = None) -> int:
     g = commands.add_parser("garch", help="the GARCH family: rv21 track and ARIMA-GARCH on VIX, dev period (milestone 3)")
     g.add_argument("--models", nargs="+", help="only these model ids (default: every rv21 and vix_level model)")
     g.add_argument("--print-metrics", action="store_true", help="print the dev losses (local only)")
+    m = commands.add_parser("lstm", help="the LSTM on the vix_level and rv21 tracks, dev period (milestone 4); after garch")
+    m.add_argument("--tracks", nargs="+", choices=["vix_level", "rv21"], default=["vix_level", "rv21"])
+    m.add_argument("--workers", type=int, default=5, help="processes training the seeds in parallel (results do not depend on it)")
+    m.add_argument("--print-metrics", action="store_true", help="print the dev losses of every model on these targets (local only)")
     args = parser.parse_args(argv)
     layout = config.data_layout(synthetic=args.synthetic)
     try:
         repo_guard.require_data_root_outside_repo(layout.root)
+        if args.command == "lstm":
+            return run_lstm(layout, synthetic=args.synthetic, tracks=tuple(args.tracks), workers=args.workers, print_metrics=args.print_metrics)
         if args.command == "garch":
             return run_garch(layout, synthetic=args.synthetic, model_ids=args.models, print_metrics=args.print_metrics)
         return run_baselines(layout, synthetic=args.synthetic, symbols=args.symbols, model_ids=args.models, print_metrics=args.print_metrics)

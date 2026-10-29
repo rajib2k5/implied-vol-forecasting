@@ -101,6 +101,17 @@ models:
     targets: [vix_level]
     milestone: 3
     retired: false
+  # Milestone 4 (docs/milestones/04-lstm.md): one model id on both tracks, like rw. An LSTM over the 22
+  # sessions t-21..t with HAR's regressors beside its last state; predicts the log change, scored as the
+  # lognormal mean. The mean over lstm.members seeds; each member is kept in forecast_member.
+  - model_id: lstm_log
+    label: LSTM on log volatility (seed ensemble)
+    family: ml
+    fit_space: log_level
+    multistep: direct
+    targets: [vix_level, rv21]
+    milestone: 4
+    retired: false
 
 baselines:
   # VIX is the protocol target (vix_level). The other implied-vol indices of
@@ -139,3 +150,26 @@ garch:
   # d was 1; on the synthetic market (ln VIX an AR(1), phi 0.98) it was 2.8% worse than the random
   # walk at h = 21 and d = 0 was 9% better, M2's arima_log lesson again.
   d: 0
+
+# Milestone 4: the LSTM (src/ivf/models/lstm.py). Set before any LSTM forecast was scored (rule L6), from
+# ADR 0002's benchmark shape (hidden 32-64, batch 64, Adam 1e-3) and round numbers, never from results.
+lstm:
+  # Networks per training cutoff, identical but for the seed; the forecast is the mean of their log
+  # forecasts. Member m's seed: SeedSequence(protocol.seed, spawn_key=(key32("lstm_log"), cutoff yyyymmdd, m))
+  # (ADR 0001 D5). The data model's `lstm_members`; kept here, since a new protocol key changes protocol_hash.
+  members: 5
+  # Sessions t-21..t: exactly the window the runner's forecastable rule guarantees (at most 22).
+  window: 22
+  hidden: 32
+  batch: 64
+  lr: 0.001
+  # Early stopping on the validation slice: stop after `patience` epochs without a new lowest loss,
+  # keep the best epoch's weights.
+  max_epochs: 50
+  patience: 5
+  # The validation slice: the last 252 usable origins before the cutoff, `H` sessions after the training slice.
+  val_sessions: 252
+  # O-M4-1 (refit frequency): a full retrain when at least this many sessions have passed since the last
+  # one (252 = every 4th 63-session cutoff); the network is applied frozen in between. Default taken
+  # 2026-10-29 from the measured training time (docs/milestones/04-lstm.md, section 7); owner can override.
+  refit_every: 252

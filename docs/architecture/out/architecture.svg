@@ -1,82 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="9653" height="4072" viewBox="0 0 9653 4072">
+<svg xmlns="http://www.w3.org/2000/svg" width="10532" height="4060" viewBox="0 0 10532 4060">
   <title>implied-vol-forecasting system architecture (M0-M6)</title>
-  <rect x="0" y="0" width="9653" height="4072" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="10532" height="4060" fill="#F8FAFC"/>
   <text x="32" y="52" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="20" font-weight="700" fill="#0F172A">implied-vol-forecasting system architecture (M0-M6)</text>
   <g id="lane_external">
-    <rect x="32" y="80" width="1396" height="2652" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="32" y="80" width="1396" height="2640" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
     <text x="48" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">EXTERNAL</text>
   </g>
   <g id="lane_core">
-    <rect x="1456" y="80" width="3205" height="3904" rx="14" fill="#EFF6FF" stroke="#DBEAFE" stroke-width="1"/>
+    <rect x="1456" y="80" width="3597" height="3892" rx="14" fill="#EFF6FF" stroke="#DBEAFE" stroke-width="1"/>
     <text x="1472" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">PYTHON CORE (SRC/IVF)</text>
   </g>
   <g id="lane_storage">
-    <rect x="4689" y="80" width="3312" height="3904" rx="14" fill="#F5F3FF" stroke="#E9E5FD" stroke-width="1"/>
-    <text x="4705" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">STORAGE</text>
+    <rect x="5081" y="80" width="3799" height="3892" rx="14" fill="#F5F3FF" stroke="#E9E5FD" stroke-width="1"/>
+    <text x="5097" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">STORAGE</text>
   </g>
   <g id="lane_tooling">
-    <rect x="8029" y="80" width="1592" height="3904" rx="14" fill="#ECFDF5" stroke="#D1FAE5" stroke-width="1"/>
-    <text x="8045" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">TOOLING</text>
+    <rect x="8908" y="80" width="1592" height="3892" rx="14" fill="#ECFDF5" stroke="#D1FAE5" stroke-width="1"/>
+    <text x="8924" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">TOOLING</text>
   </g>
   <g id="lane_app">
-    <rect x="32" y="3714" width="1396" height="270" rx="14" fill="#FFF7ED" stroke="#FFEDD5" stroke-width="1"/>
-    <text x="48" y="3734" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">APP</text>
+    <rect x="32" y="3702" width="1396" height="270" rx="14" fill="#FFF7ED" stroke="#FFEDD5" stroke-width="1"/>
+    <text x="48" y="3722" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">APP</text>
   </g>
   <g id="edge_0">
-    <path d="M6355 1572L6355 1580Q6355 1588 6347 1588L3210 1588Q3202 1588 3202 1596L3202 1678" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M7119 1572L7119 1580Q7119 1588 7111 1588L3210 1588Q3202 1588 3202 1596L3202 1678" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3202,1686 3197.5,1677 3206.5,1677" fill="#64748B"/>
   </g>
   <g id="edge_1">
-    <path d="M2524 200L2524 208Q2524 216 2516 216L1814 216Q1806 216 1806 224L1806 488Q1806 496 1814 496L2169 496Q2177 496 2177 504L2177 2204Q2177 2212 2185 2212L2296 2212Q2304 2212 2304 2220L2304 3400Q2304 3408 2296 3408L2038 3408Q2030 3408 2030 3416L2030 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2030,3506 2025.5,3497 2034.5,3497" fill="#6366F1"/>
+    <path d="M2523 200L2523 208Q2523 216 2515 216L1814 216Q1806 216 1806 224L1806 488Q1806 496 1814 496L2169 496Q2177 496 2177 504L2177 2204Q2177 2212 2185 2212L2296 2212Q2304 2212 2304 2220L2304 3388Q2304 3396 2296 3396L2038 3396Q2030 3396 2030 3404L2030 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2030,3494 2025.5,3485 2034.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_2">
-    <path d="M2145 420L2145 464Q2145 472 2153 472L2155 472Q2163 472 2163 480L2163 3412Q2163 3420 2155 3420L1865 3420Q1857 3420 1857 3428L1857 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="1857,3506 1852.5,3497 1861.5,3497" fill="#6366F1"/>
+    <path d="M2145 420L2145 464Q2145 472 2153 472L2155 472Q2163 472 2163 480L2163 3400Q2163 3408 2155 3408L1865 3408Q1857 3408 1857 3416L1857 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1857,3494 1852.5,3485 1861.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_3">
-    <path d="M2898 420L2898 428Q2898 436 2890 436L2199 436Q2191 436 2191 444L2191 2192Q2191 2200 2199 2200L2310 2200Q2318 2200 2318 2208L2318 3412Q2318 3420 2310 3420L2192 3420Q2184 3420 2184 3428L2184 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2184,3506 2179.5,3497 2188.5,3497" fill="#6366F1"/>
+    <path d="M2898 420L2898 428Q2898 436 2890 436L2199 436Q2191 436 2191 444L2191 2192Q2191 2200 2199 2200L2310 2200Q2318 2200 2318 2208L2318 3400Q2318 3408 2310 3408L2192 3408Q2184 3408 2184 3416L2184 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2184,3494 2179.5,3485 2188.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_4">
-    <path d="M3420 1032L3420 1040Q3420 1048 3412 1048L2213 1048Q2205 1048 2205 1056L2205 2180Q2205 2188 2213 2188L2324 2188Q2332 2188 2332 2196L2332 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2332,3506 2327.5,3497 2336.5,3497" fill="#6366F1"/>
+    <path d="M3420 1032L3420 1040Q3420 1048 3412 1048L2213 1048Q2205 1048 2205 1056L2205 2180Q2205 2188 2213 2188L2324 2188Q2332 2188 2332 2196L2332 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2332,3494 2327.5,3485 2336.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_5">
-    <path d="M3263 1412L3263 1420Q3263 1428 3255 1428L2227 1428Q2219 1428 2219 1436L2219 2168Q2219 2176 2227 2176L2338 2176Q2346 2176 2346 2184L2346 3412Q2346 3420 2354 3420L2459 3420Q2467 3420 2467 3428L2467 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2467,3506 2462.5,3497 2471.5,3497" fill="#6366F1"/>
+    <path d="M3263 1412L3263 1420Q3263 1428 3255 1428L2227 1428Q2219 1428 2219 1436L2219 2168Q2219 2176 2227 2176L2338 2176Q2346 2176 2346 2184L2346 3400Q2346 3408 2354 3408L2459 3408Q2467 3408 2467 3416L2467 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2467,3494 2462.5,3485 2471.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_6">
-    <path d="M2923 1940L2923 1972Q2923 1980 2915 1980L2241 1980Q2233 1980 2233 1988L2233 2156Q2233 2164 2241 2164L2352 2164Q2360 2164 2360 2172L2360 3400Q2360 3408 2368 3408L2622 3408Q2630 3408 2630 3416L2630 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2630,3506 2625.5,3497 2634.5,3497" fill="#6366F1"/>
+    <path d="M2923 1940L2923 1972Q2923 1980 2915 1980L2241 1980Q2233 1980 2233 1988L2233 2156Q2233 2164 2241 2164L2352 2164Q2360 2164 2360 2172L2360 3388Q2360 3396 2368 3396L2622 3396Q2630 3396 2630 3404L2630 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2630,3494 2625.5,3485 2634.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_7">
-    <path d="M8759 3380L8759 3388Q8759 3396 8751 3396L2801 3396Q2793 3396 2793 3404L2793 3498" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="2793,3506 2788.5,3497 2797.5,3497" fill="#6366F1"/>
+    <path d="M9638 3368L9638 3376Q9638 3384 9630 3384L2801 3384Q2793 3384 2793 3392L2793 3486" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="2793,3494 2788.5,3485 2797.5,3485" fill="#6366F1"/>
   </g>
   <g id="edge_8">
-    <path d="M2612 200L2612 256Q2612 264 2604 264L2329 264Q2321 264 2321 272L2321 342" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2611 200L2611 256Q2611 264 2603 264L2329 264Q2321 264 2321 272L2321 342" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2321,350 2316.5,341 2325.5,341" fill="#6366F1"/>
   </g>
   <g id="edge_9">
-    <path d="M2656 200L2656 256Q2656 264 2664 264L2913 264Q2921 264 2921 272L2921 342" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2655 200L2655 256Q2655 264 2663 264L2913 264Q2921 264 2921 272L2921 342" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2921,350 2916.5,341 2925.5,341" fill="#6366F1"/>
   </g>
   <g id="edge_10">
-    <path d="M2788 200L2788 220Q2788 228 2796 228L3290 228Q3298 228 3298 236L3298 476Q3298 484 3290 484L2918 484Q2910 484 2910 492L2910 696Q2910 704 2918 704L3456 704Q3464 704 3464 712L3464 856Q3464 864 3456 864L3414 864Q3406 864 3406 872L3406 954" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2787 200L2787 220Q2787 228 2795 228L3290 228Q3298 228 3298 236L3298 476Q3298 484 3290 484L2918 484Q2910 484 2910 492L2910 696Q2910 704 2918 704L3456 704Q3464 704 3464 712L3464 856Q3464 864 3456 864L3414 864Q3406 864 3406 872L3406 954" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3406,962 3401.5,953 3410.5,953" fill="#6366F1"/>
   </g>
   <g id="edge_11">
-    <path d="M2744 200L2744 232Q2744 240 2752 240L3276 240Q3284 240 3284 248L3284 452Q3284 460 3276 460L2886 460Q2878 460 2878 468L2878 868Q2878 876 2870 876L2864 876Q2856 876 2856 884L2856 954" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2743 200L2743 232Q2743 240 2751 240L3276 240Q3284 240 3284 248L3284 452Q3284 460 3276 460L2886 460Q2878 460 2878 468L2878 868Q2878 876 2870 876L2864 876Q2856 876 2856 884L2856 954" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2856,962 2851.5,953 2860.5,953" fill="#6366F1"/>
   </g>
   <g id="edge_12">
-    <path d="M2700 200L2700 244Q2700 252 2708 252L3262 252Q3270 252 3270 260L3270 440Q3270 448 3262 448L2637 448Q2629 448 2629 456L2629 1052Q2629 1060 2637 1060L3343 1060Q3351 1060 3351 1068L3351 1224Q3351 1232 3343 1232L3267 1232Q3259 1232 3259 1240L3259 1334" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2699 200L2699 244Q2699 252 2707 252L3262 252Q3270 252 3270 260L3270 440Q3270 448 3262 448L2637 448Q2629 448 2629 456L2629 1052Q2629 1060 2637 1060L3343 1060Q3351 1060 3351 1068L3351 1224Q3351 1232 3343 1232L3267 1232Q3259 1232 3259 1240L3259 1334" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3259,1342 3254.5,1333 3263.5,1333" fill="#6366F1"/>
   </g>
   <g id="edge_13">
-    <path d="M2568 200L2568 220Q2568 228 2560 228L1828 228Q1820 228 1820 236L1820 476Q1820 484 1828 484L2593 484Q2601 484 2601 492L2601 1076Q2601 1084 2609 1084L2629 1084Q2637 1084 2637 1092L2637 1776Q2637 1784 2645 1784L2877 1784Q2885 1784 2885 1792L2885 1862" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M2567 200L2567 220Q2567 228 2559 228L1828 228Q1820 228 1820 236L1820 476Q1820 484 1828 484L2593 484Q2601 484 2601 492L2601 1076Q2601 1084 2609 1084L2629 1084Q2637 1084 2637 1092L2637 1776Q2637 1784 2645 1784L2877 1784Q2885 1784 2885 1792L2885 1862" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2885,1870 2880.5,1861 2889.5,1861" fill="#6366F1"/>
   </g>
   <g id="edge_14">
@@ -104,43 +104,43 @@
     <polygon points="3310,582 3305.5,573 3314.5,573" fill="#64748B"/>
   </g>
   <g id="edge_20">
-    <path d="M3204 652L3204 684Q3204 692 3212 692L5255 692Q5263 692 5263 700L5263 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="5263,766 5258.5,757 5267.5,757" fill="#64748B"/>
+    <path d="M3204 652L3204 684Q3204 692 3212 692L5653 692Q5661 692 5661 700L5661 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="5661,766 5656.5,757 5665.5,757" fill="#64748B"/>
   </g>
   <g id="edge_21">
-    <path d="M3292 652L3292 660Q3292 668 3300 668L6447 668Q6455 668 6455 676L6455 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6455,766 6450.5,757 6459.5,757" fill="#64748B"/>
+    <path d="M3292 652L3292 660Q3292 668 3300 668L6845 668Q6853 668 6853 676L6853 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6853,766 6848.5,757 6857.5,757" fill="#64748B"/>
   </g>
   <g id="edge_22">
-    <path d="M3248 652L3248 672Q3248 680 3256 680L5844 680Q5852 680 5852 688L5852 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="5852,766 5847.5,757 5856.5,757" fill="#64748B"/>
+    <path d="M3248 652L3248 672Q3248 680 3256 680L6242 680Q6250 680 6250 688L6250 758" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6250,766 6245.5,757 6254.5,757" fill="#64748B"/>
   </g>
   <g id="edge_23">
-    <path d="M5219 836L5219 844Q5219 852 5211 852L2908 852Q2900 852 2900 860L2900 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M5617 836L5617 844Q5617 852 5609 852L2908 852Q2900 852 2900 860L2900 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="2900,962 2895.5,953 2904.5,953" fill="#64748B"/>
   </g>
   <g id="edge_24">
-    <path d="M5263 836L5263 868Q5263 876 5255 876L3472 876Q3464 876 3464 884L3464 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M5661 836L5661 868Q5661 876 5653 876L3472 876Q3464 876 3464 884L3464 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3464,962 3459.5,953 3468.5,953" fill="#64748B"/>
   </g>
   <g id="edge_25">
-    <path d="M5852 836L5852 856Q5852 864 5844 864L3530 864Q3522 864 3522 872L3522 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M6250 836L6250 856Q6250 864 6242 864L3530 864Q3522 864 3522 872L3522 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3522,962 3517.5,953 3526.5,953" fill="#64748B"/>
   </g>
   <g id="edge_26">
-    <path d="M3464 1032L3464 1076Q3464 1084 3472 1084L6757 1084Q6765 1084 6765 1092L6765 1138" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6765,1146 6760.5,1137 6769.5,1137" fill="#64748B"/>
+    <path d="M3464 1032L3464 1076Q3464 1084 3472 1084L7443 1084Q7451 1084 7451 1092L7451 1138" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="7451,1146 7446.5,1137 7455.5,1137" fill="#64748B"/>
   </g>
   <g id="edge_27">
-    <path d="M3508 1032L3508 1064Q3508 1072 3516 1072L7682 1072Q7690 1072 7690 1080L7690 1138" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="7690,1146 7685.5,1137 7694.5,1137" fill="#64748B"/>
+    <path d="M3508 1032L3508 1064Q3508 1072 3516 1072L8561 1072Q8569 1072 8569 1080L8569 1138" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="8569,1146 8564.5,1137 8573.5,1137" fill="#64748B"/>
   </g>
   <g id="edge_28">
-    <path d="M6699 1216L6699 1236Q6699 1244 6691 1244L3356 1244Q3348 1244 3348 1252L3348 1334" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M7385 1216L7385 1236Q7385 1244 7377 1244L3356 1244Q3348 1244 3348 1252L3348 1334" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3348,1342 3343.5,1333 3352.5,1333" fill="#64748B"/>
   </g>
   <g id="edge_29">
-    <path d="M7664 1216L7664 1224Q7664 1232 7656 1232L3451 1232Q3443 1232 3443 1240L3443 1334" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M8543 1216L8543 1224Q8543 1232 8535 1232L3451 1232Q3443 1232 3443 1240L3443 1334" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3443,1342 3438.5,1333 3447.5,1333" fill="#64748B"/>
   </g>
   <g id="edge_30">
@@ -152,11 +152,11 @@
     <polygon points="4012,2078 4007.5,2069 4016.5,2069" fill="#6366F1"/>
   </g>
   <g id="edge_32">
-    <path d="M3441 1412L3441 1432Q3441 1440 3449 1440L6391 1440Q6399 1440 6399 1448L6399 1494" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6399,1502 6394.5,1493 6403.5,1493" fill="#64748B"/>
+    <path d="M3441 1412L3441 1432Q3441 1440 3449 1440L7155 1440Q7163 1440 7163 1448L7163 1494" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="7163,1502 7158.5,1493 7167.5,1493" fill="#64748B"/>
   </g>
   <g id="edge_33">
-    <path d="M6743 1216L6743 1248Q6743 1256 6735 1256L5368 1256Q5360 1256 5360 1264L5360 1764Q5360 1772 5352 1772L3189 1772Q3181 1772 3181 1780L3181 1862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M7429 1216L7429 1248Q7429 1256 7421 1256L5784 1256Q5776 1256 5776 1264L5776 1764Q5776 1772 5768 1772L3189 1772Q3181 1772 3181 1780L3181 1862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <polygon points="3181,1870 3176.5,1861 3185.5,1861" fill="#64748B"/>
   </g>
   <g id="edge_34">
@@ -180,164 +180,164 @@
     <polygon points="3336,2078 3331.5,2069 3340.5,2069" fill="#6366F1"/>
   </g>
   <g id="edge_39">
-    <path d="M3099 1940L3099 1960Q3099 1968 3107 1968L6176 1968Q6184 1968 6184 1976L6184 2070" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6184,2078 6179.5,2069 6188.5,2069" fill="#64748B"/>
+    <path d="M3099 1940L3099 1960Q3099 1968 3107 1968L6710 1968Q6718 1968 6718 1976L6718 2070" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6718,2078 6713.5,2069 6722.5,2069" fill="#64748B"/>
   </g>
   <g id="edge_40">
-    <path d="M3143 1940L3143 1948Q3143 1956 3151 1956L7393 1956Q7401 1956 7401 1964L7401 2070" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="7401,2078 7396.5,2069 7405.5,2069" fill="#64748B"/>
+    <path d="M3143 1940L3143 1948Q3143 1956 3151 1956L8272 1956Q8280 1956 8280 1964L8280 2070" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="8280,2078 8275.5,2069 8284.5,2069" fill="#64748B"/>
   </g>
   <g id="edge_41">
-    <path d="M6399 1572L6399 1592Q6399 1600 6391 1600L5382 1600Q5374 1600 5374 1608L5374 1776Q5374 1784 5366 1784L5236 1784Q5228 1784 5228 1792L5228 2204Q5228 2212 5220 2212L4014 2212Q4006 2212 4006 2220L4006 2290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4006,2298 4001.5,2289 4010.5,2289" fill="#64748B"/>
+    <path d="M7163 1572L7163 1592Q7163 1600 7155 1600L5798 1600Q5790 1600 5790 1608L5790 1776Q5790 1784 5782 1784L5425 1784Q5417 1784 5417 1792L5417 2204Q5417 2212 5409 2212L4202 2212Q4194 2212 4194 2220L4194 2290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4194,2298 4189.5,2289 4198.5,2289" fill="#64748B"/>
   </g>
   <g id="edge_42">
-    <path d="M6118 2148L6118 2192Q6118 2200 6110 2200L4148 2200Q4140 2200 4140 2208L4140 2290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4140,2298 4135.5,2289 4144.5,2289" fill="#64748B"/>
+    <path d="M6630 2148L6630 2192Q6630 2200 6622 2200L4334 2200Q4326 2200 4326 2208L4326 2290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4326,2298 4321.5,2289 4330.5,2289" fill="#64748B"/>
   </g>
   <g id="edge_43">
-    <path d="M4073 2368L4073 2388Q4073 2396 4065 2396L4046 2396Q4038 2396 4038 2404L4038 2474" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4038,2482 4033.5,2473 4042.5,2473" fill="#64748B"/>
+    <path d="M4260 2368L4260 2376Q4260 2384 4252 2384L4233 2384Q4225 2384 4225 2392L4225 2462" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4225,2470 4220.5,2461 4229.5,2461" fill="#64748B"/>
   </g>
   <g id="edge_44">
-    <path d="M6162 2148L6162 2204Q6162 2212 6154 2212L6072 2212Q6064 2212 6064 2220L6064 2376Q6064 2384 6056 2384L4116 2384Q4108 2384 4108 2392L4108 2474" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4108,2482 4103.5,2473 4112.5,2473" fill="#64748B"/>
+    <path d="M6696 2148L6696 2204Q6696 2212 6688 2212L6595 2212Q6587 2212 6587 2220L6587 2376Q6587 2384 6579 2384L4303 2384Q4295 2384 4295 2392L4295 2462" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4295,2470 4290.5,2461 4299.5,2461" fill="#64748B"/>
   </g>
   <g id="edge_45">
-    <path d="M4051 2552L4051 2572Q4051 2580 4059 2580L6333 2580Q6341 2580 6341 2588L6341 2634" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6341,2642 6336.5,2633 6345.5,2633" fill="#64748B"/>
+    <path d="M4238 2540L4238 2560Q4238 2568 4246 2568L6932 2568Q6940 2568 6940 2576L6940 2622" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6940,2630 6935.5,2621 6944.5,2621" fill="#64748B"/>
   </g>
   <g id="edge_46">
-    <path d="M6329 2712L6329 2764Q6329 2772 6321 2772L4245 2772Q4237 2772 4237 2780L4237 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4237,2870 4232.5,2861 4241.5,2861" fill="#64748B"/>
+    <path d="M6928 2700L6928 2752Q6928 2760 6920 2760L4241 2760Q4233 2760 4233 2768L4233 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4233,2858 4228.5,2849 4237.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_47">
-    <path d="M6206 2148L6206 2204Q6206 2212 6214 2212L6631 2212Q6639 2212 6639 2220L6639 2776Q6639 2784 6631 2784L4341 2784Q4333 2784 4333 2792L4333 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4333,2870 4328.5,2861 4337.5,2861" fill="#64748B"/>
+    <path d="M6740 2148L6740 2204Q6740 2212 6748 2212L7230 2212Q7238 2212 7238 2220L7238 2764Q7238 2772 7230 2772L4337 2772Q4329 2772 4329 2780L4329 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="4329,2858 4324.5,2849 4333.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_48">
-    <path d="M4285 2940L4285 2948Q4285 2956 4293 2956L5040 2956Q5048 2956 5048 2964L5048 3046" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="5048,3054 5043.5,3045 5052.5,3045" fill="#64748B"/>
+    <path d="M4281 2928L4281 2936Q4281 2944 4289 2944L5432 2944Q5440 2944 5440 2952L5440 3034" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="5440,3042 5435.5,3033 5444.5,3033" fill="#64748B"/>
   </g>
   <g id="edge_49">
-    <path d="M6297 2712L6297 2752Q6297 2760 6289 2760L3831 2760Q3823 2760 3823 2768L3823 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="3823,2870 3818.5,2861 3827.5,2861" fill="#64748B"/>
+    <path d="M6896 2700L6896 2740Q6896 2748 6888 2748L3827 2748Q3819 2748 3819 2756L3819 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="3819,2858 3814.5,2849 3823.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_50">
-    <path d="M6787 1216L6787 1248Q6787 1256 6795 1256L7250 1256Q7258 1256 7258 1264L7258 1580Q7258 1588 7250 1588L7148 1588Q7140 1588 7140 1596L7140 2180Q7140 2188 7132 2188L6086 2188Q6078 2188 6078 2196L6078 2388Q6078 2396 6070 2396L6051 2396Q6043 2396 6043 2404L6043 2740Q6043 2748 6035 2748L3754 2748Q3746 2748 3746 2756L3746 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="3746,2870 3741.5,2861 3750.5,2861" fill="#64748B"/>
+    <path d="M7473 1216L7473 1248Q7473 1256 7481 1256L8014 1256Q8022 1256 8022 1264L8022 1586.5Q8022 1588 8020.5 1588L8020.5 1588Q8019 1588 8019 1589.5L8019 2180Q8019 2188 8011 2188L6650 2188Q6642 2188 6642 2196L6642 2728Q6642 2736 6634 2736L3750 2736Q3742 2736 3742 2744L3742 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="3742,2858 3737.5,2849 3746.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_51">
-    <path d="M747 2712L747 2776Q747 2784 755 2784L3661 2784Q3669 2784 3669 2792L3669 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="3669,2870 3664.5,2861 3673.5,2861" fill="#64748B"/>
+    <path d="M747 2700L747 2764Q747 2772 755 2772L3657 2772Q3665 2772 3665 2780L3665 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="3665,2858 3660.5,2849 3669.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_52">
-    <path d="M3746 2940L3746 2960Q3746 2968 3754 2968L4928 2968Q4936 2968 4936 2976L4936 3046" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="4936,3054 4931.5,3045 4940.5,3045" fill="#64748B"/>
+    <path d="M3742 2928L3742 2948Q3742 2956 3750 2956L5320 2956Q5328 2956 5328 2964L5328 3034" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="5328,3042 5323.5,3033 5332.5,3033" fill="#64748B"/>
   </g>
   <g id="edge_53">
-    <path d="M4970 3124L4970 3204Q4970 3212 4962 3212L3948 3212Q3940 3212 3940 3220L3940 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="3940,3310 3935.5,3301 3944.5,3301" fill="#64748B"/>
+    <path d="M5362 3112L5362 3192Q5362 3200 5354 3200L3959 3200Q3951 3200 3951 3208L3951 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="3951,3298 3946.5,3289 3955.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_54">
-    <path d="M3940 3380L3940 3412Q3940 3420 3948 3420L5285 3420Q5293 3420 5293 3428L5293 3498" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="5293,3506 5288.5,3497 5297.5,3497" fill="#64748B"/>
+    <path d="M3951 3368L3951 3400Q3951 3408 3959 3408L5688 3408Q5696 3408 5696 3416L5696 3486" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="5696,3494 5691.5,3485 5700.5,3485" fill="#64748B"/>
   </g>
   <g id="edge_55">
-    <path d="M6831 1216L6831 1236Q6831 1244 6839 1244L7668 1244Q7676 1244 7676 1252L7676 2204Q7676 2212 7668 2212L7598 2212Q7590 2212 7590 2220L7590 3144Q7590 3152 7598 3152L9102 3152Q9110 3152 9110 3160L9110 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="9110,3310 9105.5,3301 9114.5,3301" fill="#64748B"/>
+    <path d="M7517 1216L7517 1236Q7517 1244 7525 1244L8547 1244Q8555 1244 8555 1252L8555 2204Q8555 2212 8547 2212L8432 2212Q8424 2212 8424 2220L8424 3132Q8424 3140 8432 3140L9981 3140Q9989 3140 9989 3148L9989 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9989,3298 9984.5,3289 9993.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_56">
-    <path d="M7712 1216L7712 1248Q7712 1256 7704 1256L7698 1256Q7690 1256 7690 1264L7690 3132Q7690 3140 7698 3140L9220 3140Q9228 3140 9228 3148L9228 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="9228,3310 9223.5,3301 9232.5,3301" fill="#64748B"/>
+    <path d="M8591 1216L8591 1248Q8591 1256 8583 1256L8577 1256Q8569 1256 8569 1264L8569 3120Q8569 3128 8577 3128L10100 3128Q10108 3128 10108 3136L10108 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="10108,3298 10103.5,3289 10112.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_57">
-    <path d="M6443 1572L6443 1592Q6443 1600 6451 1600L7654 1600Q7662 1600 7662 1608L7662 2192Q7662 2200 7654 2200L7584 2200Q7576 2200 7576 2208L7576 3156Q7576 3164 7584 3164L8973 3164Q8981 3164 8981 3172L8981 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8981,3310 8976.5,3301 8985.5,3301" fill="#64748B"/>
+    <path d="M7207 1572L7207 1592Q7207 1600 7215 1600L8533 1600Q8541 1600 8541 1608L8541 2192Q8541 2200 8533 2200L8418 2200Q8410 2200 8410 2208L8410 3144Q8410 3152 8418 3152L9852 3152Q9860 3152 9860 3160L9860 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9860,3298 9855.5,3289 9864.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_58">
-    <path d="M2598 2148L2598 3216Q2598 3224 2606 3224L8414 3224Q8422 3224 8422 3232L8422 3302" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8422,3310 8417.5,3301 8426.5,3301" fill="#6366F1"/>
+    <path d="M2598 2148L2598 3204Q2598 3212 2606 3212L9292 3212Q9300 3212 9300 3220L9300 3290" fill="none" stroke="#6366F1" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9300,3298 9295.5,3289 9304.5,3289" fill="#6366F1"/>
   </g>
   <g id="edge_59">
-    <path d="M5014 3124L5014 3204Q5014 3212 5022 3212L8582 3212Q8590 3212 8590 3220L8590 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8590,3310 8585.5,3301 8594.5,3301" fill="#64748B"/>
+    <path d="M5406 3112L5406 3192Q5406 3200 5414 3200L9462 3200Q9470 3200 9470 3208L9470 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9470,3298 9465.5,3289 9474.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_60">
-    <path d="M6385 2712L6385 2764Q6385 2772 6377 2772L6349 2772Q6341 2772 6341 2780L6341 3180Q6341 3188 6349 3188L8742 3188Q8750 3188 8750 3196L8750 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8750,3310 8745.5,3301 8754.5,3301" fill="#64748B"/>
+    <path d="M6984 2700L6984 2752Q6984 2760 6976 2760L6948 2760Q6940 2760 6940 2768L6940 3168Q6940 3176 6948 3176L9620 3176Q9628 3176 9628 3184L9628 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9628,3298 9623.5,3289 9632.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_61">
-    <path d="M6250 2148L6250 2192Q6250 2200 6258 2200L6645 2200Q6653 2200 6653 2208L6653 3168Q6653 3176 6661 3176L8844 3176Q8852 3176 8852 3184L8852 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8852,3310 8847.5,3301 8856.5,3301" fill="#64748B"/>
+    <path d="M6784 2148L6784 2192Q6784 2200 6792 2200L7244 2200Q7252 2200 7252 2208L7252 3156Q7252 3164 7260 3164L9723 3164Q9731 3164 9731 3172L9731 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9731,3298 9726.5,3289 9735.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_62">
-    <path d="M5580 3124L5580 3192Q5580 3200 5588 3200L8664 3200Q8672 3200 8672 3208L8672 3302" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8672,3310 8667.5,3301 8676.5,3301" fill="#64748B"/>
+    <path d="M5983 3112L5983 3180Q5983 3188 5991 3188L9544 3188Q9552 3188 9552 3196L9552 3290" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9552,3298 9547.5,3289 9556.5,3289" fill="#64748B"/>
   </g>
   <g id="edge_63">
-    <path d="M8803 3380L8803 3412Q8803 3420 8795 3420L5877 3420Q5869 3420 5869 3428L5869 3498" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="5869,3506 5864.5,3497 5873.5,3497" fill="#64748B"/>
+    <path d="M9682 3368L9682 3400Q9682 3408 9674 3408L6275 3408Q6267 3408 6267 3416L6267 3486" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6267,3494 6262.5,3485 6271.5,3485" fill="#64748B"/>
   </g>
   <g id="edge_64">
-    <path d="M8847 3380L8847 3400Q8847 3408 8839 3408L6289 3408Q6281 3408 6281 3416L6281 3498" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="6281,3506 6276.5,3497 6285.5,3497" fill="#64748B"/>
+    <path d="M9726 3368L9726 3388Q9726 3396 9718 3396L6687 3396Q6679 3396 6679 3404L6679 3486" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="6679,3494 6674.5,3485 6683.5,3485" fill="#64748B"/>
   </g>
   <g id="edge_65">
-    <path d="M5307 836L5307 868Q5307 876 5315 876L8722 876Q8730 876 8730 884L8730 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8730,962 8725.5,953 8734.5,953" fill="#64748B"/>
+    <path d="M5705 836L5705 868Q5705 876 5713 876L9601 876Q9609 876 9609 884L9609 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9609,962 9604.5,953 9613.5,953" fill="#64748B"/>
   </g>
   <g id="edge_66">
-    <path d="M6455 836L6455 856Q6455 864 6463 864L8912 864Q8920 864 8920 872L8920 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8920,962 8915.5,953 8924.5,953" fill="#64748B"/>
+    <path d="M6853 836L6853 856Q6853 864 6861 864L9791 864Q9799 864 9799 872L9799 954" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9799,962 9794.5,953 9803.5,953" fill="#64748B"/>
   </g>
   <g id="edge_67">
-    <path d="M8891 3380L8891 3412Q8891 3420 8883 3420L8833 3420Q8825 3420 8825 3428L8825 3620Q8825 3628 8833 3628L8853 3628Q8861 3628 8861 3636L8861 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8861,3764 8856.5,3755 8865.5,3755" fill="#64748B"/>
+    <path d="M9770 3368L9770 3400Q9770 3408 9762 3408L9712 3408Q9704 3408 9704 3416L9704 3608Q9704 3616 9712 3616L9732 3616Q9740 3616 9740 3624L9740 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9740,3752 9735.5,3743 9744.5,3743" fill="#64748B"/>
   </g>
   <g id="edge_68">
-    <path d="M5913 3576L5913 3620Q5913 3628 5921 3628L8781 3628Q8789 3628 8789 3636L8789 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8789,3764 8784.5,3755 8793.5,3755" fill="#64748B"/>
+    <path d="M6311 3564L6311 3608Q6311 3616 6319 3616L9660 3616Q9668 3616 9668 3624L9668 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9668,3752 9663.5,3743 9672.5,3743" fill="#64748B"/>
   </g>
   <g id="edge_69">
-    <path d="M4095 2552L4095 2560Q4095 2568 4103 2568L8817 2568Q8825 2568 8825 2576L8825 2634" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8825,2642 8820.5,2633 8829.5,2633" fill="#64748B"/>
+    <path d="M4282 2540L4282 2548Q4282 2556 4290 2556L9696 2556Q9704 2556 9704 2564L9704 2622" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9704,2630 9699.5,2621 9708.5,2621" fill="#64748B"/>
   </g>
   <g id="edge_70">
-    <path d="M8825 2712L8825 2862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="8825,2870 8820.5,2861 8829.5,2861" fill="#64748B"/>
+    <path d="M9704 2700L9704 2850" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="9704,2858 9699.5,2849 9708.5,2849" fill="#64748B"/>
   </g>
   <g id="edge_71">
-    <path d="M5869 3576L5869 3620Q5869 3628 5861 3628L871 3628Q863 3628 863 3636L863 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="863,3764 858.5,3755 867.5,3755" fill="#64748B"/>
+    <path d="M6267 3564L6267 3608Q6267 3616 6259 3616L871 3616Q863 3616 863 3624L863 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="863,3752 858.5,3743 867.5,3743" fill="#64748B"/>
   </g>
   <g id="edge_72">
-    <path d="M6281 3576L6281 3608Q6281 3616 6273 3616L936 3616Q928 3616 928 3624L928 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="928,3764 923.5,3755 932.5,3755" fill="#64748B"/>
+    <path d="M6679 3564L6679 3596Q6679 3604 6671 3604L936 3604Q928 3604 928 3612L928 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="928,3752 923.5,3743 932.5,3743" fill="#64748B"/>
   </g>
   <g id="edge_73">
-    <path d="M5536 3124L5536 3192Q5536 3200 5544 3200L5550 3200Q5558 3200 5558 3208L5558 3584Q5558 3592 5550 3592L806 3592Q798 3592 798 3600L798 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="798,3764 793.5,3755 802.5,3755" fill="#64748B"/>
+    <path d="M5939 3112L5939 3180Q5939 3188 5947 3188L5953 3188Q5961 3188 5961 3196L5961 3572Q5961 3580 5953 3580L806 3580Q798 3580 798 3588L798 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="798,3752 793.5,3743 802.5,3743" fill="#64748B"/>
   </g>
   <g id="edge_74">
-    <path d="M797 3834L797 3847Q797 3855 789 3855L455 3855Q447 3855 447 3863L447 3886" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="447,3894 442.5,3885 451.5,3885" fill="#64748B"/>
+    <path d="M797 3822L797 3835Q797 3843 789 3843L455 3843Q447 3843 447 3851L447 3874" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="447,3882 442.5,3873 451.5,3873" fill="#64748B"/>
   </g>
   <g id="edge_75">
-    <path d="M841 3834L841 3859Q841 3867 833 3867L737 3867Q729 3867 729 3875L729 3886" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="729,3894 724.5,3885 733.5,3885" fill="#64748B"/>
+    <path d="M841 3822L841 3847Q841 3855 833 3855L737 3855Q729 3855 729 3863L729 3874" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="729,3882 724.5,3873 733.5,3873" fill="#64748B"/>
   </g>
   <g id="edge_76">
-    <path d="M885 3834L885 3859Q885 3867 893 3867L992 3867Q1000 3867 1000 3875L1000 3886" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="1000,3894 995.5,3885 1004.5,3885" fill="#64748B"/>
+    <path d="M885 3822L885 3847Q885 3855 893 3855L992 3855Q1000 3855 1000 3863L1000 3874" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1000,3882 995.5,3873 1004.5,3873" fill="#64748B"/>
   </g>
   <g id="edge_77">
-    <path d="M929 3834L929 3847Q929 3855 937 3855L1269 3855Q1277 3855 1277 3863L1277 3886" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="1277,3894 1272.5,3885 1281.5,3885" fill="#64748B"/>
+    <path d="M929 3822L929 3835Q929 3843 937 3843L1269 3843Q1277 3843 1277 3851L1277 3874" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1277,3882 1272.5,3873 1281.5,3873" fill="#64748B"/>
   </g>
   <g id="edge_78">
-    <path d="M5825 3576L5825 3596Q5825 3604 5817 3604L409 3604Q401 3604 401 3612L401 3756" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <polygon points="401,3764 396.5,3755 405.5,3755" fill="#64748B"/>
+    <path d="M6223 3564L6223 3584Q6223 3592 6215 3592L409 3592Q401 3592 401 3600L401 3744" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="401,3752 396.5,3743 405.5,3743" fill="#64748B"/>
   </g>
   <g id="node_cboe">
     <rect x="52" y="131" width="510" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
@@ -385,34 +385,34 @@
     <text x="1022" y="184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">^GSPC and other underlyings, VXX, SVXY; auto_adjust=False</text>
   </g>
   <g id="node_sharpe">
-    <rect x="570" y="2643" width="354" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="569" y="2644" width="356" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="568" y="2646" width="358" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="570" y="2642" width="354" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="584" y="2662" width="30" height="30" rx="8" fill="#F1F5F9"/>
-    <g transform="translate(591 2669)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="570" y="2631" width="354" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="569" y="2632" width="356" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="568" y="2634" width="358" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="570" y="2630" width="354" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="584" y="2650" width="30" height="30" rx="8" fill="#F1F5F9"/>
+    <g transform="translate(591 2657)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="8" cy="8" r="6"/>
       <ellipse cx="8" cy="8" rx="2.6" ry="6"/>
       <path d="M2 8h12"/>
     </g>
-    <text x="626" y="2662" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#475569">EXTERNAL</text>
-    <text x="626" y="2680" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">sharpe-observatory scripts/metrics.py</text>
-    <text x="626" y="2696" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">PSR, expected max SR, DSR (MIT, reused)</text>
+    <text x="626" y="2650" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#475569">EXTERNAL</text>
+    <text x="626" y="2668" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">sharpe-observatory scripts/metrics.py</text>
+    <text x="626" y="2684" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">PSR, expected max SR, DSR (MIT, reused)</text>
   </g>
   <g id="node_cli">
-    <rect x="2314" y="131" width="684" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="2313" y="132" width="686" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="2312" y="134" width="688" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="2314" y="130" width="684" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="2328" y="150" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(2335 157)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2313" y="131" width="684" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="2312" y="132" width="686" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="2311" y="134" width="688" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="2313" y="130" width="684" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="2327" y="150" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(2334 157)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="2370" y="150" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="2370" y="168" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.data.cli</text>
-    <text x="2370" y="184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">python -m ivf.data fetch | build-interim | verify | check | eda; --synthetic switches the root and the protocol</text>
+    <text x="2369" y="150" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="2369" y="168" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.data.cli</text>
+    <text x="2369" y="184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">python -m ivf.data fetch | build-interim | verify | check | eda; --synthetic switches the root and the protocol</text>
   </g>
   <g id="node_protocol_mod">
     <rect x="2650" y="1687" width="766" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
@@ -430,19 +430,19 @@
     <text x="2706" y="1740" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">strict readers of every config; protocol_hash = SHA-256 of the canonical JSON; freeze_data_end and its freeze record</text>
   </g>
   <g id="node_repo_guard">
-    <rect x="1476" y="3507" width="1698" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="1475" y="3508" width="1700" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="1474" y="3510" width="1702" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="1476" y="3506" width="1698" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="1490" y="3526" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(1497 3533)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="1476" y="3495" width="1698" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1475" y="3496" width="1700" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1474" y="3498" width="1702" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1476" y="3494" width="1698" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1490" y="3514" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(1497 3521)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="1532" y="3526" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="1532" y="3544" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.repo_guard</text>
-    <text x="1532" y="3560" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">licensing guard (ADR 0001 D2): refuses a data root (and its raw, interim, processed, eda, app-data folders) or an export folder inside a git checkout, by device and inode of every ancestor and by any .git entry; write_file, the one writer, checks each folder again at write time; exit 3</text>
+    <text x="1532" y="3514" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="1532" y="3532" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.repo_guard</text>
+    <text x="1532" y="3548" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">licensing guard (ADR 0001 D2): refuses a data root (and its raw, interim, processed, eda, app-data folders) or an export folder inside a git checkout, by device and inode of every ancestor and by any .git entry; write_file, the one writer, checks each folder again at write time; exit 3</text>
   </g>
   <g id="node_raw_store">
     <rect x="2923" y="583" width="650" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
@@ -595,470 +595,470 @@
     <text x="2792" y="1924" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">run_id; refuses a failed data_check; writes the processed tables and the local EDA report</text>
   </g>
   <g id="node_splits">
-    <rect x="3859" y="2299" width="428" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="3858" y="2300" width="430" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="3857" y="2302" width="432" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="3859" y="2298" width="428" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="3873" y="2318" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(3880 2325)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4046" y="2299" width="428" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="4045" y="2300" width="430" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="4044" y="2302" width="432" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="4046" y="2298" width="428" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="4060" y="2318" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(4067 2325)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="3915" y="2318" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="3915" y="2336" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.evaluation.splits</text>
-    <text x="3915" y="2352" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">expanding window, 63-session folds, shared by every model</text>
+    <text x="4102" y="2318" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="4102" y="2336" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.evaluation.splits</text>
+    <text x="4102" y="2352" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">expanding window, 63-session folds, shared by every model</text>
   </g>
   <g id="node_models">
-    <rect x="3505" y="2483" width="1136" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="3504" y="2484" width="1138" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="3503" y="2486" width="1140" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="3505" y="2482" width="1136" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="3519" y="2502" width="30" height="30" rx="8" fill="#EDE9FE"/>
-    <g transform="translate(3526 2509)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3487" y="2471" width="1546" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="3486" y="2472" width="1548" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="3485" y="2474" width="1550" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="3487" y="2470" width="1546" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="3501" y="2490" width="30" height="30" rx="8" fill="#EDE9FE"/>
+    <g transform="translate(3508 2497)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2 12.5l3.5-4 3 2.5 5.5-7"/>
       <path d="M10.5 4h3.5v3.5"/>
     </g>
-    <text x="3561" y="2502" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#6D28D9">MODEL</text>
-    <text x="3561" y="2520" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.models</text>
-    <text x="3561" y="2536" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">rw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S&amp;P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); LSTM; params frozen within a fold</text>
+    <text x="3543" y="2490" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#6D28D9">MODEL</text>
+    <text x="3543" y="2508" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.models</text>
+    <text x="3543" y="2524" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">rw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S&amp;P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); lstm_log on vix_level and rv21, 5-seed mean, retrained every 4th cutoff (M4); params frozen within a fold</text>
   </g>
   <g id="node_evaluation">
-    <rect x="4016" y="2871" width="538" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="4015" y="2872" width="540" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="4014" y="2874" width="542" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="4016" y="2870" width="538" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="4030" y="2890" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(4037 2897)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4012" y="2859" width="538" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="4011" y="2860" width="540" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="4010" y="2862" width="542" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="4012" y="2858" width="538" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="4026" y="2878" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(4033 2885)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="4072" y="2890" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="4072" y="2908" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.evaluation</text>
-    <text x="4072" y="2924" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes</text>
+    <text x="4068" y="2878" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="4068" y="2896" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.evaluation</text>
+    <text x="4068" y="2912" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes</text>
   </g>
   <g id="node_backtest">
-    <rect x="3516" y="2871" width="460" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="3515" y="2872" width="462" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="3514" y="2874" width="464" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="3516" y="2870" width="460" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="3530" y="2890" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(3537 2897)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3512" y="2859" width="460" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="3511" y="2860" width="462" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="3510" y="2862" width="464" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="3512" y="2858" width="460" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="3526" y="2878" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(3533 2885)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="3572" y="2890" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="3572" y="2908" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.backtest</text>
-    <text x="3572" y="2924" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR</text>
+    <text x="3568" y="2878" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="3568" y="2896" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.backtest</text>
+    <text x="3568" y="2912" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR</text>
   </g>
   <g id="node_ivf_reports">
-    <rect x="3578" y="3311" width="724" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="3577" y="3312" width="726" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="3576" y="3314" width="728" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="3578" y="3310" width="724" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="3592" y="3330" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(3599 3337)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3589" y="3299" width="724" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="3588" y="3300" width="726" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="3587" y="3302" width="728" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="3589" y="3298" width="724" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="3603" y="3318" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(3610 3325)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="3634" y="3330" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="3634" y="3348" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.reports</text>
-    <text x="3634" y="3364" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree</text>
+    <text x="3645" y="3318" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="3645" y="3336" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ivf.reports</text>
+    <text x="3645" y="3352" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree</text>
   </g>
   <g id="node_configs">
-    <rect x="5553" y="1503" width="1692" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5552" y="1504" width="1694" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5551" y="1506" width="1696" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5553" y="1502" width="1692" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5567" y="1522" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(5574 1529)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6317" y="1503" width="1692" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="6316" y="1504" width="1694" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="6315" y="1506" width="1696" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="6317" y="1502" width="1692" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="6331" y="1522" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(6338 1529)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="5609" y="1522" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="5609" y="1540" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">configs/*.yaml</text>
-    <text x="5609" y="1556" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); M3: its garch block (innovation rule, ARIMA-GARCH order); strategies arrive in M6. Committed</text>
+    <text x="6373" y="1522" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="6373" y="1540" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">configs/*.yaml</text>
+    <text x="6373" y="1556" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); M3: its garch block (innovation rule, ARIMA-GARCH order); strategies arrive in M6. Committed</text>
   </g>
   <g id="node_raw">
-    <rect x="5070" y="767" width="386" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5069" y="768" width="388" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5068" y="770" width="390" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5070" y="766" width="386" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5084" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(5091 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5468" y="767" width="386" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5467" y="768" width="388" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5466" y="770" width="390" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5468" y="766" width="386" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5482" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(5489 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="5126" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="5126" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/raw/{source}/{symbol}/{sha256}.csv</text>
-    <text x="5126" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">bytes as downloaded; never committed</text>
+    <text x="5524" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="5524" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/raw/{source}/{symbol}/{sha256}.csv</text>
+    <text x="5524" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">bytes as downloaded; never committed</text>
   </g>
   <g id="node_prov">
-    <rect x="6248" y="767" width="414" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="6247" y="768" width="416" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="6246" y="770" width="418" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="6248" y="766" width="414" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="6262" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(6269 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6646" y="767" width="414" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="6645" y="768" width="416" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="6644" y="770" width="418" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="6646" y="766" width="414" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="6660" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(6667 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="6304" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="6304" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/raw/provenance.jsonl</text>
-    <text x="6304" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">append-only, one line per fetch, written even if unchanged</text>
+    <text x="6702" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="6702" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/raw/provenance.jsonl</text>
+    <text x="6702" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">append-only, one line per fetch, written even if unchanged</text>
   </g>
   <g id="node_synth_raw">
-    <rect x="5496" y="767" width="712" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5495" y="768" width="714" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5494" y="770" width="716" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5496" y="766" width="712" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5510" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(5517 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5894" y="767" width="712" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5893" y="768" width="714" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5892" y="770" width="716" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5894" y="766" width="712" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5908" y="786" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(5915 793)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="5552" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="5552" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/synthetic/raw/</text>
-    <text x="5552" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed</text>
+    <text x="5950" y="786" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="5950" y="804" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/synthetic/raw/</text>
+    <text x="5950" y="820" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed</text>
   </g>
   <g id="node_interim">
-    <rect x="6561" y="1147" width="408" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="6560" y="1148" width="410" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="6559" y="1150" width="412" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="6561" y="1146" width="408" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="6575" y="1166" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(6582 1173)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="7247" y="1147" width="408" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="7246" y="1148" width="410" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="7245" y="1150" width="412" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="7247" y="1146" width="408" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="7261" y="1166" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(7268 1173)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="6617" y="1166" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="6617" y="1184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/interim/{table}.parquet</text>
-    <text x="6617" y="1200" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">iv_index_daily, price_daily; every row keeps raw_sha256</text>
+    <text x="7303" y="1166" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="7303" y="1184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/interim/{table}.parquet</text>
+    <text x="7303" y="1200" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">iv_index_daily, price_daily; every row keeps raw_sha256</text>
   </g>
   <g id="node_build_report">
-    <rect x="7399" y="1147" width="582" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="7398" y="1148" width="584" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="7397" y="1150" width="586" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="7399" y="1146" width="582" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="7413" y="1166" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(7420 1173)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8278" y="1147" width="582" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="8277" y="1148" width="584" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="8276" y="1150" width="586" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="8278" y="1146" width="582" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="8292" y="1166" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(8299 1173)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="7455" y="1166" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="7455" y="1184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/interim/build_report.json</text>
-    <text x="7455" y="1200" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">per raw file: raw_sha256, fetched_at, rows, duplicates dropped; local, never committed</text>
+    <text x="8334" y="1166" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="8334" y="1184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/interim/build_report.json</text>
+    <text x="8334" y="1200" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">per raw file: raw_sha256, fetched_at, rows, duplicates dropped; local, never committed</text>
   </g>
   <g id="node_processed">
-    <rect x="5241" y="2079" width="1886" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5240" y="2080" width="1888" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5239" y="2082" width="1890" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5241" y="2078" width="1886" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5255" y="2098" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(5262 2105)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5430" y="2079" width="2576" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5429" y="2080" width="2578" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5428" y="2082" width="2580" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5430" y="2078" width="2576" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5444" y="2098" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(5451 2105)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="5297" y="2098" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="5297" y="2116" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/processed/run_id=&lt;id&gt;/{table}.parquet</text>
-    <text x="5297" y="2132" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; M3 (python -m ivf.models garch) merges its rv21 and arima_garch_log rows into the same fit, forecast and metric tables; runs.parquet beside it</text>
+    <text x="5486" y="2098" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="5486" y="2116" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/processed/run_id=&lt;id&gt;/{table}.parquet</text>
+    <text x="5486" y="2132" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; M3 (python -m ivf.models garch) merges its rv21 and arima_garch_log rows into the same fit, forecast and metric tables; M4 (python -m ivf.models lstm, after garch) merges lstm_log rows (one fit row per seed) and writes forecast_member; runs.parquet beside it</text>
   </g>
   <g id="node_eda_dir">
-    <rect x="7153" y="2079" width="496" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="7152" y="2080" width="498" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="7151" y="2082" width="500" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="7153" y="2078" width="496" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="7167" y="2098" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(7174 2105)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8032" y="2079" width="496" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="8031" y="2080" width="498" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="8030" y="2082" width="500" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="8032" y="2078" width="496" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="8046" y="2098" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(8053 2105)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="7209" y="2098" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="7209" y="2116" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/eda/&lt;run_id&gt;/eda_report.json</text>
-    <text x="7209" y="2132" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">every EDA number, for reading locally; never committed (ADR 0001 D2)</text>
+    <text x="8088" y="2098" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="8088" y="2116" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/eda/&lt;run_id&gt;/eda_report.json</text>
+    <text x="8088" y="2132" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">every EDA number, for reading locally; never committed (ADR 0001 D2)</text>
   </g>
   <g id="node_forecasts">
-    <rect x="6056" y="2643" width="570" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="6055" y="2644" width="572" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="6054" y="2646" width="574" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="6056" y="2642" width="570" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="6070" y="2662" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(6077 2669)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6655" y="2631" width="570" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="6654" y="2632" width="572" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="6653" y="2634" width="574" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="6655" y="2630" width="570" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="6669" y="2650" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(6676 2657)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="6112" y="2662" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="6112" y="2680" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">forecast and fit tables</text>
-    <text x="6112" y="2696" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">under processed/run_id=&lt;id&gt;/; key (run_id, model_id, target_id, origin_date, horizon)</text>
+    <text x="6711" y="2650" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="6711" y="2668" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">forecast and fit tables</text>
+    <text x="6711" y="2684" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">under processed/run_id=&lt;id&gt;/; key (run_id, model_id, target_id, origin_date, horizon)</text>
   </g>
   <g id="node_results">
-    <rect x="4709" y="3055" width="566" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="4708" y="3056" width="568" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="4707" y="3058" width="570" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="4709" y="3054" width="566" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="4723" y="3074" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(4730 3081)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5101" y="3043" width="566" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5100" y="3044" width="568" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5099" y="3046" width="570" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5101" y="3042" width="566" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5115" y="3062" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(5122 3069)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="4765" y="3074" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="4765" y="3092" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">metric, dm_test, mz_regression, backtest_daily, strategy_summary</text>
-    <text x="4765" y="3108" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">under processed/run_id=&lt;id&gt;/</text>
+    <text x="5157" y="3062" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="5157" y="3080" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">metric, dm_test, mz_regression, backtest_daily, strategy_summary</text>
+    <text x="5157" y="3096" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">under processed/run_id=&lt;id&gt;/</text>
   </g>
   <g id="node_reports_dir">
-    <rect x="5041" y="3507" width="504" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5040" y="3508" width="506" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5039" y="3510" width="508" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5041" y="3506" width="504" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5055" y="3526" width="30" height="30" rx="8" fill="#D1FAE5"/>
-    <g transform="translate(5062 3533)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5444" y="3495" width="504" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5443" y="3496" width="506" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5442" y="3498" width="508" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5444" y="3494" width="504" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5458" y="3514" width="30" height="30" rx="8" fill="#D1FAE5"/>
+    <g transform="translate(5465 3521)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 10.5V2"/>
       <path d="M5 5l3-3 3 3"/>
       <path d="M2.5 10v3.5h11V10"/>
     </g>
-    <text x="5097" y="3526" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
-    <text x="5097" y="3544" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">reports/*.agg.csv</text>
-    <text x="5097" y="3560" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">committed: publication set P only (unitless, rounded), source_dirty = false</text>
+    <text x="5500" y="3514" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
+    <text x="5500" y="3532" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">reports/*.agg.csv</text>
+    <text x="5500" y="3548" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">committed: publication set P only (unitless, rounded), source_dirty = false</text>
   </g>
   <g id="node_schemas">
-    <rect x="5352" y="3055" width="412" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5351" y="3056" width="414" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5350" y="3058" width="416" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5352" y="3054" width="412" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5366" y="3074" width="30" height="30" rx="8" fill="#FEF3C7"/>
-    <g transform="translate(5373 3081)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5755" y="3043" width="412" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="5754" y="3044" width="414" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="5753" y="3046" width="416" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="5755" y="3042" width="412" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="5769" y="3062" width="30" height="30" rx="8" fill="#FEF3C7"/>
+    <g transform="translate(5776 3069)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="5408" y="3074" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
-    <text x="5408" y="3092" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">schemas/app-data/</text>
-    <text x="5408" y="3108" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">JSON Schemas: the single source of truth for the contract</text>
+    <text x="5811" y="3062" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#B45309">STORE</text>
+    <text x="5811" y="3080" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">schemas/app-data/</text>
+    <text x="5811" y="3096" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">JSON Schemas: the single source of truth for the contract</text>
   </g>
   <g id="node_synth_json">
-    <rect x="5716" y="3507" width="306" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="5715" y="3508" width="308" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="5714" y="3510" width="310" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="5716" y="3506" width="306" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="5730" y="3526" width="30" height="30" rx="8" fill="#D1FAE5"/>
-    <g transform="translate(5737 3533)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6114" y="3495" width="306" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="6113" y="3496" width="308" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="6112" y="3498" width="310" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="6114" y="3494" width="306" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="6128" y="3514" width="30" height="30" rx="8" fill="#D1FAE5"/>
+    <g transform="translate(6135 3521)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 10.5V2"/>
       <path d="M5 5l3-3 3 3"/>
       <path d="M2.5 10v3.5h11V10"/>
     </g>
-    <text x="5772" y="3526" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
-    <text x="5772" y="3544" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">app/public/data/synthetic/*.json</text>
-    <text x="5772" y="3560" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">committed fixture; data_mode synthetic</text>
+    <text x="6170" y="3514" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
+    <text x="6170" y="3532" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">app/public/data/synthetic/*.json</text>
+    <text x="6170" y="3548" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">committed fixture; data_mode synthetic</text>
   </g>
   <g id="node_real_json">
-    <rect x="6062" y="3507" width="438" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="6061" y="3508" width="440" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="6060" y="3510" width="442" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="6062" y="3506" width="438" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="6076" y="3526" width="30" height="30" rx="8" fill="#D1FAE5"/>
-    <g transform="translate(6083 3533)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6460" y="3495" width="438" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="6459" y="3496" width="440" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="6458" y="3498" width="442" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="6460" y="3494" width="438" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="6474" y="3514" width="30" height="30" rx="8" fill="#D1FAE5"/>
+    <g transform="translate(6481 3521)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 10.5V2"/>
       <path d="M5 5l3-3 3 3"/>
       <path d="M2.5 10v3.5h11V10"/>
     </g>
-    <text x="6118" y="3526" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
-    <text x="6118" y="3544" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/app-data/real/*.json</text>
-    <text x="6118" y="3560" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">never in the repo tree; the Vite dev server serves it in dev only</text>
+    <text x="6516" y="3514" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
+    <text x="6516" y="3532" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">ROOT/app-data/real/*.json</text>
+    <text x="6516" y="3548" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">never in the repo tree; the Vite dev server serves it in dev only</text>
   </g>
   <g id="node_export">
-    <rect x="8348" y="3311" width="954" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="8347" y="3312" width="956" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="8346" y="3314" width="958" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="8348" y="3310" width="954" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="8362" y="3330" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(8369 3337)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9227" y="3299" width="954" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="9226" y="3300" width="956" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="9225" y="3302" width="958" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="9227" y="3298" width="954" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="9241" y="3318" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(9248 3325)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="8404" y="3330" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="8404" y="3348" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/export_app_data.py</text>
-    <text x="8404" y="3364" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">reshape, round, validate, write; computes no new number (D1). M1 real: ribbon from interim iv_index_daily, first session with all five tenors to data_end</text>
+    <text x="9283" y="3318" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="9283" y="3336" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/export_app_data.py</text>
+    <text x="9283" y="3352" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">reshape, round, validate, write; computes no new number (D1). M1 real: ribbon from interim iv_index_daily, first session with all five tenors to data_end</text>
   </g>
   <g id="node_export_check">
-    <rect x="8600" y="3765" width="450" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="8599" y="3766" width="452" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="8598" y="3768" width="454" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="8600" y="3764" width="450" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="8614" y="3784" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(8621 3791)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9479" y="3753" width="450" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="9478" y="3754" width="452" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="9477" y="3756" width="454" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="9479" y="3752" width="450" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="9493" y="3772" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(9500 3779)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="8656" y="3784" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="8656" y="3802" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">export_app_data.py --mode synthetic --check</text>
-    <text x="8656" y="3818" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">regenerate in a temp dir and compare with the committed fixture</text>
+    <text x="9535" y="3772" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="9535" y="3790" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">export_app_data.py --mode synthetic --check</text>
+    <text x="9535" y="3806" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">regenerate in a temp dir and compare with the committed fixture</text>
   </g>
   <g id="node_scan_real">
-    <rect x="8049" y="963" width="1552" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="8048" y="964" width="1554" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="8047" y="966" width="1556" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="8049" y="962" width="1552" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="8063" y="982" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(8070 989)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8928" y="963" width="1552" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="8927" y="964" width="1554" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="8926" y="966" width="1556" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="8928" y="962" width="1552" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="8942" y="982" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(8949 989)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="8105" y="982" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="8105" y="1000" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/licensing/scan_real_rows.py</text>
-    <text x="8105" y="1016" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">local only, not a test: flags a repo line that holds a raw row, a dated raw value (any date spelling), a run of 3 or more consecutive raw values, a raw file size or a raw SHA-256; prints file:line and a count, never the text; exit 0 clean, 1 flagged, 2 no raw data</text>
+    <text x="8984" y="982" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="8984" y="1000" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/licensing/scan_real_rows.py</text>
+    <text x="8984" y="1016" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">local only, not a test: flags a repo line that holds a raw row, a dated raw value (any date spelling), a run of 3 or more consecutive raw values, a raw file size or a raw SHA-256; prints file:line and a count, never the text; exit 0 clean, 1 flagged, 2 no raw data</text>
   </g>
   <g id="node_build_nb">
-    <rect x="8691" y="2643" width="268" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="8690" y="2644" width="270" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="8689" y="2646" width="272" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="8691" y="2642" width="268" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="8705" y="2662" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(8712 2669)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9570" y="2631" width="268" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="9569" y="2632" width="270" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="9568" y="2634" width="272" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="9570" y="2630" width="268" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="9584" y="2650" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(9591 2657)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="8747" y="2662" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="8747" y="2680" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/build_notebooks.py</text>
-    <text x="8747" y="2696" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">--check is the notebook sync test</text>
+    <text x="9626" y="2650" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="9626" y="2668" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">tools/build_notebooks.py</text>
+    <text x="9626" y="2684" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">--check is the notebook sync test</text>
   </g>
   <g id="node_notebooks">
-    <rect x="8667" y="2871" width="316" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="8666" y="2872" width="318" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="8665" y="2874" width="320" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="8667" y="2870" width="316" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="8681" y="2890" width="30" height="30" rx="8" fill="#D1FAE5"/>
-    <g transform="translate(8688 2897)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9546" y="2859" width="316" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="9545" y="2860" width="318" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="9544" y="2862" width="320" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="9546" y="2858" width="316" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="9560" y="2878" width="30" height="30" rx="8" fill="#D1FAE5"/>
+    <g transform="translate(9567 2885)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 10.5V2"/>
       <path d="M5 5l3-3 3 3"/>
       <path d="M2.5 10v3.5h11V10"/>
     </g>
-    <text x="8723" y="2890" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
-    <text x="8723" y="2908" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">notebooks/</text>
-    <text x="8723" y="2924" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">generated from src/ivf; never hand-edited</text>
+    <text x="9602" y="2878" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#047857">OUTPUT</text>
+    <text x="9602" y="2896" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">notebooks/</text>
+    <text x="9602" y="2912" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">generated from src/ivf; never hand-edited</text>
   </g>
   <g id="node_loader">
-    <rect x="599" y="3765" width="528" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="598" y="3766" width="530" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="597" y="3768" width="532" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="599" y="3764" width="528" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="613" y="3784" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(620 3791)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="599" y="3753" width="528" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="598" y="3754" width="530" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="597" y="3756" width="532" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="599" y="3752" width="528" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="613" y="3772" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(620 3779)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="655" y="3784" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="655" y="3802" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">app/src/lib loaders</text>
-    <text x="655" y="3818" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">check envelope and invariants, show the data_mode badge; compute nothing</text>
+    <text x="655" y="3772" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="655" y="3790" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">app/src/lib loaders</text>
+    <text x="655" y="3806" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">check envelope and invariants, show the data_mode badge; compute nothing</text>
   </g>
   <g id="node_page_ribbon">
-    <rect x="312" y="3895" width="270" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="311" y="3896" width="272" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="310" y="3898" width="274" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="312" y="3894" width="270" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="326" y="3914" width="30" height="30" rx="8" fill="#FCE7F3"/>
-    <g transform="translate(333 3921)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="312" y="3883" width="270" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="311" y="3884" width="272" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="310" y="3886" width="274" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="312" y="3882" width="270" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="326" y="3902" width="30" height="30" rx="8" fill="#FCE7F3"/>
+    <g transform="translate(333 3909)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
       <path d="M1.5 6h13"/>
       <circle cx="4" cy="4.25" r="0.5"/>
     </g>
-    <text x="368" y="3914" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
-    <text x="368" y="3932" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Term-structure ribbon (3D)</text>
-    <text x="368" y="3948" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">term_structure.json, series</text>
+    <text x="368" y="3902" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
+    <text x="368" y="3920" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Term-structure ribbon (3D)</text>
+    <text x="368" y="3936" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">term_structure.json, series</text>
   </g>
   <g id="node_page_race">
-    <rect x="622" y="3895" width="214" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="621" y="3896" width="216" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="620" y="3898" width="218" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="622" y="3894" width="214" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="636" y="3914" width="30" height="30" rx="8" fill="#FCE7F3"/>
-    <g transform="translate(643 3921)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="622" y="3883" width="214" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="621" y="3884" width="216" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="620" y="3886" width="218" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="622" y="3882" width="214" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="636" y="3902" width="30" height="30" rx="8" fill="#FCE7F3"/>
+    <g transform="translate(643 3909)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
       <path d="M1.5 6h13"/>
       <circle cx="4" cy="4.25" r="0.5"/>
     </g>
-    <text x="678" y="3914" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
-    <text x="678" y="3932" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Model race</text>
-    <text x="678" y="3948" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">model_race.json, series</text>
+    <text x="678" y="3902" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
+    <text x="678" y="3920" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Model race</text>
+    <text x="678" y="3936" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">model_race.json, series</text>
   </g>
   <g id="node_page_surface">
-    <rect x="876" y="3895" width="248" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="875" y="3896" width="250" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="874" y="3898" width="252" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="876" y="3894" width="248" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="890" y="3914" width="30" height="30" rx="8" fill="#FCE7F3"/>
-    <g transform="translate(897 3921)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="876" y="3883" width="248" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="875" y="3884" width="250" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="874" y="3886" width="252" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="876" y="3882" width="248" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="890" y="3902" width="30" height="30" rx="8" fill="#FCE7F3"/>
+    <g transform="translate(897 3909)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
       <path d="M1.5 6h13"/>
       <circle cx="4" cy="4.25" r="0.5"/>
     </g>
-    <text x="932" y="3914" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
-    <text x="932" y="3932" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Error surface (3D)</text>
-    <text x="932" y="3948" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">error_surface.json, aggregate</text>
+    <text x="932" y="3902" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
+    <text x="932" y="3920" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Error surface (3D)</text>
+    <text x="932" y="3936" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">error_surface.json, aggregate</text>
   </g>
   <g id="node_page_equity">
-    <rect x="1164" y="3895" width="226" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="1163" y="3896" width="228" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="1162" y="3898" width="230" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="1164" y="3894" width="226" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="1178" y="3914" width="30" height="30" rx="8" fill="#FCE7F3"/>
-    <g transform="translate(1185 3921)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="1164" y="3883" width="226" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1163" y="3884" width="228" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1162" y="3886" width="230" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1164" y="3882" width="226" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1178" y="3902" width="30" height="30" rx="8" fill="#FCE7F3"/>
+    <g transform="translate(1185 3909)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
       <path d="M1.5 6h13"/>
       <circle cx="4" cy="4.25" r="0.5"/>
     </g>
-    <text x="1220" y="3914" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
-    <text x="1220" y="3932" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Equity curve</text>
-    <text x="1220" y="3948" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">equity_curves.json, series</text>
+    <text x="1220" y="3902" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
+    <text x="1220" y="3920" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Equity curve</text>
+    <text x="1220" y="3936" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">equity_curves.json, series</text>
   </g>
   <g id="node_dist_guard">
-    <rect x="243" y="3765" width="316" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="242" y="3766" width="318" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="241" y="3768" width="320" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="243" y="3764" width="316" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="257" y="3784" width="30" height="30" rx="8" fill="#E0E7FF"/>
-    <g transform="translate(264 3791)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="243" y="3753" width="316" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="242" y="3754" width="318" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="241" y="3756" width="320" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="243" y="3752" width="316" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="257" y="3772" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(264 3779)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="299" y="3784" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
-    <text x="299" y="3802" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">npm run verify</text>
-    <text x="299" y="3818" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">fails if any file in dist/ has data_mode real</text>
+    <text x="299" y="3772" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="299" y="3790" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">npm run verify</text>
+    <text x="299" y="3806" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">fails if any file in dist/ has data_mode real</text>
   </g>
   <rect x="3122" y="1610" width="160" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3202" y="1624.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">strict read of every config</text>
-  <rect x="1882" y="3454" width="296" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2030" y="3468.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">every command, first: data root and its subfolders</text>
-  <rect x="1690.5" y="3430" width="333" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="1857" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">fetch_one: data root; write_file per snapshot and log line</text>
-  <rect x="2041.5" y="3430" width="285" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2184" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">write_synthetic_raw: data root; write_file per file</text>
-  <rect x="2203.5" y="3454" width="257" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2332" y="3468.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">build_interim: data root; write_file per table</text>
-  <rect x="2400" y="3430" width="134" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2467" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_check: data root</text>
-  <rect x="2473" y="3454" width="314" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2630" y="3468.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_eda: data root; write_file per table and the report</text>
-  <rect x="2667.5" y="3430" width="251" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="2793" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real mode: output folder; write_file per file</text>
+  <rect x="1882" y="3442" width="296" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2030" y="3456.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">every command, first: data root and its subfolders</text>
+  <rect x="1690.5" y="3418" width="333" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1857" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">fetch_one: data root; write_file per snapshot and log line</text>
+  <rect x="2041.5" y="3418" width="285" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2184" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">write_synthetic_raw: data root; write_file per file</text>
+  <rect x="2203.5" y="3442" width="257" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2332" y="3456.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">build_interim: data root; write_file per table</text>
+  <rect x="2400" y="3418" width="134" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2467" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_check: data root</text>
+  <rect x="2473" y="3442" width="314" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2630" y="3456.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_eda: data root; write_file per table and the report</text>
+  <rect x="2667.5" y="3418" width="251" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="2793" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real mode: output folder; write_file per file</text>
   <rect x="2298" y="298" width="46" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="2321" y="312.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">fetch</text>
   <rect x="2867" y="274" width="108" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
@@ -1083,22 +1083,22 @@
   <text x="3198" y="520.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">bytes and one record per fetch</text>
   <rect x="3220" y="530" width="180" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3310" y="544.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">same store, source synthetic</text>
-  <rect x="5192" y="714" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="5263" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">{sha256}.csv if absent</text>
-  <rect x="6400.5" y="714" width="109" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6455" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">append one line</text>
-  <rect x="5745.5" y="714" width="213" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="5852" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">--synthetic: under ROOT/synthetic/</text>
+  <rect x="5590" y="714" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="5661" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">{sha256}.csv if absent</text>
+  <rect x="6798.5" y="714" width="109" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6853" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">append one line</text>
+  <rect x="6143.5" y="714" width="213" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6250" y="728.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">--synthetic: under ROOT/synthetic/</text>
   <rect x="2869.5" y="910" width="61" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="2900" y="924.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">re-hash</text>
   <rect x="3412" y="910" width="104" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3464" y="924.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">latest snapshot</text>
   <rect x="3475" y="886" width="94" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3522" y="900.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">same loaders</text>
-  <rect x="6717" y="1094" width="96" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6765" y="1108.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">typed parquet</text>
-  <rect x="7643" y="1094" width="94" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="7690" y="1108.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">per-file report</text>
+  <rect x="7403" y="1094" width="96" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="7451" y="1108.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">typed parquet</text>
+  <rect x="8522" y="1094" width="94" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="8569" y="1108.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">per-file report</text>
   <rect x="3265.5" y="1290" width="165" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3348" y="1304.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">iv_index_daily, price_daily</text>
   <rect x="3354" y="1266" width="178" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
@@ -1107,8 +1107,8 @@
   <text x="3033" y="1648.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">train_start, dev_start, holdout_start, fold_len, data_end</text>
   <rect x="3929" y="2026" width="166" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="4012" y="2040.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">xnys_sessions, first_cutoff</text>
-  <rect x="6219" y="1450" width="360" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6399" y="1464.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">--freeze-data-end: write data_end once, and its freeze record</text>
+  <rect x="6983" y="1450" width="360" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="7163" y="1464.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">--freeze-data-end: write data_end once, and its freeze record</text>
   <rect x="3098.5" y="1818" width="165" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3181" y="1832.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">iv_index_daily, price_daily</text>
   <rect x="2891" y="1818" width="150" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
@@ -1121,132 +1121,132 @@
   <text x="2598" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">build_features, build_target_values, build_regime_labels</text>
   <rect x="3054.5" y="2002" width="563" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
   <text x="3336" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">EDA statistics on sessions and rows before holdout_start only (eda_inputs); a later one is refused</text>
-  <rect x="5940" y="2002" width="488" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6184" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_input, calendar, data_check, feature, target_value, regime_label, eda_stat, runs</text>
-  <rect x="7348" y="2002" width="106" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="7401" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">eda_report.json</text>
-  <rect x="3879" y="2222" width="254" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4006" y="2236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">protocol: dev_start, holdout_start, fold_len</text>
-  <rect x="4091.5" y="2246" width="97" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4140" y="2260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">calendar t_idx</text>
-  <rect x="3974.5" y="2406" width="127" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4038" y="2420.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">folds: cutoff, origins</text>
-  <rect x="4052.5" y="2430" width="111" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4108" y="2444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">features at t (L1)</text>
-  <rect x="6270.5" y="2590" width="141" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6341" y="2604.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">fit rows, forecast rows</text>
-  <rect x="4146.5" y="2794" width="181" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4237" y="2808.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">same origins for every model</text>
-  <rect x="4267" y="2818" width="132" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4333" y="2832.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">targets y, v; regimes</text>
-  <rect x="4950.5" y="3002" width="195" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="5048" y="3016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">metric, dm_test, mz_regression</text>
-  <rect x="3769.5" y="2794" width="107" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="3823" y="2808.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">signal at origin t</text>
-  <rect x="3675" y="2818" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="3746" y="2832.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">VXX, SVXY adj_close</text>
-  <rect x="3630" y="2794" width="78" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="3669" y="2808.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">PSR, DSR</text>
-  <rect x="4831" y="2978" width="210" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="4936" y="2992.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">backtest_daily, strategy_summary</text>
-  <rect x="3899" y="3234" width="82" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="3940" y="3248.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">aggregates</text>
-  <rect x="5219.5" y="3430" width="147" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="5293" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">set P only, one release</text>
-  <rect x="8997.5" y="3234" width="225" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="9110" y="3248.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: iv_index_daily for the ribbon</text>
-  <rect x="9133.5" y="3258" width="189" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="9228" y="3272.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: raw hashes for run_id</text>
-  <rect x="8858" y="3258" width="246" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8981" y="3272.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: frozen protocol.yaml (data_end)</text>
-  <rect x="8259" y="3234" width="326" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8422" y="3248.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: term_structure_panel (calls is_backwardation)</text>
-  <rect x="8514" y="3258" width="152" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8590" y="3272.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">metrics, DM, MZ, equity</text>
-  <rect x="8695" y="3258" width="110" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8750" y="3272.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">yhat for the race</text>
-  <rect x="8755.5" y="3234" width="193" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8852" y="3248.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">target_value, regime_label, run</text>
-  <rect x="8601" y="3234" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8672" y="3248.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">validate before writing</text>
-  <rect x="5802" y="3430" width="134" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="5869" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">synthetic: committed</text>
-  <rect x="6212.5" y="3430" width="137" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="6281" y="3444.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real: outside the repo</text>
-  <rect x="8545.5" y="886" width="369" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8730" y="900.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real snapshots only, compared with every file git would commit</text>
-  <rect x="8817.5" y="910" width="205" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8920" y="924.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">latest snapshot per symbol: sizes</text>
-  <rect x="8812" y="3662" width="98" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8861" y="3676.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">temp-dir rerun</text>
-  <rect x="8723" y="3638" width="132" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8789" y="3652.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">compare with fixture</text>
-  <rect x="8716.5" y="2590" width="217" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8825" y="2604.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">generated from src/ivf (all modules)</text>
-  <rect x="8791" y="2794" width="68" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="8825" y="2808.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">generate</text>
-  <rect x="804.5" y="3662" width="117" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="863" y="3676.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">manifest.json first</text>
-  <rect x="876" y="3638" width="104" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="928" y="3652.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">dev server only</text>
-  <rect x="751" y="3638" width="94" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="798" y="3652.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">contract tests</text>
-  <rect x="326.5" y="3638" width="149" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
-  <text x="401" y="3652.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">vite build copies to dist/</text>
+  <rect x="6474" y="2002" width="488" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6718" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">run_input, calendar, data_check, feature, target_value, regime_label, eda_stat, runs</text>
+  <rect x="8227" y="2002" width="106" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="8280" y="2016.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">eda_report.json</text>
+  <rect x="4067" y="2222" width="254" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4194" y="2236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">protocol: dev_start, holdout_start, fold_len</text>
+  <rect x="4277.5" y="2246" width="97" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4326" y="2260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">calendar t_idx</text>
+  <rect x="4161.5" y="2394" width="127" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4225" y="2408.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">folds: cutoff, origins</text>
+  <rect x="4239.5" y="2418" width="111" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4295" y="2432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">features at t (L1)</text>
+  <rect x="6869.5" y="2578" width="141" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6940" y="2592.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">fit rows, forecast rows</text>
+  <rect x="4142.5" y="2782" width="181" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4233" y="2796.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">same origins for every model</text>
+  <rect x="4263" y="2806" width="132" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="4329" y="2820.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">targets y, v; regimes</text>
+  <rect x="5342.5" y="2990" width="195" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="5440" y="3004.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">metric, dm_test, mz_regression</text>
+  <rect x="3765.5" y="2782" width="107" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="3819" y="2796.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">signal at origin t</text>
+  <rect x="3671" y="2806" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="3742" y="2820.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">VXX, SVXY adj_close</text>
+  <rect x="3626" y="2782" width="78" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="3665" y="2796.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">PSR, DSR</text>
+  <rect x="5223" y="2966" width="210" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="5328" y="2980.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">backtest_daily, strategy_summary</text>
+  <rect x="3910" y="3222" width="82" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="3951" y="3236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">aggregates</text>
+  <rect x="5622.5" y="3418" width="147" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="5696" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">set P only, one release</text>
+  <rect x="9876.5" y="3222" width="225" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9989" y="3236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: iv_index_daily for the ribbon</text>
+  <rect x="10013.5" y="3246" width="189" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="10108" y="3260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: raw hashes for run_id</text>
+  <rect x="9737" y="3246" width="246" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9860" y="3260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: frozen protocol.yaml (data_end)</text>
+  <rect x="9137" y="3222" width="326" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9300" y="3236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">M1 real: term_structure_panel (calls is_backwardation)</text>
+  <rect x="9394" y="3246" width="152" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9470" y="3260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">metrics, DM, MZ, equity</text>
+  <rect x="9573" y="3246" width="110" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9628" y="3260.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">yhat for the race</text>
+  <rect x="9634.5" y="3222" width="193" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9731" y="3236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">target_value, regime_label, run</text>
+  <rect x="9481" y="3222" width="142" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9552" y="3236.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">validate before writing</text>
+  <rect x="6200" y="3418" width="134" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6267" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">synthetic: committed</text>
+  <rect x="6610.5" y="3418" width="137" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="6679" y="3432.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real: outside the repo</text>
+  <rect x="9424.5" y="886" width="369" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9609" y="900.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">real snapshots only, compared with every file git would commit</text>
+  <rect x="9696.5" y="910" width="205" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9799" y="924.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">latest snapshot per symbol: sizes</text>
+  <rect x="9691" y="3650" width="98" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9740" y="3664.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">temp-dir rerun</text>
+  <rect x="9602" y="3626" width="132" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9668" y="3640.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">compare with fixture</text>
+  <rect x="9595.5" y="2578" width="217" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9704" y="2592.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">generated from src/ivf (all modules)</text>
+  <rect x="9670" y="2782" width="68" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="9704" y="2796.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">generate</text>
+  <rect x="804.5" y="3650" width="117" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="863" y="3664.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">manifest.json first</text>
+  <rect x="876" y="3626" width="104" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="928" y="3640.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">dev server only</text>
+  <rect x="751" y="3626" width="94" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="798" y="3640.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">contract tests</text>
+  <rect x="326.5" y="3626" width="149" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="401" y="3640.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">vite build copies to dist/</text>
   <g id="legend">
-    <rect x="32" y="4016" width="20" height="20" rx="6" fill="#E0F2FE"/>
-    <g transform="translate(34 4018)" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="32" y="4004" width="20" height="20" rx="6" fill="#E0F2FE"/>
+    <g transform="translate(34 4006)" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 1.5h5.5L13 5v9.5H4z"/>
       <path d="M9.5 1.5V5H13"/>
       <path d="M6.5 8.5h4M6.5 11.5h4"/>
     </g>
-    <text x="60" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Source</text>
-    <rect x="120.08" y="4016" width="20" height="20" rx="6" fill="#FEF3C7"/>
-    <g transform="translate(122.08 4018)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="60" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Source</text>
+    <rect x="120.08" y="4004" width="20" height="20" rx="6" fill="#FEF3C7"/>
+    <g transform="translate(122.08 4006)" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="8" cy="4" rx="5" ry="2"/>
       <path d="M3 4v8c0 1.1 2.24 2 5 2s5-.9 5-2V4"/>
       <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2"/>
     </g>
-    <text x="148.08" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Store</text>
-    <rect x="198.32" y="4016" width="20" height="20" rx="6" fill="#E0E7FF"/>
-    <g transform="translate(200.32 4018)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="148.08" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Store</text>
+    <rect x="198.32" y="4004" width="20" height="20" rx="6" fill="#E0E7FF"/>
+    <g transform="translate(200.32 4006)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2.5 5h11M2.5 11h11"/>
       <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
       <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
     </g>
-    <text x="226.32" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Process</text>
-    <rect x="292.01" y="4016" width="20" height="20" rx="6" fill="#EDE9FE"/>
-    <g transform="translate(294.01 4018)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="226.32" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Process</text>
+    <rect x="292.01" y="4004" width="20" height="20" rx="6" fill="#EDE9FE"/>
+    <g transform="translate(294.01 4006)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2 12.5l3.5-4 3 2.5 5.5-7"/>
       <path d="M10.5 4h3.5v3.5"/>
     </g>
-    <text x="320.01" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Model</text>
-    <rect x="374.47" y="4016" width="20" height="20" rx="6" fill="#D1FAE5"/>
-    <g transform="translate(376.47 4018)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="320.01" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Model</text>
+    <rect x="374.47" y="4004" width="20" height="20" rx="6" fill="#D1FAE5"/>
+    <g transform="translate(376.47 4006)" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 10.5V2"/>
       <path d="M5 5l3-3 3 3"/>
       <path d="M2.5 10v3.5h11V10"/>
     </g>
-    <text x="402.47" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Output</text>
-    <rect x="460.44" y="4016" width="20" height="20" rx="6" fill="#F1F5F9"/>
-    <g transform="translate(462.44 4018)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="402.47" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Output</text>
+    <rect x="460.44" y="4004" width="20" height="20" rx="6" fill="#F1F5F9"/>
+    <g transform="translate(462.44 4006)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="8" cy="8" r="6"/>
       <ellipse cx="8" cy="8" rx="2.6" ry="6"/>
       <path d="M2 8h12"/>
     </g>
-    <text x="488.44" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">External</text>
-    <rect x="554.85" y="4016" width="20" height="20" rx="6" fill="#FCE7F3"/>
-    <g transform="translate(556.85 4018)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <text x="488.44" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">External</text>
+    <rect x="554.85" y="4004" width="20" height="20" rx="6" fill="#FCE7F3"/>
+    <g transform="translate(556.85 4006)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
       <path d="M1.5 6h13"/>
       <circle cx="4" cy="4.25" r="0.5"/>
     </g>
-    <text x="582.85" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">UI</text>
-    <path d="M615.5 4026H635.5" fill="none" stroke="#64748B" stroke-width="1.6"/>
-    <polygon points="643.5,4026 634.5,4030.5 634.5,4021.5" fill="#64748B"/>
-    <text x="651.5" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Data flow</text>
-    <path d="M724.23 4026H744.23" fill="none" stroke="#6366F1" stroke-width="1.6"/>
-    <polygon points="752.23,4026 743.23,4030.5 743.23,4021.5" fill="#6366F1"/>
-    <text x="760.23" y="4030" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Control flow</text>
+    <text x="582.85" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">UI</text>
+    <path d="M615.5 4014H635.5" fill="none" stroke="#64748B" stroke-width="1.6"/>
+    <polygon points="643.5,4014 634.5,4018.5 634.5,4009.5" fill="#64748B"/>
+    <text x="651.5" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Data flow</text>
+    <path d="M724.23 4014H744.23" fill="none" stroke="#6366F1" stroke-width="1.6"/>
+    <polygon points="752.23,4014 743.23,4018.5 743.23,4009.5" fill="#6366F1"/>
+    <text x="760.23" y="4018" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Control flow</text>
   </g>
 </svg>

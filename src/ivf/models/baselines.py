@@ -63,6 +63,9 @@ class Fit:
     # target is a window ending ``horizon`` sessions later (``har_rv``). The runner checks
     # ``train_last_origin + horizon <= cutoff``. None for models without such pairs.
     train_last_origin: int | None = None
+    # Milestone 4: one entry per ensemble member (``lstm_log``'s seeds: seed, epochs_run, seconds). The runner
+    # writes one ``fit`` row per member (``member`` 1..K); None for a single deterministic fit (``member`` 0).
+    members: list[dict[str, Any]] | None = None
 
 
 @dataclass
@@ -79,6 +82,8 @@ class Forecast:
     # None means plugin, v_hat = (yhat/100)**2. ``floored``: True where a forecast was raised to a floor.
     v_hat: np.ndarray | None = None
     floored: np.ndarray | None = None
+    # Milestone 4: each member's own yhat, shape (K, n), for the ``forecast_member`` table; None for one model.
+    members: np.ndarray | None = None
 
 
 def lognormal_forecast(mu: np.ndarray, s2: np.ndarray) -> Forecast:

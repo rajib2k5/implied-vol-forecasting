@@ -167,7 +167,7 @@ def run_symbol(
             if fit.train_last_target is not None and fit.train_last_target > c:
                 raise AssertionError(f"{model.model_id}: a training value is dated after the cutoff (rule L2)")
             previous[model.model_id] = fit
-            fit_rows.append(_fit_row(model.model_id, target_id, fold, fit, dates))
+            fit_rows.extend(_fit_rows(model.model_id, target_id, fold, fit, dates))
             if len(origins):
                 out = model.forecast(fit, y[: last + 1], origins, horizons)
                 for h in horizons:
@@ -243,7 +243,7 @@ def run_rv21(
             if fit.train_last_origin is not None and fit.train_last_origin + h > c:
                 raise AssertionError(f"{model.model_id}: a training target window ends after the cutoff (rule L2, window target)")
             previous[model.model_id] = fit
-            fit_rows.append(_fit_row(model.model_id, rv21.TARGET_ID, fold, fit, dates))
+            fit_rows.extend(_fit_rows(model.model_id, rv21.TARGET_ID, fold, fit, dates))
             if len(origins):
                 out = model.forecast(fit, inputs.upto(last), origins)
                 rows.append(_forecast_frame(model, rv21.TARGET_ID, rv21.SYMBOL, fold, fit, out, origins, h, y, dates, calendar_dates)
@@ -286,6 +286,14 @@ def _fit_row(model_id: str, target_id: str, fold: Fold, fit: Fit, dates: list[da
     }
 
 
+def _fit_rows(model_id: str, target_id: str, fold: Fold, fit: Fit, dates: list[date]) -> list[dict]:
+    """One ``fit`` row, or one per ensemble member (M4: ``member`` 1..K with its ``seed`` and ``epochs_run``)."""
+    row = _fit_row(model_id, target_id, fold, fit, dates)
+    if not fit.members:
+        return [row]
+    return [{**row, "member": k, "seed": m["seed"], "epochs_run": m["epochs_run"]} for k, m in enumerate(fit.members, start=1)]
+
+
 def _forecast_frame(model, target_id, symbol, fold, fit, fc, origins, h, y, dates, calendar_dates) -> pd.DataFrame:
     yhat = np.asarray(fc.yhat, dtype=float)
     if not (np.isfinite(yhat).all() and (yhat > 0).all()):
@@ -298,7 +306,7 @@ def _forecast_frame(model, target_id, symbol, fold, fit, fc, origins, h, y, date
     def col(values):
         return np.full(len(origins), np.nan) if values is None else np.asarray(values, dtype=float)
 
-    return pd.DataFrame(
+    frame = pd.DataFrame(
         {
             "model_id": model.model_id,
             "target_id": target_id,
@@ -316,11 +324,14 @@ def _forecast_frame(model, target_id, symbol, fold, fit, fc, origins, h, y, date
             "s2_log": col(fc.s2_log),
             "pi80_lo": col(fc.pi80_lo),
             "pi80_hi": col(fc.pi80_hi),
-            "n_members": np.int16(1),
+            "n_members": np.int16(1 if fc.members is None else len(fc.members)),
             "fallback": fit.fallback,
             "y": y_target,  # the target if observed before holdout_start; not written to the store
         }
     )
+    if fc.members is not None:  # M4: each member's own yhat, for the forecast_member table (not a forecast column)
+        frame["member_yhat"] = list(np.asarray(fc.members, dtype=float).T)
+    return frame
 
 
 def check_same_rows(forecasts: pd.DataFrame, expected_models=None) -> None:
