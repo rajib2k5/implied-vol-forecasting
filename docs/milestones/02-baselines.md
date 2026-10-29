@@ -317,6 +317,6 @@ round (amended M2, review A; the first round's run had 784 tests and 224 scanned
 | O-M2-2 | How `arima_log` chooses d (amended M2, review A). Measured on stationary AR(1) series at fold sample sizes, KPSS at 5% chose d = 1 on 52% (phi 0.98, n 2,570), 24% (0.98, 8,700), 76% (0.99, 2,570) and 52% (0.99, 8,700) of seeds (review A, 100 each; fresh seeds 47%, 28%, 70%, 50%). The first real run, under KPSS, chose d = 1 at all 97 VIX cutoffs, which is what KPSS does to a persistent stationary series. Alternatives: KPSS (`d_rule: kpss`), or d by an ADF-type test | **d = 0** (`d_rule: d0`); the random walk covers the unit-root case |
 | O-M2-3 | The fixed window of `hist_mean_252` | 252 sessions |
 | O-M2-4 | `min_train_sessions` for late-starting indices | 504 |
-| O-M2-5 | `rv21` baselines here or in M3 | M3 |
+| O-M2-5 | `rv21` baselines here or in M3 | M3 (done: `rw`, `har_rv`, `vix_implied` in the `garch` step) |
 | O-M2-6 | Move real results into the repo (pending data-policy confirmation) | Not done: real results stay under `$VOL_DATA_DIR` |
-| O-M2-7 | Re-check L2 for the window target `rv21` in M3: M2's "the array ends at the cutoff" holds only because each value sits on the row of the date it is observed (review A) | Open: an L2 test of its own when `rv21` arrives |
+| O-M2-7 | Re-check L2 for the window target `rv21` in M3: M2's "the array ends at the cutoff" holds only because each value sits on the row of the date it is observed (review A) | **Closed in M3**: origins τ ≤ c − 21 only, a runner assertion and its own tests ([M3 walkthrough](03-garch-done-right.md), section 6) |

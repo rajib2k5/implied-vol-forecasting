@@ -179,6 +179,82 @@ def run_symbol(
     return SymbolRun(forecasts, pd.DataFrame(fit_rows), fitted, skipped, not_forecastable, seconds)
 
 
+def run_rv21(
+    inputs,
+    dates: list[date],
+    calendar_dates: list[date],
+    folds: list[Fold],
+    models: list,
+    holdout_start: date,
+    min_train_sessions: int,
+) -> SymbolRun:
+    """The rv21 track (milestone 3): every model of ``ivf.models.rv21`` on the same folds, at h = 21.
+
+    ``inputs`` is an ``rv21.Rv21Inputs`` (returns and VIX, each on the row of the date it is observed)
+    on ``dates`` (all before ``holdout_start``). Per fold with cutoff c: ``fit(inputs.upto(c))``, then
+    ``forecast`` at the fold's forecastable origins with ``inputs.upto(last origin)``. The target of
+    origin t is ``rv21`` at ``t + 21`` (``rv21.target_series``), observed only if ``t + 21`` is a
+    readable session. **Rule L2 for a window target** (O-M2-7): the runner asserts
+    ``train_last_target <= c`` and, for a model with supervised pairs, ``train_last_origin + 21 <= c``.
+    A fold is fitted when at least ``min_train_sessions`` returns are dated <= c.
+    """
+    from ivf.models import rv21
+
+    if any(d >= holdout_start for d in dates):
+        raise HoldoutRowRefused(f"the rv21 track reads nothing on or after holdout_start {holdout_start}")
+    if list(calendar_dates[: len(dates)]) != list(dates):
+        raise ValueError("dates must be a prefix of the master calendar")
+    n = len(inputs)
+    if n > len(dates):
+        raise ValueError("the inputs are longer than the sessions they may read")
+    h = rv21.H
+    ok = rv21.forecastable(inputs)
+    y = rv21.target_series(inputs.r)  # y[t + 21] is origin t's target
+    rows, fit_rows = [], []
+    previous: dict[str, Fit | None] = {m.model_id: None for m in models}
+    seconds = {m.model_id: 0.0 for m in models}
+    fitted = skipped = not_forecastable = 0
+    for fold in folds:
+        if fold.period != "dev":
+            raise HoldoutRowRefused("milestone 3 runs dev folds only")
+        c = fold.cutoff_idx
+        if c >= n:
+            break
+        if int(np.isfinite(inputs.r[: c + 1]).sum()) < min_train_sessions:
+            skipped += 1
+            continue
+        last = min(fold.last_origin_idx, n - 1)
+        span = np.arange(c, last + 1)
+        origins = span[ok[span]]
+        not_forecastable += len(span) - len(origins)
+        fitted += 1
+        for model in models:
+            started = time.perf_counter()
+            try:
+                fit = model.fit(inputs.upto(c), previous[model.model_id])
+            except Exception as exc:
+                if previous[model.model_id] is None:
+                    raise RuntimeError(f"{model.model_id} on rv21: the first fit failed ({exc}) and there is no previous fold") from exc
+                kept = previous[model.model_id]
+                fit = Fit(**{**kept.__dict__, "fallback": "previous_fold", "converged": False})
+            fit.fit_seconds = time.perf_counter() - started
+            if fit.train_last_target is not None and fit.train_last_target > c:
+                raise AssertionError(f"{model.model_id}: a training value is dated after the cutoff (rule L2)")
+            if fit.train_last_origin is not None and fit.train_last_origin + h > c:
+                raise AssertionError(f"{model.model_id}: a training target window ends after the cutoff (rule L2, window target)")
+            previous[model.model_id] = fit
+            fit_rows.append(_fit_row(model.model_id, rv21.TARGET_ID, fold, fit, dates))
+            if len(origins):
+                out = model.forecast(fit, inputs.upto(last), origins)
+                rows.append(_forecast_frame(model, rv21.TARGET_ID, rv21.SYMBOL, fold, fit, out, origins, h, y, dates, calendar_dates)
+                            .assign(floored=False if out.floored is None else out.floored))
+            seconds[model.model_id] += time.perf_counter() - started
+    forecasts = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+    if len(forecasts):
+        check_same_rows(forecasts, [m.model_id for m in models])
+    return SymbolRun(forecasts, pd.DataFrame(fit_rows), fitted, skipped, not_forecastable, seconds)
+
+
 def _fit_row(model_id: str, target_id: str, fold: Fold, fit: Fit, dates: list[date]) -> dict:
     import json
 
@@ -204,6 +280,9 @@ def _fit_row(model_id: str, target_id: str, fold: Fold, fit: Fit, dates: list[da
         "loglik": fit.loglik,
         "aic": fit.aic,
         "epochs_run": None,
+        # Amended M3, review A: candidates refused by a model's own checks (unconverged, non-stationary,
+        # recursion not reproducing arch), so a silent degradation shows in the table. None without candidates.
+        "candidates_refused": sum(not c.get("ok", True) for c in fit.params["candidates"]) if "candidates" in fit.params else None,
     }
 
 
@@ -230,8 +309,8 @@ def _forecast_frame(model, target_id, symbol, fold, fit, fc, origins, h, y, date
             "fold_id": np.int32(fold.fold_id),
             "cutoff_date": dates[fold.cutoff_idx],
             "yhat": yhat,
-            "v_hat": (yhat / 100) ** 2,
-            "var_method": "plugin",
+            "v_hat": (yhat / 100) ** 2 if fc.v_hat is None else np.asarray(fc.v_hat, dtype=float),
+            "var_method": getattr(model, "var_method", "plugin"),
             "yhat_naive": np.asarray(fc.yhat_naive, dtype=float),
             "mu_log": col(fc.mu_log),
             "s2_log": col(fc.s2_log),

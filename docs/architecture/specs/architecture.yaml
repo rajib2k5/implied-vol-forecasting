@@ -15,6 +15,7 @@
 # Amended M1, review B, checked against src/ivf/repo_guard.py, src/ivf/protocol.py, src/ivf/data/{raw,check,process}.py and tools/export_app_data.py:
 # every file is written through ivf.repo_guard.write_file, which checks the folder at write time; the data-root check also covers raw/, interim/, processed/, eda/ and app-data/;
 # check --freeze-data-end also writes a freeze record (configs/<protocol>.freeze.json) that check, eda and the notebook compare with the protocol.
+# Amended M3, checked against src/ivf/models/{garch,rv21,cli}.py and configs/models.yaml: the models node names the M3 rv21 track and ARIMA-GARCH; the garch step merges its rows into the M2 tables.
 kind: flow
 title: implied-vol-forecasting system architecture (M0-M6)
 direction: TB
@@ -48,19 +49,19 @@ nodes:
   - {id: eda_mod, label: ivf.eda, lane: core, type: process, sublabel: "pure statistics: ACF, Ljung-Box, AR(1) half-life, ADF/KPSS, implied-realised gap, vol-of-vol, term structure"}
   - {id: process_mod, label: ivf.data.process, lane: core, type: process, sublabel: "run_id; refuses a failed data_check; writes the processed tables and the local EDA report"}
   - {id: splits, label: ivf.evaluation.splits, lane: core, type: process, sublabel: "expanding window, 63-session folds, shared by every model"}
-  - {id: models, label: ivf.models, lane: core, type: model, sublabel: "rw, hist_mean, ARIMA, HAR, GARCH/GJR/EGARCH, ARIMA-GARCH, LSTM; params frozen within a fold"}
+  - {id: models, label: ivf.models, lane: core, type: model, sublabel: "rw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S&P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); LSTM; params frozen within a fold"}
   - {id: evaluation, label: ivf.evaluation, lane: core, type: process, sublabel: "RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"}
   - {id: backtest, label: ivf.backtest, lane: core, type: process, sublabel: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"}
   - {id: ivf_reports, label: ivf.reports, lane: core, type: process, sublabel: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
 
   # ---------------- Storage ----------------
-  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); strategies arrive in M6. Committed"}
+  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); M3: its garch block (innovation rule, ARIMA-GARCH order); strategies arrive in M6. Committed"}
   - {id: raw, label: "ROOT/raw/{source}/{symbol}/{sha256}.csv", lane: storage, type: store, sublabel: "bytes as downloaded; never committed"}
   - {id: prov, label: "ROOT/raw/provenance.jsonl", lane: storage, type: store, sublabel: "append-only, one line per fetch, written even if unchanged"}
   - {id: synth_raw, label: "ROOT/synthetic/raw/", lane: storage, type: store, sublabel: "Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed"}
   - {id: interim, label: "ROOT/interim/{table}.parquet", lane: storage, type: store, sublabel: "iv_index_daily, price_daily; every row keeps raw_sha256"}
   - {id: build_report, label: "ROOT/interim/build_report.json", lane: storage, type: store, sublabel: "per raw file: raw_sha256, fetched_at, rows, duplicates dropped; local, never committed"}
-  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; runs.parquet beside it"}
+  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; M3 (python -m ivf.models garch) merges its rv21 and arima_garch_log rows into the same fit, forecast and metric tables; runs.parquet beside it"}
   - {id: eda_dir, label: "ROOT/eda/<run_id>/eda_report.json", lane: storage, type: store, sublabel: "every EDA number, for reading locally; never committed (ADR 0001 D2)"}
   - {id: forecasts, label: "forecast and fit tables", lane: storage, type: store, sublabel: "under processed/run_id=<id>/; key (run_id, model_id, target_id, origin_date, horizon)"}
   - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, sublabel: "under processed/run_id=<id>/"}

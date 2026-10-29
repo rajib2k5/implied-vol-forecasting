@@ -1,4 +1,5 @@
-"""``configs/models.yaml``: the model registry (``model_def``) and the milestone 2 baseline settings.
+"""``configs/models.yaml``: the model registry (``model_def``), the milestone 2 baseline settings and
+the milestone 3 GARCH settings (``load_garch_settings``).
 
 Read strictly, like the protocol (``ivf.protocol``): an unknown key, a missing key or a value of
 the wrong type is an error, because a typo would otherwise change a forecast silently.
@@ -52,7 +53,7 @@ def target_id_for(symbol: str) -> str:
 
 def load_models(path: Path | None = None) -> tuple[tuple[ModelDef, ...], BaselineSettings]:
     path = path or config.configs_dir() / MODELS_FILE
-    document = _exact_keys(str(path), _read_yaml(path), {"models", "baselines"})
+    document = _exact_keys(str(path), _read_yaml(path), {"models", "baselines", "garch"})
     models = []
     for i, entry in enumerate(document["models"]):
         where = f"{path}: models[{i}]"
@@ -94,3 +95,33 @@ def load_models(path: Path | None = None) -> tuple[tuple[ModelDef, ...], Baselin
     if settings.d_rule not in D_RULES:
         raise ProtocolError(f"{path}: baselines.arima.d_rule must be one of {list(D_RULES)}, not {settings.d_rule!r}")
     return tuple(models), settings
+
+
+_GARCH_KEYS = {"dists", "max_p", "d"}
+GARCH_DISTS = ("normal", "t")
+
+
+@dataclass(frozen=True)
+class GarchSettings:
+    dists: tuple[str, ...]  # innovation distributions tried at every cutoff; the lower AIC wins
+    max_p: int  # arima_garch_log's largest AR order
+    d: int  # arima_garch_log: 0 (default; AR with a constant on ln IV) or 1 (AR on its changes, no constant)
+
+
+def load_garch_settings(path: Path | None = None) -> GarchSettings:
+    """The ``garch`` block of ``configs/models.yaml`` (milestone 3), read as strictly as the rest."""
+    path = path or config.configs_dir() / MODELS_FILE
+    document = _exact_keys(str(path), _read_yaml(path), {"models", "baselines", "garch"})
+    block = _exact_keys(f"{path}: garch", document["garch"], _GARCH_KEYS)
+    dists = tuple(block["dists"])
+    if not dists or len(set(dists)) != len(dists) or any(d not in GARCH_DISTS for d in dists):
+        raise ProtocolError(f"{path}: garch.dists must be distinct values from {list(GARCH_DISTS)}")
+    d = block["d"]
+    if isinstance(d, bool) or d not in (0, 1):
+        raise ProtocolError(f"{path}: garch.d must be 0 or 1")
+    return GarchSettings(dists=dists, max_p=_int(f"{path}: garch.max_p", block["max_p"], 0), d=d)
+
+
+def models_for(defs, target_id: str, max_milestone: int) -> list[str]:
+    """The expected model list for one target: registered, not retired, up to a milestone, in registry order."""
+    return [d.model_id for d in defs if target_id in d.targets and not d.retired and d.milestone <= max_milestone]
