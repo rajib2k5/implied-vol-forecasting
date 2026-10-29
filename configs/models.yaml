@@ -14,7 +14,8 @@ models:
     family: naive
     fit_space: level
     multistep: none
-    targets: [vix_level]
+    # rv21 added in M3: yhat = rv21 of the window ending at the origin (ADR 0001 D2's benchmark).
+    targets: [vix_level, rv21]
     milestone: 2
     retired: false
   - model_id: hist_mean
@@ -49,6 +50,57 @@ models:
     targets: [vix_level]
     milestone: 2
     retired: false
+  # Milestone 3 (docs/milestones/03-garch-done-right.md). The rv21 track: h = 21 only.
+  - model_id: har_rv
+    label: HAR on realised variance
+    family: har
+    fit_space: variance
+    multistep: direct
+    targets: [rv21]
+    milestone: 3
+    retired: false
+  - model_id: vix_implied
+    label: VIX as a forecast of realised variance
+    family: implied
+    fit_space: level
+    multistep: none
+    targets: [rv21]
+    milestone: 3
+    retired: false
+  - model_id: garch
+    label: GARCH(1,1) on S&P 500 returns
+    family: garch
+    fit_space: returns
+    multistep: iterated
+    targets: [rv21]
+    milestone: 3
+    retired: false
+  - model_id: gjr
+    label: GJR-GARCH(1,1,1) on S&P 500 returns
+    family: garch
+    fit_space: returns
+    multistep: iterated
+    targets: [rv21]
+    milestone: 3
+    retired: false
+  - model_id: egarch
+    label: EGARCH(1,1,1) on S&P 500 returns
+    family: garch
+    fit_space: returns
+    multistep: iterated
+    targets: [rv21]
+    milestone: 3
+    retired: false
+  # The vix_level track: an AR(p) with a constant on ln VIX and GARCH(1,1) errors on its innovations
+  # (d = 0; amended M3, review A: was d = 1, the AR on the changes). GARCH is never fitted on the level.
+  - model_id: arima_garch_log
+    label: ARIMA-GARCH on log IV (AR mean, GARCH errors)
+    family: garch
+    fit_space: log_level
+    multistep: iterated
+    targets: [vix_level]
+    milestone: 3
+    retired: false
 
 baselines:
   # VIX is the protocol target (vix_level). The other implied-vol indices of
@@ -73,3 +125,17 @@ baselines:
     max_q: 2
     d_rule: d0
     kpss_alpha: 0.05
+
+# Milestone 3: the GARCH family. Set before any M3 forecast was scored (rule L6).
+garch:
+  # Innovations: at every cutoff each model is fitted with every distribution listed, and the fit with
+  # the lower AIC is kept (a tie keeps the first). Pre-registered; decision D3 of the M3 walkthrough.
+  dists: [normal, t]
+  # arima_garch_log: AR order p in 0..max_p, chosen with the distribution by AIC on a common sample
+  # (the first max_p values held back).
+  max_p: 2
+  # arima_garch_log's d. 0 (default): an AR(p) with a constant on 100 x ln VIX, which reverts to its
+  # mean. 1 (an option): the AR on 100 x the daily change of ln VIX, no constant. Amended M3, review A:
+  # d was 1; on the synthetic market (ln VIX an AR(1), phi 0.98) it was 2.8% worse than the random
+  # walk at h = 21 and d = 0 was 9% better, M2's arima_log lesson again.
+  d: 0

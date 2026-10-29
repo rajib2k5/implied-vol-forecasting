@@ -625,6 +625,41 @@ Every target also has a variance-space value `v = (y/100)²`: annualised varianc
   | `vix_level` (P vs Q) | `garch`, `gjr`, `egarch` uncalibrated: `100·sqrt(G_t(h))`. This is the window `VIX_{t+h}` prices. | `V_{t+h}` | **The VRP gap.** Q-variance usually exceeds P-variance, so the raw GARCH forecast should be biased low. MZ shows it as α ≠ 0 or β ≠ 1. These rows are scale-tied, so they are evaluated locally and published only as a direction (D2; amended M0, review E). |
   | `vix_level` | `*_cal`: `v̂ = a_h + b_h·G_t(h)` | `V_{t+h}` | The map from P to Q. `a_h, b_h` are fitted by OLS on training pairs whose target date ≤ cutoff. With an intercept, OLS fits the means exactly, so the average gap is `mean(v) − mean(G) = a_h + (b_h − 1)·mean(G)`. That equals `a_h` only if `b_h = 1`. It is the average VRP only if `G` is unbiased for realised variance; otherwise it also contains GARCH's own bias (concept 01). (amended M0) |
 
+**As built in M3 (amended M3).** `ivf.models.garch`, `ivf.models.rv21` and
+`walkforward.run_rv21`; the walkthrough is `docs/milestones/03-garch-done-right.md`, the concepts are
+notes 09 and 10. What M3 settles:
+- **Mean model: zero.** `rv21` removes no mean, so `G_t` must forecast `E_t[r²]`, not `E_t[(r−μ)²]`.
+  With a zero mean `E_t[r²_{t+k}] = σ²_{t+k|t}/10⁴` and `G_t(0) = (252/21)·Σ_{k=1}^{21} σ²_{t+k|t}/10⁴`
+  is `E_t[v]` exactly (returns ×100 for `arch`, so σ² is in percent²; `rescale=False`).
+- **Innovations: normal or Student-t by AIC at every cutoff** (pre-registered; a tie keeps normal).
+  A candidate counts only if it converged, is covariance-stationary, and this project's recursion
+  reproduces `arch`'s conditional variances on the training sample to 1e-7.
+- **Multi-step.** GARCH and GJR: `arch`'s analytic recursion (GJR's factor `α + γ/2 + β`).
+  EGARCH: `E_t[σ²_{t+k}] = exp(ω·Σβ^i + β^{k−1} ln σ²_{t+1|t})·Π M(β^i)`, with
+  `M(c) = E[exp(c·g(z))]` taken **as the exact mean over the training standardised residuals,
+  rescaled to unit RMS** (`E[z²] = 1`). Under Student-t innovations M is infinite in theory, but only
+  through |z| of a few hundred, so a simulated mean is a stable truncated value with Monte Carlo
+  noise; the empirical mean is deterministic and exact for the rescaled residuals, not for the fitted
+  distribution. (amended M3, review A: the residuals were not rescaled, and "a simulated mean is
+  noise" overstated the problem.)
+- **Forecasting inside a fold** runs the project's own copy of `arch`'s recursion through returns up
+  to the origin with the parameters and the backcast frozen at the cutoff: `arch`'s filter applies
+  variance bounds computed from the whole sample, so it is not a pure function of data ≤ t.
+- **The `rv21` baselines** (`rw`: `rv21` of the window ending at t; `har_rv`: HAR on realised
+  variance, direct at h = 21, floored at the smallest training target; `vix_implied`) run in the same
+  `garch` step on the same rows. `var_method` is `native` for the GARCH family, `har_rv` and
+  `vix_implied`, `plugin` for `rw`.
+- **`arima_garch_log`** is an AR(p) **with a constant on `100·ln VIX` (d = 0)** and GARCH(1,1) on its
+  innovations, p ∈ {0,1,2} and the distribution by AIC on a common sample; a candidate whose AR is not
+  stationary is refused. `arch` has AR means, not MA, hence q = 0. The forecast iterates the AR, its
+  variance is the ψ-weighted GARCH path, and the lognormal mean is scored with the median stored, as in
+  M2. (amended M3, review A: the first version was d = 1, the AR on `100·Δ ln VIX` with no constant.
+  On the synthetic market its h = 1/5/21 RMSE was 1.1871/2.6158/5.0857 against the random walk's
+  1.1857/2.5992/4.9454 and d = 0's 1.1798/2.5373/4.4975: M2's `arima_log` lesson again. d = 1 stays an
+  option, `garch.d: 1`.)
+- **Not in M3:** the uncalibrated `garch`/`gjr`/`egarch` rows on `vix_level` and the `*_cal` maps of
+  the table above (O-M3-3 in the walkthrough).
+
 #### 4.5 Walk-forward design
 
 | Rule | Value | Why |
@@ -679,6 +714,14 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
 - **L2 and window targets (open, M3).** L2 holds by construction in M2 because every value sits
   on the row of the date it is observed. A window target stored on its origin's row (as M1's
   `forward_rv21`) would not; `rv21` needs its own L2 test in M3. (amended M2, review A)
+  **Settled in M3 (amended M3).** Every rv21 input is a daily series on the row of the date it is
+  observed (returns, VIX); a fit at cutoff c gets the inputs up to c only (`Rv21Inputs.upto`); the
+  target `rv21` is stored at the END of its window; and a supervised model pairs origin τ with its
+  target only if `τ ≤ c − 21` (`rv21.training_origins`). The runner asserts
+  `train_last_origin + 21 ≤ c` as well as `train_last_target ≤ c`. Tested by poisoning every return
+  after the cutoff (identical fits and forecasts at the cutoff), by an origin-truncation test (the
+  `har_rv` fit equals OLS on hand-built pairs with τ ≤ c − 21, and one more origin would change it),
+  and mutation-checked.
 - **Secondary targets.** The other implied-vol indices of `configs/iv_indices.yaml` are
   forecast as `<symbol>_level` with the same calendar, folds and rules. They are not protocol
   targets (adding one would change the frozen `protocol_hash`); owner decision O-M2-1.

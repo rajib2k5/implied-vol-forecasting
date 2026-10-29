@@ -263,10 +263,11 @@ def test_arima_keeps_the_previous_fold_when_no_candidate_converges(monkeypatch):
 
 def test_the_committed_registry_names_the_five_baselines_and_their_settings():
     defs, settings = registry.load_models()
-    assert [d.model_id for d in defs] == ["rw", "hist_mean", "hist_mean_252", "arima_log", "har_log"]
-    assert {d.model_id for d in defs if d.fit_space == "log_level"} == {"arima_log", "har_log"}
+    m2 = [d.model_id for d in defs if d.milestone == 2]
+    assert m2 == ["rw", "hist_mean", "hist_mean_252", "arima_log", "har_log"]  # amended M3: M3's models follow
+    assert {d.model_id for d in defs if d.fit_space == "log_level" and d.milestone == 2} == {"arima_log", "har_log"}
     assert settings.symbols[0] == "VIX" and settings.hist_window == 252 and (settings.max_p, settings.max_q, settings.d_rule) == (2, 2, "d0")
-    assert [m.model_id for m in baselines.build_models(settings)] == [d.model_id for d in defs]
+    assert [m.model_id for m in baselines.build_models(settings)] == m2
     assert registry.target_id_for("VIX") == "vix_level" and registry.target_id_for("VIX3M") == "vix3m_level"
 
 

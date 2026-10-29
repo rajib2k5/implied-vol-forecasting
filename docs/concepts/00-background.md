@@ -94,7 +94,7 @@ The two standard definitions have opposite signs.
 | GARCH(1,1) | $\sigma_t^2=\omega+\alpha\varepsilon_{t-1}^2+\beta\sigma_{t-1}^2$ | SPX returns | Engle (1982); Bollerslev (1986) | M3 |
 | GJR (modern form) | $+\gamma\,\varepsilon_{t-1}^2\,\mathbb{I}[\varepsilon_{t-1}<0]$ | SPX returns | Glosten, Jagannathan & Runkle (1993), reparameterised | M3 |
 | EGARCH | $\ln\sigma_t^2=\omega+\alpha(\lvert e_{t-1}\rvert-\sqrt{2/\pi})+\gamma e_{t-1}+\beta\ln\sigma_{t-1}^2$ | SPX returns | Nelson (1991); `arch` 8.0.0 form | M3 |
-| ARIMA-GARCH | ARMA mean + GARCH variance | $\Delta\log\text{VIX}$ | As above | M3 |
+| ARIMA-GARCH | ARMA mean + GARCH variance | $\log\text{VIX}$ (d = 0; amended M3, review A: was $\Delta\log\text{VIX}$) | As above | M3 |
 | LSTM | Gated recurrent network | log-VIX lags (+ features) | Hochreiter & Schmidhuber (1997) | M4 |
 
 - **HAR.** Corsi (2009): an additive cascade of daily, weekly (5-day, eq. 4) and monthly (22-day) components (eq. 8). No true long memory, yet it reproduces long memory and fat tails and forecasts well.

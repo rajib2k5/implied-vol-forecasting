@@ -23,6 +23,7 @@ import build_notebooks  # noqa: E402
 M0 = "00_environment_and_contract.ipynb"
 M1 = "01_data_and_eda.ipynb"
 M2 = "02_baselines.ipynb"
+M3 = "03_garch.ipynb"
 
 
 @pytest.fixture
@@ -48,10 +49,10 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 3 notebook(s)")
+    assert result.stdout.startswith("ok: 4 notebook(s)")  # amended M3: 03_garch.ipynb
 
 
-@pytest.mark.parametrize("name", [M0, M1])
+@pytest.mark.parametrize("name", [M0, M1, M2, M3])
 def test_committed_bytes_equal_generated_bytes(name):
     assert (REPO / "notebooks" / name).read_bytes() == build_notebooks.generate()[name]
 
@@ -244,3 +245,26 @@ def test_m2_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch,
     assert set(namespace["FC"].model_id) == {"rw", "hist_mean", "hist_mean_252", "arima_log", "har_log"}
     assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
     plt.close("all")
+
+
+# --- milestone 3: the GARCH notebook ------------------------------------------------------------
+
+
+def test_m3_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch, capsys, no_network):
+    # Synthetic data, one fold: every rv21 model and ARIMA-GARCH fitted, the hand-worked aggregate,
+    # the known-truth floor and the category-error demo printed; nothing on or after holdout_start read.
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("IVF_NOTEBOOK_FOLDS", "1")
+    notebook = nbformat.reads(build_notebooks.generate()[M3].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert namespace["MODE"] == "synthetic" and "data: SYNTHETIC" in out
+    assert "sum of the 21 daily variances 38.287209" in out and "yhat = 21.4347 vol points" in out
+    assert "truth: QLIKE" in out and out.count("AR(") == 1 and "level_alpha_plus_beta" in out
+    assert set(namespace["FC"].model_id) == {"rw", "har_rv", "vix_implied", "garch", "gjr", "egarch"}
+    assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
+

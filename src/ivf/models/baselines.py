@@ -59,6 +59,10 @@ class Fit:
     loglik: float | None = None
     aic: float | None = None
     fit_seconds: float = 0.0
+    # Milestone 3, rule L2 for a window target: the last training ORIGIN of a supervised pair whose
+    # target is a window ending ``horizon`` sessions later (``har_rv``). The runner checks
+    # ``train_last_origin + horizon <= cutoff``. None for models without such pairs.
+    train_last_origin: int | None = None
 
 
 @dataclass
@@ -71,6 +75,10 @@ class Forecast:
     s2_log: np.ndarray | None = None
     pi80_lo: np.ndarray | None = None
     pi80_hi: np.ndarray | None = None
+    # Milestone 3. ``v_hat``: a ``native`` model's own variance forecast E_t[v] (yhat = 100*sqrt(v_hat));
+    # None means plugin, v_hat = (yhat/100)**2. ``floored``: True where a forecast was raised to a floor.
+    v_hat: np.ndarray | None = None
+    floored: np.ndarray | None = None
 
 
 def lognormal_forecast(mu: np.ndarray, s2: np.ndarray) -> Forecast:
