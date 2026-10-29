@@ -750,6 +750,21 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
   `target_date < holdout_start`. The last h dev origins of each horizon are dropped from tuning.
 - **One look.** The holdout is scored with hyper-parameters frozen. If a hyper-parameter changes
   after the holdout has been seen, `protocol.holdout_looks` increments and the report must print it.
+  **When (amended M5; default taken 2026-10-29, owner can override):** the one look is taken at the
+  end of M6, for the forecasts and the backtest together, because M6's trading rules are not frozen
+  yet. M5's `python -m ivf.evaluation report` scores `dev` only; no value dated on or after
+  `holdout_start` enters any output (targets and regimes come from the sessions before it; the frozen
+  `data_end` check reads the full interim tables, as every step does; amended M5, review A: was "reads
+  no interim row"). It refuses `--period holdout` on real data before reading anything, and runs that
+  path on the synthetic market only (tested). `holdout_looks` stays 0.
+  **Holdout rule, pre-registered (amended M5, review A; O-M5-5; default taken 2026-10-29, owner can
+  override).** Neither test is size-controlled at n ≈ 583 (4.8, "As built in M5"), so on the holdout
+  every DM and MZ p-value is reported as **descriptive only** (`descriptive_only`, flagged "not
+  size-controlled at n ≈ 583"). The **confirmatory** check is directional and fixed now: for each
+  (target, h), the dev period's best model by RMSE (and by QLIKE on `rv21`) must also have a lower
+  holdout loss than `rw` for the result to count as "held up" (`report.holdout_check`; none to confirm
+  when `rw` is the dev best). No model choice may use holdout results. Implemented in the holdout path
+  and tested on synthetic data, so M6's single look applies it mechanically.
 - **M1's EDA computes nothing on holdout rows (amended M1, review A).** Every EDA statistic uses
   sessions and interim rows strictly before `holdout_start`, so no origin and no target date is in
   the holdout (`ivf.data.process.eda_inputs`; `eda_report` refuses a holdout row). Its samples are
@@ -782,8 +797,8 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
 |---|---|
 | `vix_level` regimes (labelled at the origin) | `low`: V < 15. `mid`: 15 ≤ V < 25. `high`: V ≥ 25. These are fixed round numbers, not quantiles. |
 | `term_structure` regimes | `backwardation` if VIX > VIX3M, else `contango`. Null before VIX3M's first date (to verify in M1). Review C found Cboe's `VIX3M_History.csv` starts 2009-09-18, so this regime is null for roughly the first decade of the dev period unless M1 adds an earlier VXV source; M1 measures it and decides (amended M0, review C). **M1 decision (amended M1):** M1 confirmed 2009-09-18 on the file and adds no earlier source. The regime is null before then (no `regime_label` row), so regime cells for `term_structure` cover only the later part of dev. An earlier VXV series would be a second licensed source with its own splice risk, for a regime that never reaches committed reports (O7). |
-| Diebold-Mariano | `d_t = L_a − L_b` per origin, on identical rows. Losses: squared error (level) and QLIKE. The long-run variance uses the **rectangular** estimator, with the HLN correction and a Bartlett fallback, as set out below the table. (amended M0: was Newey-West) |
-| Mincer-Zarnowitz | `y = α + β·ŷ + ε`, with a joint Wald test of α=0 and β=1 using NW lag h−1. Run in level space for `vix_level` and in variance space for `rv21`. The Bartlett kernel's downward bias (below) applies here too: see O5. (amended M0) |
+| Diebold-Mariano | `d_t = L_a − L_b` per origin, on identical rows. Losses: squared error (level) and QLIKE. The long-run variance uses the **rectangular** estimator, with the HLN correction and a Bartlett fallback, as set out below the table. (amended M0: was Newey-West) **Amended M5 (O6):** the primary test is **fixed-b**: Bartlett weights with bandwidth `M = ceil(0.1·n)` and critical values from the statistic's simulated fixed-b null; the rectangular, Newey-West (h−1) and Andrews-bandwidth versions are kept in `dm_test` as the bandwidth sensitivity. Benchmarks: `rw` on each track and HAR (`har_log`, `har_rv`) as the strong baseline; every pair is tested, with Holm's correction per (target, horizon, loss, estimator). |
+| Mincer-Zarnowitz | `y = α + β·ŷ + ε`, with a joint Wald test of α=0 and β=1 using NW lag h−1. Run in level space for `vix_level` and in variance space for `rv21`. The Bartlett kernel's downward bias (below) applies here too: see O5. (amended M0) **Amended M5 (O5):** the primary covariance is **Hansen-Hodrick** (rectangular, lag h−1, Newey-West fallback when not positive definite); `rv21` runs in level **and** variance space. |
 | Suppression | In the local `metric` table and the local app, any cell with n < `min_cell_n` (20) is written as null, with its n kept, because so small a cell is unreliable. Regime cells never reach committed real reports at all (D2 P), so the M0 secondary-suppression rule is superseded (amended M0, review D). The holdout's `high` regime may be thin. The dev period is reported alongside it, labelled "dev (used for tuning)". (amended M0, review B) |
 
 **DM long-run variance (amended M0).**
@@ -835,6 +850,46 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
   So DM p-values from this protocol can be about 2.5 times too liberal. A wider Bartlett window does
   not fix it at these sample sizes. M5 must choose a remedy by measurement (O6) and report how
   sensitive each DM result is to the bandwidth.
+
+**As built in M5 (amended M5).** `ivf.evaluation.dm`, `mz`, `regimes`, `calibration` and `report`
+(`python -m ivf.evaluation report`); walkthrough `docs/milestones/05-evaluation.md`, concept notes 12
+and 13. Measured with `tools/probes/dm_mz_size.py 2000 1000` (seed 20261028, h = 21, nominal 5%; MC SE
+0.0049 for DM, 0.0069 for MZ). M5's own nulls: `sq_error` is two equally good forecasts with
+overlapping errors (correlation 0.8); `state` scales one model's shocks by a stationary AR(1)
+log-variance state (φ = 0.98, sd 0.5) with `E[d] = 0`; they are not review B's probe.
+
+| DM null | n | Rectangular + HLN | Newey-West (h−1) + HLN | Andrews | **Fixed-b, b = 0.1** |
+|---|---:|---:|---:|---:|---:|
+| `ma` (linear) | 583 | 0.0665 | 0.1195 | 0.1155 | 0.0705 |
+| `ma` | 6,090 | 0.0480 | 0.1090 | 0.0630 | 0.0485 |
+| `sq_error` | 583 | 0.0635 | 0.0940 | 0.0970 | 0.0585 |
+| `sq_error` | 6,090 | 0.0560 | 0.0915 | 0.0685 | 0.0545 |
+| `state` | 583 | 0.1135 | 0.1745 | 0.1545 | 0.1025 |
+| `state` | 6,090 | 0.1060 | 0.1830 | 0.0920 | **0.0560** |
+
+- **O6 settled (default taken 2026-10-29, owner can override).** The pre-registered rule: the smallest
+  worst-case size error across the three nulls at the dev size (6,090). Fixed-b's worst case is 0.0560;
+  rectangular's 0.1060, Andrews' 0.0920. Its fixed-b critical value was simulated (20,000 i.i.d.
+  normal series, n = 1,000, seed 20261028): 2.2458; over 20 seeds the mean is 2.2290, sd 0.0195. The
+  comparison with Kiefer-Vogelsang's tables is **not verified** (amended M5, review A: the first version
+  claimed agreement with a cubic, 2.2606, quoted from memory; review A's seeds put it about 10 SE away). The block bootstrap of `d_t` was **not measured** (owner review): its variance
+  is asymptotically a Bartlett estimate with the block length as bandwidth, so it inherits the choice
+  of bandwidth it was meant to avoid.
+- **Not fixed at the holdout's size.** Under the `state` null at n = 583 every estimator over-rejects
+  (fixed-b 0.1025). Hence the pre-registered holdout rule in 4.6 (amended M5, review A): holdout DM and
+  MZ are descriptive only, and the confirmatory check is directional.
+- **Sign (amended M5, review A).** `d = L_a − L_b` with `model_a` first alphabetically: a positive
+  `mean_d` means `model_a` is worse; `dm_test.lower_loss` names the better model.
+- **Sensitivity (real data, counts only).** Of the 168 pairwise DM tests on the dev period, 15 are
+  Holm-significant at 5% with fixed-b, 75 with the rectangular estimator: the bandwidth choice
+  changes most conclusions. The rectangular estimate was never ≤ 0 (no `bartlett_fallback` row).
+- **O5 settled the same way (default taken 2026-10-29, owner can override).** MZ Wald size, rational
+  forecast of an AR(1) level (φ = 0.98): Hansen-Hodrick 0.0650, Andrews 0.0920, Newey-West 0.1430 at
+  n = 6,090; 0.1660, 0.2660 and 0.2600 at n = 583. Hansen-Hodrick is primary; it was positive definite
+  on every real row. At the holdout's size the MZ Wald test is about three times too liberal.
+- **Regime DM tests are not computed** (owner review): a regime's origins are not consecutive, so the
+  lag structure of `d_t` inside a regime is not the overlap structure the estimators assume. Regime
+  cells carry losses and counts only.
 
 ### D5. Determinism and reproducibility
 
@@ -910,8 +965,9 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
 | O2 | LSTM refit cadence. ADR 0002's compute estimate assumes 24 refits; this protocol gives about 107 (97 dev + 10 holdout). | **Keep 63 sessions for the LSTM too.** Scaling ADR 0002's figure (about 25 min on a CPU pool for 18,000 model-epochs) linearly to 107 × 3 × 5 × 50 ≈ 80,000 model-epochs gives about 2 h. That is derived, not measured, and it ignores the expanding training set. Measure in M4. If it is too slow, refit the LSTM every 4th fold and reuse its weights in between, recorded in `fit`. This handicaps the LSTM and leaks nothing. ADR 0002's "24 refits" should be updated. *(amended M4)* **Measured and taken:** one member trains in 4 to 22 s on one thread (7 to 25 epochs; milestone 4, section 7), about 100 s of single-thread training per cutoff for 5 seeds × 2 tracks, about 2.8 h for all 97 dev cutoffs (derived: the mean member time on each track at three cutoffs, × 5 × 97). Default: retrain when ≥ 252 sessions have passed since the last training (every 4th cutoff), the frozen network applied in between, `params.refit` in `fit`. Default taken 2026-10-29, owner can override (`lstm.refit_every` in `configs/models.yaml`). |
 | O3 | Real-data time-series figures in `docs/` (e.g. a VIX history plot)? | **No.** Use synthetic figures, or link to Cboe's own charts. |
 | O4 | Real JSON outside the repo (`ROOT/app-data/real/`) instead of the brief's `app/public/data/` | **Accept.** It is the only placement a `vite build` cannot leak. |
-| O5 (amended M0) | MZ uses Newey-West at lag h−1, the same kernel the DM amendment rejected. Overlapping MA(h−1) errors bias its Wald test the same way. | **Decide in M5 by measurement.** Run the same simulation for the MZ Wald size, then choose between Hansen-Hodrick (rectangular, lag h−1, with a fallback when the covariance matrix is not positive definite) and Newey-West with a longer bandwidth. Not changed in M0 because MZ size was not measured. |
-| O6 (amended M0, review B) | DM size under state-dependent loss differentials: 0.1258 at n = 583 (4.8) | **Decide in M5 by measurement.** Add the state-dependent null to the M5 size simulation, then compare three candidates: an automatic bandwidth (Andrews 1991), fixed-b critical values (Kiefer-Vogelsang), and a block bootstrap of `d_t`. Report every DM result's sensitivity to the bandwidth. Do not call `statsmodels.tsa.stattools.diebold_mariano_test` (0.15.0) for the 4.8 estimator: it defaults to `lags = max(h-1, ceil(n**(1/3)))` and uses Bartlett (HAC) weights even with `lags=h-1`, so it computes the fallback, not the rectangular estimate (measured in docs/concepts/02, Reproduce block; amended M0). The rectangular estimate is available as `OLS(d, 1).fit(cov_type="HAC", cov_kwds={"maxlags": h-1, "kernel": "uniform", "use_correction": False})`, with the HLN factor applied by hand; on overlapping 21-step errors (n = 583) it reproduced a hand-coded rectangular t to 6 dp (-0.913913, against -1.094819 Bartlett) (amended M0, review C). |
+| O5 (amended M0) | MZ uses Newey-West at lag h−1, the same kernel the DM amendment rejected. Overlapping MA(h−1) errors bias its Wald test the same way. | **Decide in M5 by measurement.** Run the same simulation for the MZ Wald size, then choose between Hansen-Hodrick (rectangular, lag h−1, with a fallback when the covariance matrix is not positive definite) and Newey-West with a longer bandwidth. Not changed in M0 because MZ size was not measured. *(amended M5)* **Measured and taken:** Hansen-Hodrick, size 0.0650 at n = 6,090 against Newey-West's 0.1430 and Andrews' 0.0920 (4.8, "As built in M5"). Default taken 2026-10-29, owner can override (`mz.PRIMARY_METHOD`). All three over-reject at n = 583, so holdout MZ is descriptive only (4.6; amended M5, review A). |
+| O6 (amended M0, review B) | DM size under state-dependent loss differentials: 0.1258 at n = 583 (4.8) |
+| O6 (amended M0, review B) | DM size under state-dependent loss differentials: 0.1258 at n = 583 (4.8) | **Decide in M5 by measurement.** Add the state-dependent null to the M5 size simulation, then compare three candidates: an automatic bandwidth (Andrews 1991), fixed-b critical values (Kiefer-Vogelsang), and a block bootstrap of `d_t`. Report every DM result's sensitivity to the bandwidth. Do not call `statsmodels.tsa.stattools.diebold_mariano_test` (0.15.0) for the 4.8 estimator: it defaults to `lags = max(h-1, ceil(n**(1/3)))` and uses Bartlett (HAC) weights even with `lags=h-1`, so it computes the fallback, not the rectangular estimate (measured in docs/concepts/02, Reproduce block; amended M0). The rectangular estimate is available as `OLS(d, 1).fit(cov_type="HAC", cov_kwds={"maxlags": h-1, "kernel": "uniform", "use_correction": False})`, with the HLN factor applied by hand; on overlapping 21-step errors (n = 583) it reproduced a hand-coded rectangular t to 6 dp (-0.913913, against -1.094819 Bartlett) (amended M0, review C). *(amended M5)* **Measured and taken:** fixed-b (Bartlett, b = 0.1, simulated critical values) is primary, worst-case size 0.0560 at n = 6,090 across three nulls, against 0.1060 rectangular and 0.0920 Andrews; the block bootstrap was not measured. Every DM row is stored with all four estimators (`dm_test.method`), the sensitivity this item asked for. Default taken 2026-10-29, owner can override (`dm.PRIMARY_METHOD`). At n = 583 the state-dependent null still rejects 0.1025, so holdout DM is descriptive only and the confirmatory holdout check is directional (4.6, pre-registered; amended M5, review A). The fixed-b critical value is simulated; agreement with Kiefer-Vogelsang's tables is not verified (review A). |
 | O7 (amended M0, review B) | Should real-data **regime** numbers ever be public? D2 P keeps them local. | **No.** Regime cells would need a separate disclosure analysis that P avoids (amended M0, review D). This is the user's call. |
 | O8 (amended M0, review E) | Publish the scale-tied rows (`vix_implied` on `rv21`; uncalibrated `garch`, `gjr`, `egarch` on `vix_level`) in P? | **No (orchestrator default).** Measured leak, on 10 simulated seeds with public SPX (`tools/licensing/p_tie_seeds.py`): the holdout RMS VIX-RV gap to a median 0.053%, and the holdout mean VIX to a median 4.29% (max 13.69%). These are period-level VIX statistics, not daily values. Opting in breaks M2 of the proposed definition (O9). The user's call. |
 | O9 (amended M0, review E) | What is a "material part" of a vendor series (the D2 objective)? | **Adopt the proposed definition in D2:** M1 (a run of 5 or more consecutive values within ±1 vol point or ±1%) and M2 (any level-unit statistic within ±10%), using committed content plus public data other than the series itself. P is argued, not proven, to comply. The user's decision. |

@@ -25,6 +25,7 @@ M1 = "01_data_and_eda.ipynb"
 M2 = "02_baselines.ipynb"
 M3 = "03_garch.ipynb"
 M4 = "04_lstm.ipynb"
+M5 = "05_evaluation.ipynb"  # amended M5
 
 
 @pytest.fixture
@@ -50,10 +51,10 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 5 notebook(s)")  # amended M4: 04_lstm.ipynb
+    assert result.stdout.startswith("ok: 6 notebook(s)")  # amended M5: 05_evaluation.ipynb
 
 
-@pytest.mark.parametrize("name", [M0, M1, M2, M3, M4])
+@pytest.mark.parametrize("name", [M0, M1, M2, M3, M4, M5])
 def test_committed_bytes_equal_generated_bytes(name):
     assert (REPO / "notebooks" / name).read_bytes() == build_notebooks.generate()[name]
 
@@ -293,4 +294,23 @@ def test_m4_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch,
     assert "weights sha256 equal: True" in out and "member rows" in out and "RMSE of each member:" in out
     assert len(namespace["PER"]) == 4  # (vix_level h = 1, 5, 21; rv21) x 1 member (amended M4, review A)
     assert {"lstm_log", "har_rv"} <= set(namespace["RV_RUN"].forecasts.model_id)
+    assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
+
+
+def test_m5_notebook_runs_top_to_bottom_on_synthetic_data(monkeypatch, capsys, no_network):
+    # Synthetic only, three baselines on two folds: the DM statistic by hand equals dm_test's, the
+    # tables, and the holdout path finding no holdout row (amended M5).
+    monkeypatch.setenv("IVF_NOTEBOOK_FOLDS", "2")
+    notebook = nbformat.reads(build_notebooks.generate()[M5].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert "data: SYNTHETIC" in out and "holdout rows 0" in out and "holdout_looks 0" in out
+    assert "calibration warm-up here: 63 pairs (illustration); the report uses 252" in out  # amended M5, review A
+    from ivf.evaluation import dm
+
+    assert namespace["by_hand"] == pytest.approx(dm.dm_test(namespace["d"], 21, "rectangular").dm_stat, rel=1e-12)
     assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start

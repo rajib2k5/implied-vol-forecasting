@@ -24,7 +24,7 @@ flowchart TB
         process_mod["ivf.data.process\nrun_id; refuses a failed data_check; writes the processed tables and the local EDA report"]
         splits["ivf.evaluation.splits\nexpanding window, 63-session folds, shared by every model"]
         models[["ivf.models\nrw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S#38;P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); lstm_log on vix_level and rv21, 5-seed mean, retrained every 4th cutoff (M4); params frozen within a fold"]]
-        evaluation["ivf.evaluation\nRMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"]
+        evaluation["ivf.evaluation\npython -m ivf.evaluation report (M5)#58; RMSE, MAE, MAPE, QLIKE, bias by regime; DM (fixed-b primary) with Holm; MZ (Hansen-Hodrick); walk-forward calibration variant; dev only, holdout refused on real data"]
         backtest["ivf.backtest\nVXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"]
         ivf_reports["ivf.reports\ncommits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"]
     end
@@ -38,7 +38,7 @@ flowchart TB
         processed[("ROOT/processed/run_id=#lt;id#gt;/{table}.parquet\nM1#58; run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines)#58; fold, fit, forecast, metric, and calendar.fold_id; M3 (python -m ivf.models garch) merges its rv21 and arima_garch_log rows into the same fit, forecast and metric tables; M4 (python -m ivf.models lstm, after garch) merges lstm_log rows (one fit row per seed) and writes forecast_member; runs.parquet beside it")]
         eda_dir[("ROOT/eda/#lt;run_id#gt;/eda_report.json\nevery EDA number, for reading locally; never committed (ADR 0001 D2)")]
         forecasts[("forecast and fit tables\nunder processed/run_id=#lt;id#gt;/; key (run_id, model_id, target_id, origin_date, horizon)")]
-        results[("metric, dm_test, mz_regression, backtest_daily, strategy_summary\nunder processed/run_id=#lt;id#gt;/")]
+        results[("metric, dm_test, mz_regression, backtest_daily, strategy_summary\nunder processed/run_id=#lt;id#gt;/; M5 writes evaluation/period=dev/ (metric, dm_test, mz_regression, calibration, calibration_summary, report_meta.json)")]
         reports_dir[/"reports/*.agg.csv\ncommitted#58; publication set P only (unitless, rounded), source_dirty = false"/]
         schemas[("schemas/app-data/\nJSON Schemas#58; the single source of truth for the contract")]
         synth_json[/"app/public/data/synthetic/*.json\ncommitted fixture; data_mode synthetic"/]
