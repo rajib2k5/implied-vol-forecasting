@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2725" height="1184" viewBox="0 0 2725 1184">
+  <title>implied-vol-forecasting walk-forward fold</title>
+  <rect x="0" y="0" width="2725" height="1184" fill="#F8FAFC"/>
+  <text x="32" y="52" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="20" font-weight="700" fill="#0F172A">implied-vol-forecasting walk-forward fold</text>
+  <g id="block_0">
+    <rect x="144" y="528" width="1193" height="152" rx="10" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+    <path d="M144 538Q144 528 154 528H183.14V542L177.14 548H144Z" fill="#E2E8F0"/>
+    <text x="152" y="542" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="10" font-weight="700" letter-spacing="0.8" fill="#334155">ALT</text>
+    <text x="193.14" y="542.5" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="600" fill="#334155">[fit converged]</text>
+    <path d="M144 606H1337" fill="none" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="5 4"/>
+    <text x="156" y="624" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="600" fill="#334155">[fit failed]</text>
+  </g>
+  <g id="block_1">
+    <rect x="144" y="692" width="1867" height="216" rx="10" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+    <path d="M144 702Q144 692 154 692H193.81V706L187.81 712H144Z" fill="#E2E8F0"/>
+    <text x="152" y="706" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="10" font-weight="700" letter-spacing="0.8" fill="#334155">LOOP</text>
+    <text x="203.81" y="706.5" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="600" fill="#334155">[each origin t in [c_k, c_{k+1}), once per session]</text>
+  </g>
+  <path d="M166 128V1104" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M608 128V1104" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M887 128V1104" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M1315 128V1104" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M1989 128V1104" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <g id="participant_splitter">
+    <rect x="32.5" y="81" width="267" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="31.5" y="82" width="269" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="30.5" y="84" width="271" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="32.5" y="80" width="267" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="57.73" y="92" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(61.73 96)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="89.73" y="109" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Splitter (ivf.evaluation.splits)</text>
+    <rect x="32.5" y="1105" width="267" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="31.5" y="1106" width="269" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="30.5" y="1108" width="271" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="32.5" y="1104" width="267" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="57.73" y="1116" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(61.73 1120)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="89.73" y="1133" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Splitter (ivf.evaluation.splits)</text>
+  </g>
+  <g id="participant_features">
+    <rect x="475.5" y="81" width="265" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="474.5" y="82" width="267" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="473.5" y="84" width="269" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="475.5" y="80" width="265" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="500.86" y="92" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(504.86 96)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="532.86" y="109" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Feature builder (ivf.features)</text>
+    <rect x="475.5" y="1105" width="265" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="474.5" y="1106" width="267" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="473.5" y="1108" width="269" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="475.5" y="1104" width="265" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="500.86" y="1116" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(504.86 1120)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="532.86" y="1133" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Feature builder (ivf.features)</text>
+  </g>
+  <g id="participant_scaler">
+    <rect x="788" y="81" width="198" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="787" y="82" width="200" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="786" y="84" width="202" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="788" y="80" width="198" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="810.23" y="92" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(814.23 96)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="842.23" y="109" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Scaler and imputer</text>
+    <rect x="788" y="1105" width="198" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="787" y="1106" width="200" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="786" y="1108" width="202" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="788" y="1104" width="198" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="810.23" y="1116" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(814.23 1120)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="842.23" y="1133" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Scaler and imputer</text>
+  </g>
+  <g id="participant_model">
+    <rect x="1217.5" y="81" width="195" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1216.5" y="82" width="197" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1215.5" y="84" width="199" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1217.5" y="80" width="195" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1239.75" y="92" width="24" height="24" rx="7" fill="#EDE9FE"/>
+    <g transform="translate(1243.75 96)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12.5l3.5-4 3 2.5 5.5-7"/>
+      <path d="M10.5 4h3.5v3.5"/>
+    </g>
+    <text x="1271.75" y="109" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Model (ivf.models)</text>
+    <rect x="1217.5" y="1105" width="195" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1216.5" y="1106" width="197" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1215.5" y="1108" width="199" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1217.5" y="1104" width="195" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1239.75" y="1116" width="24" height="24" rx="7" fill="#EDE9FE"/>
+    <g transform="translate(1243.75 1120)" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12.5l3.5-4 3 2.5 5.5-7"/>
+      <path d="M10.5 4h3.5v3.5"/>
+    </g>
+    <text x="1271.75" y="1133" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Model (ivf.models)</text>
+  </g>
+  <g id="participant_evaluator">
+    <rect x="1868.5" y="81" width="241" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1867.5" y="82" width="243" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1866.5" y="84" width="245" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1868.5" y="80" width="241" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1892.73" y="92" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(1896.73 96)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="1924.73" y="109" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Evaluator (ivf.evaluation)</text>
+    <rect x="1868.5" y="1105" width="241" height="48" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1867.5" y="1106" width="243" height="49" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1866.5" y="1108" width="245" height="50" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1868.5" y="1104" width="241" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1892.73" y="1116" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(1896.73 1120)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="1924.73" y="1133" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="13.5" font-weight="600" fill="#0F172A">Evaluator (ivf.evaluation)</text>
+  </g>
+  <g id="message_1">
+    <path d="M166 180H600" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <rect x="215.62" y="160" width="342.75" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="387" y="172" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">build features from data dated ≤ c_k (L1: trailing windows only)</text>
+    <polygon points="607,180 598,184.5 598,175.5" fill="#475569"/>
+    <circle cx="166" cy="180" r="8.5" fill="#334155"/>
+    <text x="166" y="183.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
+  </g>
+  <g id="note_1">
+    <rect x="620" y="196" width="704" height="28" rx="6" fill="#FEF9C3" stroke="#FDE68A" stroke-width="1"/>
+    <text x="632" y="214" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#713F12">Fold k. Expanding window from train_start. Cutoff c_k, origins t in [c_k, c_{k+1}), 63 sessions, same for every model.</text>
+  </g>
+  <g id="message_2">
+    <path d="M608 260H168" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="271.59" y="240" width="230.82" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="387" y="252" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">feature rows x_τ for every session τ ≤ c_k</text>
+    <path d="M176 255L167 260L176 265" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="608" cy="260" r="8.5" fill="#334155"/>
+    <text x="608" y="263.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
+  </g>
+  <g id="message_3">
+    <path d="M166 288H196Q202 288 202 294V304Q202 310 196 310H175" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <text x="214" y="301" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#334155">keep pairs with τ + h ≤ c_k (L2)</text>
+    <polygon points="168,310 177,305.5 177,314.5" fill="#475569"/>
+    <circle cx="180" cy="288" r="8.5" fill="#334155"/>
+    <text x="180" y="291.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
+  </g>
+  <g id="message_4">
+    <path d="M166 354H879" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <rect x="357.09" y="334" width="338.82" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="526.5" y="346" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">fit(rows used for gradient or OLS updates only) (L3: train only)</text>
+    <polygon points="886,354 877,358.5 877,349.5" fill="#475569"/>
+    <circle cx="166" cy="354" r="8.5" fill="#334155"/>
+    <text x="166" y="357.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
+  </g>
+  <g id="note_4">
+    <rect x="899" y="370" width="873" height="28" rx="6" fill="#FEF9C3" stroke="#FDE68A" stroke-width="1"/>
+    <text x="911" y="388" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#713F12">LSTM: the early-stopping block is the last 252 training origins whose targets ≤ c_k. An h-session purge separates it from the inner-train rows (L4).</text>
+  </g>
+  <g id="message_5">
+    <path d="M887 434H1313" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="935.93" y="414" width="330.13" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="1101" y="426" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">scaler moments, imputer values, clipping thresholds (frozen)</text>
+    <path d="M1305 439L1314 434L1305 429" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="887" cy="434" r="8.5" fill="#334155"/>
+    <text x="887" y="437.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
+  </g>
+  <g id="message_6">
+    <path d="M166 474H1307" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <rect x="633.83" y="454" width="213.34" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="740.5" y="466" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">fit(training pairs with target date ≤ c_k)</text>
+    <polygon points="1314,474 1305,478.5 1305,469.5" fill="#475569"/>
+    <circle cx="166" cy="474" r="8.5" fill="#334155"/>
+    <text x="166" y="477.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">6</text>
+  </g>
+  <g id="note_6">
+    <rect x="1327" y="490" width="795" height="28" rx="6" fill="#FEF9C3" stroke="#FDE68A" stroke-width="1"/>
+    <text x="1339" y="508" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#713F12">Parameters are frozen for the whole fold. AIC order, MLE parameters and calibration OLS were re-estimated at c_k from data ≤ c_k.</text>
+  </g>
+  <g id="message_7">
+    <path d="M1315 588H168" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="647.12" y="568" width="186.75" height="16" rx="3" fill="#F1F5F9"/>
+    <text x="740.5" y="580" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">fit row (converged, fallback none)</text>
+    <path d="M176 583L167 588L176 593" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="1315" cy="588" r="8.5" fill="#334155"/>
+    <text x="1315" y="591.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">7</text>
+  </g>
+  <g id="message_8">
+    <path d="M1315 658H168" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="509.59" y="638" width="461.83" height="16" rx="3" fill="#F1F5F9"/>
+    <text x="740.5" y="650" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">fit row (fallback previous_fold): reuse the previous fold's parameters, never drop rows</text>
+    <path d="M176 653L167 658L176 663" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="1315" cy="658" r="8.5" fill="#334155"/>
+    <text x="1315" y="661.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">8</text>
+  </g>
+  <g id="message_9">
+    <path d="M166 752H600" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <rect x="302.62" y="732" width="168.77" height="16" rx="3" fill="#F1F5F9"/>
+    <text x="387" y="744" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">features through the close of t</text>
+    <polygon points="607,752 598,756.5 598,747.5" fill="#475569"/>
+    <circle cx="166" cy="752" r="8.5" fill="#334155"/>
+    <text x="166" y="755.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">9</text>
+  </g>
+  <g id="message_10">
+    <path d="M608 792H1313" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="859.32" y="772" width="204.36" height="16" rx="3" fill="#F1F5F9"/>
+    <text x="961.5" y="784" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">x_t (data dated ≤ t, nothing from t+1)</text>
+    <path d="M1305 797L1314 792L1305 787" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="608" cy="792" r="8.5" fill="#334155"/>
+    <text x="608" y="795.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">10</text>
+  </g>
+  <g id="message_11">
+    <path d="M1315 820H1345Q1351 820 1351 826V836Q1351 842 1345 842H1324" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <text x="1363" y="833" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#334155">update state with data ≤ t (Kalman state, GARCH recursion, HAR regressors, LSTM input window)</text>
+    <polygon points="1317,842 1326,837.5 1326,846.5" fill="#475569"/>
+    <circle cx="1329" cy="820" r="8.5" fill="#334155"/>
+    <text x="1329" y="823.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">11</text>
+  </g>
+  <g id="message_12">
+    <path d="M1315 886H1981" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <rect x="1426.88" y="866" width="450.23" height="16" rx="3" fill="#F1F5F9"/>
+    <text x="1652" y="878" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">forecast(origin t, h in 1, 5, 21): yhat in vol points, v_hat, target_date = T at idx(t) + h</text>
+    <polygon points="1988,886 1979,890.5 1979,881.5" fill="#475569"/>
+    <circle cx="1315" cy="886" r="8.5" fill="#334155"/>
+    <text x="1315" y="889.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">12</text>
+  </g>
+  <g id="message_13">
+    <path d="M1989 934H2019Q2025 934 2025 940V950Q2025 956 2019 956H1998" fill="none" stroke="#475569" stroke-width="1.6"/>
+    <text x="2037" y="947" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#334155">error e = y - yhat in level space, QLIKE = v/v_hat - ln(v/v_hat) - 1 in variance space</text>
+    <polygon points="1991,956 2000,951.5 2000,960.5" fill="#475569"/>
+    <circle cx="2003" cy="934" r="8.5" fill="#334155"/>
+    <text x="2003" y="937.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">13</text>
+  </g>
+  <g id="note_13">
+    <rect x="2001" y="976" width="514" height="28" rx="6" fill="#FEF9C3" stroke="#FDE68A" stroke-width="1"/>
+    <text x="2013" y="994" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#713F12">Once the target date has passed, join the realised y(t+h) on (target_id, target_date).</text>
+  </g>
+  <g id="message_14">
+    <path d="M1989 1040H168" fill="none" stroke="#64748B" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="861.08" y="1020" width="432.84" height="16" rx="3" fill="#F8FAFC"/>
+    <text x="1077.5" y="1032" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#334155">loss rows keyed (model, target, origin, horizon): same origin set for every model</text>
+    <path d="M176 1035L167 1040L176 1045" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="1989" cy="1040" r="8.5" fill="#334155"/>
+    <text x="1989" y="1043.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">14</text>
+  </g>
+  <g id="note_14">
+    <rect x="178" y="1056" width="638" height="28" rx="6" fill="#FEF9C3" stroke="#FDE68A" stroke-width="1"/>
+    <text x="190" y="1074" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#713F12">Next fold: c_{k+1} = c_k + 63. Truncation test: a run on data ≤ t must reproduce the full run's forecast at t.</text>
+  </g>
+</svg>

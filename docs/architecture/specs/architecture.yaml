@@ -1,10 +1,20 @@
 # End-to-end system architecture for implied-vol-forecasting, milestones 0-6. Source of truth: docs/adr/0001-python-core-versioned-json-app.md.
-# Rendered by the shared diagram toolkit (tools/diagrams/) once it is vendored; until then architecture.mmd is hand-kept in sync.
+# Rendered by the vendored diagram toolkit (tools/diagrams/) into docs/architecture/out/; docs/architecture/architecture.mmd is the M0 hand-kept copy.
 #
 # type:  source (data we do not own) | external (code we do not own) | process (code that runs) | model (fitted forecaster)
-#        store (persistent table or file) | artifact (a committed or exported product) | ui (what the learner sees)
+#        store (persistent table or file) | output (a committed or exported product; called artifact before the kit's schema) | ui (what the learner sees)
+# Each node's sublabel was called note before the kit's schema.
 # ROOT:  $VOL_DATA_DIR/implied-vol-forecasting, with VOL_DATA_DIR defaulting to ~/data/vol-projects. Synthetic runs use the same layout under ROOT/synthetic/.
-# Drawn at module level. The stage that builds calendar, target_value and regime_label has no module name in ADR-0001 (D3 says "the pipeline stages"), so it is drawn inside ivf.features.
+# Drawn at module level. M1 named the stages ADR-0001 left open: the calendar is ivf.data.calendar, the gap policy and the data_end freeze are ivf.data.check,
+# features, target_value and regime_label are ivf.features.build, and ivf.data.process writes the processed tables and the local EDA report.
+# Amended M1, checked against src/ivf/ and tools/export_app_data.py: the new modules are ivf.protocol, ivf.eda, ivf.data.{raw,fetch,build_interim,calendar,check,process,synthetic,cli}
+# and ivf.features.build. Indigo (control) edges are calls: the command line dispatching to a stage, or a stage calling a pure module.
+# Amended M1, review A, checked against src/ivf/repo_guard.py, src/ivf/data/{cli,fetch,build_interim,synthetic,check,process}.py, tools/export_app_data.py and tools/licensing/scan_real_rows.py:
+# ivf.repo_guard is the licensing guard shared by the exporter and every pipeline stage, tools/licensing/scan_real_rows.py is the local scan for real data copied into the repo,
+# and the EDA sees only sessions before holdout_start (ivf.data.process.eda_inputs; the report's samples are pre_holdout, burn_in and dev).
+# Amended M1, review B, checked against src/ivf/repo_guard.py, src/ivf/protocol.py, src/ivf/data/{raw,check,process}.py and tools/export_app_data.py:
+# every file is written through ivf.repo_guard.write_file, which checks the folder at write time; the data-root check also covers raw/, interim/, processed/, eda/ and app-data/;
+# check --freeze-data-end also writes a freeze record (configs/<protocol>.freeze.json) that check, eda and the notebook compare with the protocol.
 kind: flow
 title: implied-vol-forecasting system architecture (M0-M6)
 direction: TB
@@ -18,68 +28,111 @@ lanes:
 
 nodes:
   # ---------------- External ----------------
-  - {id: cboe, label: "CBOE index CSVs", lane: external, type: source, note: "cdn.cboe.com .../daily_prices/{SYM}_History.csv, 307 to cdn-api.cboe.com"}
-  - {id: fred, label: "FRED *CLS series", lane: external, type: source, note: "fallback: only fills dates missing from Cboe"}
-  - {id: yfinance, label: yfinance, lane: external, type: source, note: "^GSPC and other underlyings, VXX, SVXY; auto_adjust=False"}
-  - {id: sharpe, label: "sharpe-observatory scripts/metrics.py", lane: external, type: external, note: "PSR, expected max SR, DSR (MIT, reused)"}
+  - {id: cboe, label: "CBOE index CSVs", lane: external, type: source, sublabel: "cdn.cboe.com .../daily_prices/{SYM}_History.csv, 307 to cdn-api.cboe.com"}
+  - {id: fred, label: "FRED *CLS series", lane: external, type: source, sublabel: "fallback: only fills dates missing from Cboe"}
+  - {id: yfinance, label: yfinance, lane: external, type: source, sublabel: "^GSPC and other underlyings, VXX, SVXY; auto_adjust=False"}
+  - {id: sharpe, label: "sharpe-observatory scripts/metrics.py", lane: external, type: external, sublabel: "PSR, expected max SR, DSR (MIT, reused)"}
 
   # ---------------- Python core ----------------
-  - {id: fetch, label: ivf.data.fetch, lane: core, type: process, note: "temp file, SHA-256, rename to {sha256}.csv if absent; skip within --max-age 1 day"}
-  - {id: synthetic, label: ivf.data.synthetic, lane: core, type: process, note: "seeded two-factor generator; hand-set parameters, not fitted"}
-  - {id: build_interim, label: ivf.data.build_interim, lane: core, type: process, note: "typed, deduplicated, one table per source kind; latest snapshot unless --snapshot"}
-  - {id: verify, label: ivf data verify, lane: core, type: process, note: "re-hash every raw file; fail on any mismatch"}
-  - {id: features, label: ivf.features, lane: core, type: process, note: "trailing windows only (L1); also calendar, targets, regimes (L5)"}
-  - {id: splits, label: ivf.evaluation.splits, lane: core, type: process, note: "expanding window, 63-session folds, shared by every model"}
-  - {id: models, label: ivf.models, lane: core, type: model, note: "rw, hist_mean, ARIMA, HAR, GARCH/GJR/EGARCH, ARIMA-GARCH, LSTM; params frozen within a fold"}
-  - {id: evaluation, label: ivf.evaluation, lane: core, type: process, note: "RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"}
-  - {id: backtest, label: ivf.backtest, lane: core, type: process, note: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"}
-  - {id: ivf_reports, label: ivf.reports, lane: core, type: process, note: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
+  - {id: cli, label: ivf.data.cli, lane: core, type: process, sublabel: "python -m ivf.data fetch | build-interim | verify | check | eda; --synthetic switches the root and the protocol"}
+  - {id: protocol_mod, label: ivf.protocol, lane: core, type: process, sublabel: "strict readers of every config; protocol_hash = SHA-256 of the canonical JSON; freeze_data_end and its freeze record"}
+  - {id: repo_guard, label: ivf.repo_guard, lane: core, type: process, sublabel: "licensing guard (ADR 0001 D2): refuses a data root (and its raw, interim, processed, eda, app-data folders) or an export folder inside a git checkout, by device and inode of every ancestor and by any .git entry; write_file, the one writer, checks each folder again at write time; exit 3"}
+  - {id: raw_store, label: ivf.data.raw, lane: core, type: process, sublabel: "store_snapshot: temp file, SHA-256, os.link to {sha256}.csv if absent; append-only provenance log"}
+  - {id: fetch, label: ivf.data.fetch, lane: core, type: process, sublabel: "network_get is the only network call; skip within --max-age 1 day; yfinance bytes fixed by yfinance_csv_bytes"}
+  - {id: synthetic, label: ivf.data.synthetic, lane: core, type: process, sublabel: "seeded generator with known truth: AR(1) ln VIX, GARCH(1,1) returns; hand-set parameters, not fitted"}
+  - {id: build_interim, label: ivf.data.build_interim, lane: core, type: process, sublabel: "strict parse; typed, deduplicated, one table per source kind; latest snapshot unless --snapshot"}
+  - {id: verify, label: ivf data verify, lane: core, type: process, sublabel: "re-hash every raw file and cross-check the log; fail on any mismatch"}
+  - {id: check_mod, label: ivf.data.check, lane: core, type: process, sublabel: "data_check, gap policy G1-G5, settled data_end; --freeze-data-end writes it once, with a freeze record; check fails if the protocol no longer matches the record"}
+  - {id: calendar_mod, label: ivf.data.calendar, lane: core, type: process, sublabel: "master calendar from XNYS sessions, from dates alone; first fold cutoff"}
+  - {id: features, label: ivf.features.build, lane: core, type: process, sublabel: "trailing windows only (L1): feature, target_value, regime_label; is_backwardation, term_structure_panel (L5)"}
+  - {id: eda_mod, label: ivf.eda, lane: core, type: process, sublabel: "pure statistics: ACF, Ljung-Box, AR(1) half-life, ADF/KPSS, implied-realised gap, vol-of-vol, term structure"}
+  - {id: process_mod, label: ivf.data.process, lane: core, type: process, sublabel: "run_id; refuses a failed data_check; writes the processed tables and the local EDA report"}
+  - {id: splits, label: ivf.evaluation.splits, lane: core, type: process, sublabel: "expanding window, 63-session folds, shared by every model"}
+  - {id: models, label: ivf.models, lane: core, type: model, sublabel: "rw, hist_mean, ARIMA, HAR, GARCH/GJR/EGARCH, ARIMA-GARCH, LSTM; params frozen within a fold"}
+  - {id: evaluation, label: ivf.evaluation, lane: core, type: process, sublabel: "RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"}
+  - {id: backtest, label: ivf.backtest, lane: core, type: process, sublabel: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"}
+  - {id: ivf_reports, label: ivf.reports, lane: core, type: process, sublabel: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
 
   # ---------------- Storage ----------------
-  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, note: "protocol, models, strategies, iv_indices, instruments; committed. Every stage reads protocol.yaml; ivf.models reads models.yaml; ivf.backtest reads strategies.yaml"}
-  - {id: raw, label: "ROOT/raw/{source}/{symbol}/{sha256}.csv", lane: storage, type: store, note: "bytes as downloaded; never committed"}
-  - {id: prov, label: "ROOT/raw/provenance.jsonl", lane: storage, type: store, note: "append-only, one line per fetch, written even if unchanged"}
-  - {id: synth_raw, label: "ROOT/synthetic/raw/", lane: storage, type: store, note: "Cboe-shaped CSVs and Yahoo-shaped tables; never committed"}
-  - {id: interim, label: "ROOT/interim/{table}.parquet", lane: storage, type: store, note: "iv_index_daily, price_daily; every row keeps raw_sha256"}
-  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, note: "calendar, feature, target_value, regime_label, fold, eda_stat, data_check; runs.parquet beside it"}
-  - {id: forecasts, label: "forecast and fit tables", lane: storage, type: store, note: "under processed/run_id=<id>/; key (run_id, model_id, target_id, origin_date, horizon)"}
-  - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, note: "under processed/run_id=<id>/"}
-  - {id: reports_dir, label: "reports/*.agg.csv", lane: storage, type: artifact, note: "committed: publication set P only (unitless, rounded), source_dirty = false"}
-  - {id: schemas, label: "schemas/app-data/", lane: storage, type: store, note: "JSON Schemas: the single source of truth for the contract"}
-  - {id: synth_json, label: "app/public/data/synthetic/*.json", lane: storage, type: artifact, note: "committed fixture; data_mode synthetic"}
-  - {id: real_json, label: "ROOT/app-data/real/*.json", lane: storage, type: artifact, note: "never in the repo tree; the Vite dev server serves it in dev only"}
+  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; models and strategies arrive with the milestones that use them. Committed"}
+  - {id: raw, label: "ROOT/raw/{source}/{symbol}/{sha256}.csv", lane: storage, type: store, sublabel: "bytes as downloaded; never committed"}
+  - {id: prov, label: "ROOT/raw/provenance.jsonl", lane: storage, type: store, sublabel: "append-only, one line per fetch, written even if unchanged"}
+  - {id: synth_raw, label: "ROOT/synthetic/raw/", lane: storage, type: store, sublabel: "Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed"}
+  - {id: interim, label: "ROOT/interim/{table}.parquet", lane: storage, type: store, sublabel: "iv_index_daily, price_daily; every row keeps raw_sha256"}
+  - {id: build_report, label: "ROOT/interim/build_report.json", lane: storage, type: store, sublabel: "per raw file: raw_sha256, fetched_at, rows, duplicates dropped; local, never committed"}
+  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; fold from M2; runs.parquet beside it"}
+  - {id: eda_dir, label: "ROOT/eda/<run_id>/eda_report.json", lane: storage, type: store, sublabel: "every EDA number, for reading locally; never committed (ADR 0001 D2)"}
+  - {id: forecasts, label: "forecast and fit tables", lane: storage, type: store, sublabel: "under processed/run_id=<id>/; key (run_id, model_id, target_id, origin_date, horizon)"}
+  - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, sublabel: "under processed/run_id=<id>/"}
+  - {id: reports_dir, label: "reports/*.agg.csv", lane: storage, type: output, sublabel: "committed: publication set P only (unitless, rounded), source_dirty = false"}
+  - {id: schemas, label: "schemas/app-data/", lane: storage, type: store, sublabel: "JSON Schemas: the single source of truth for the contract"}
+  - {id: synth_json, label: "app/public/data/synthetic/*.json", lane: storage, type: output, sublabel: "committed fixture; data_mode synthetic"}
+  - {id: real_json, label: "ROOT/app-data/real/*.json", lane: storage, type: output, sublabel: "never in the repo tree; the Vite dev server serves it in dev only"}
 
   # ---------------- Tooling ----------------
-  - {id: export, label: "tools/export_app_data.py", lane: tooling, type: process, note: "reshape, round, validate, write; computes no new number (D1). Ribbon levels come from interim iv_index_daily"}
-  - {id: export_check, label: "export_app_data.py --mode synthetic --check", lane: tooling, type: process, note: "regenerate in a temp dir and compare with the committed fixture"}
-  - {id: build_nb, label: "tools/build_notebooks.py", lane: tooling, type: process, note: "--check is the notebook sync test"}
-  - {id: notebooks, label: "notebooks/", lane: tooling, type: artifact, note: "generated from src/ivf; never hand-edited"}
+  - {id: export, label: "tools/export_app_data.py", lane: tooling, type: process, sublabel: "reshape, round, validate, write; computes no new number (D1). M1 real: ribbon from interim iv_index_daily, first session with all five tenors to data_end"}
+  - {id: export_check, label: "export_app_data.py --mode synthetic --check", lane: tooling, type: process, sublabel: "regenerate in a temp dir and compare with the committed fixture"}
+  - {id: scan_real, label: "tools/licensing/scan_real_rows.py", lane: tooling, type: process, sublabel: "local only, not a test: flags a repo line that holds a raw row, a dated raw value (any date spelling), a run of 3 or more consecutive raw values, a raw file size or a raw SHA-256; prints file:line and a count, never the text; exit 0 clean, 1 flagged, 2 no raw data"}
+  - {id: build_nb, label: "tools/build_notebooks.py", lane: tooling, type: process, sublabel: "--check is the notebook sync test"}
+  - {id: notebooks, label: "notebooks/", lane: tooling, type: output, sublabel: "generated from src/ivf; never hand-edited"}
 
   # ---------------- App ----------------
-  - {id: loader, label: "app/src/lib loaders", lane: app, type: process, note: "check envelope and invariants, show the data_mode badge; compute nothing"}
-  - {id: page_ribbon, label: "Term-structure ribbon (3D)", lane: app, type: ui, note: "term_structure.json, series"}
-  - {id: page_race, label: "Model race", lane: app, type: ui, note: "model_race.json, series"}
-  - {id: page_surface, label: "Error surface (3D)", lane: app, type: ui, note: "error_surface.json, aggregate"}
-  - {id: page_equity, label: "Equity curve", lane: app, type: ui, note: "equity_curves.json, series"}
-  - {id: dist_guard, label: "npm run verify", lane: app, type: process, note: "fails if any file in dist/ has data_mode real"}
+  - {id: loader, label: "app/src/lib loaders", lane: app, type: process, sublabel: "check envelope and invariants, show the data_mode badge; compute nothing"}
+  - {id: page_ribbon, label: "Term-structure ribbon (3D)", lane: app, type: ui, sublabel: "term_structure.json, series"}
+  - {id: page_race, label: "Model race", lane: app, type: ui, sublabel: "model_race.json, series"}
+  - {id: page_surface, label: "Error surface (3D)", lane: app, type: ui, sublabel: "error_surface.json, aggregate"}
+  - {id: page_equity, label: "Equity curve", lane: app, type: ui, sublabel: "equity_curves.json, series"}
+  - {id: dist_guard, label: "npm run verify", lane: app, type: process, sublabel: "fails if any file in dist/ has data_mode real"}
 
 edges:
+  # configs and the command line
+  - {from: configs, to: protocol_mod, label: "strict read of every config"}
+  # the licensing guard: the command line runs it first for every command, the library entry points run it again, and the exporter shares it in real mode
+  - {from: cli, to: repo_guard, label: "every command, first: data root and its subfolders", style: control}
+  - {from: fetch, to: repo_guard, label: "fetch_one: data root; write_file per snapshot and log line", style: control}
+  - {from: synthetic, to: repo_guard, label: "write_synthetic_raw: data root; write_file per file", style: control}
+  - {from: build_interim, to: repo_guard, label: "build_interim: data root; write_file per table", style: control}
+  - {from: check_mod, to: repo_guard, label: "run_check: data root", style: control}
+  - {from: process_mod, to: repo_guard, label: "run_eda: data root; write_file per table and the report", style: control}
+  - {from: export, to: repo_guard, label: "real mode: output folder; write_file per file", style: control}
+  - {from: cli, to: fetch, label: "fetch", style: control}
+  - {from: cli, to: synthetic, label: "fetch --synthetic", style: control}
+  - {from: cli, to: build_interim, label: "build-interim", style: control}
+  - {from: cli, to: verify, label: "verify", style: control}
+  - {from: cli, to: check_mod, label: "check", style: control}
+  - {from: cli, to: process_mod, label: "eda", style: control}
   # sources to the fetcher
   - {from: cboe, to: fetch, label: "HTTP GET, follow 307"}
   - {from: fred, to: fetch, label: "fallback series"}
   - {from: yfinance, to: fetch, label: "DataFrame to CSV, hashed"}
-  - {from: configs, to: fetch, label: "URLs, tickers"}
-  # raw layer
-  - {from: fetch, to: raw, label: "{sha256}.csv if absent"}
-  - {from: fetch, to: prov, label: "append one line"}
+  - {from: protocol_mod, to: fetch, label: "iv_indices, instruments: URLs, tickers"}
+  # raw layer (fetch and synthetic both store through ivf.data.raw)
+  - {from: fetch, to: raw_store, label: "bytes and one record per fetch"}
+  - {from: synthetic, to: raw_store, label: "same store, source synthetic"}
+  - {from: raw_store, to: raw, label: "{sha256}.csv if absent"}
+  - {from: raw_store, to: prov, label: "append one line"}
+  - {from: raw_store, to: synth_raw, label: "--synthetic: under ROOT/synthetic/"}
   - {from: raw, to: verify, label: "re-hash"}
-  - {from: synthetic, to: synth_raw, label: "seeded CSVs"}
-  # interim and processed
+  # interim
   - {from: raw, to: build_interim, label: "latest snapshot"}
   - {from: synth_raw, to: build_interim, label: "same loaders"}
   - {from: build_interim, to: interim, label: "typed parquet"}
-  - {from: interim, to: features, label: "iv_index_daily, price_daily"}
-  - {from: features, to: processed, label: "calendar, feature, target_value, regime_label, run"}
+  - {from: build_interim, to: build_report, label: "per-file report"}
+  # check, calendar, freeze
+  - {from: interim, to: check_mod, label: "iv_index_daily, price_daily"}
+  - {from: build_report, to: check_mod, label: "fetch times, duplicate counts"}
+  - {from: protocol_mod, to: check_mod, label: "train_start, dev_start, holdout_start, fold_len, data_end"}
+  - {from: check_mod, to: calendar_mod, label: "xnys_sessions, first_cutoff", style: control}
+  - {from: check_mod, to: configs, label: "--freeze-data-end: write data_end once, and its freeze record"}
+  # processed and the local EDA report
+  - {from: interim, to: process_mod, label: "iv_index_daily, price_daily"}
+  - {from: protocol_mod, to: process_mod, label: "protocol, protocol_hash"}
+  - {from: process_mod, to: check_mod, label: "data_check; refuse on a violation", style: control}
+  - {from: process_mod, to: calendar_mod, label: "master_calendar", style: control}
+  - {from: process_mod, to: features, label: "build_features, build_target_values, build_regime_labels", style: control}
+  - {from: process_mod, to: eda_mod, label: "EDA statistics on sessions and rows before holdout_start only (eda_inputs); a later one is refused", style: control}
+  - {from: process_mod, to: processed, label: "run_input, calendar, data_check, feature, target_value, regime_label, eda_stat, runs"}
+  - {from: process_mod, to: eda_dir, label: "eda_report.json"}
   # walk-forward
   - {from: configs, to: splits, label: "protocol: dev_start, holdout_start, fold_len"}
   - {from: processed, to: splits, label: "calendar t_idx"}
@@ -98,12 +151,18 @@ edges:
   - {from: results, to: ivf_reports, label: "aggregates"}
   - {from: ivf_reports, to: reports_dir, label: "set P only, one release"}
   # export to the app JSON contract
+  - {from: interim, to: export, label: "M1 real: iv_index_daily for the ribbon"}
+  - {from: build_report, to: export, label: "M1 real: raw hashes for run_id"}
+  - {from: configs, to: export, label: "M1 real: frozen protocol.yaml (data_end)"}
+  - {from: features, to: export, label: "M1 real: term_structure_panel (calls is_backwardation)", style: control}
   - {from: results, to: export, label: "metrics, DM, MZ, equity"}
   - {from: forecasts, to: export, label: "yhat for the race"}
   - {from: processed, to: export, label: "target_value, regime_label, run"}
   - {from: schemas, to: export, label: "validate before writing"}
   - {from: export, to: synth_json, label: "synthetic: committed"}
   - {from: export, to: real_json, label: "real: outside the repo"}
+  - {from: raw, to: scan_real, label: "real snapshots only, compared with every file git would commit"}
+  - {from: prov, to: scan_real, label: "latest snapshot per symbol: sizes"}
   - {from: export, to: export_check, label: "temp-dir rerun"}
   - {from: synth_json, to: export_check, label: "compare with fixture"}
   # notebooks

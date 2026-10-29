@@ -1,11 +1,22 @@
 # ERD spec for implied-vol-forecasting, milestones 0-6. Source of truth: docs/architecture/data-model.md.
-# Rendered by the shared diagram toolkit (tools/diagrams/) once it is vendored (M1). Until then erd.mmd is hand-synced
-# with this file: edit both. (amended M0, review B)
+# Rendered by the vendored diagram toolkit (tools/diagrams/) into docs/architecture/out/; docs/architecture/erd.mmd is the M0 hand-kept copy.
+# (amended M0, review B)
+# (amended M1, checked against src/ivf/data/*.py, src/ivf/features/build.py, src/ivf/eda.py, src/ivf/protocol.py, configs/ and tools/export_app_data.py:
+#   feature gains three tenor ratios; build_report and eda_report are new local json entities; protocol.lstm_members and protocol.cost_bps are marked as later
+#   milestones; the ribbon's backwardation flag no longer points at regime_label. Comments below say where a value list cannot be drawn.)
 #
-# store:       yaml (committed config) | raw_csv | jsonl | parquet | json (app contract, store: json)
-# cardinality: "<from>:<to>" multiplicities, UML-style: the left side says how many `from` rows relate to one `to` row,
-#              the right side how many `to` rows relate to one `from` row. e.g. raw_file -> raw_fetch "1:1..*".
-# Every processed parquet table also has run_id -> run.run_id; only the main run edges are drawn.
+# Written in the kit schema (SCHEMA.md in https://github.com/rajib2k5/vol-diagram-kit); what changed from the M0 spec:
+#   store:       the kit's entity has no `store` key, so each entity keeps it as a `# store: ...` comment line.
+#                yaml (committed config) | raw_csv | jsonl | parquet | json (app contract, store: json)
+#   relations:   `from` is now the child column that holds the key and `to` the parent column it points at (the M0 spec had parent -> child entities).
+#                `cardinality` is how many child rows per parent row, which is the right-hand side of the old "<from>:<to>" pair.
+#                The kit derives the parent end itself: "exactly one" for a NOT NULL child column, "zero or one" for a nullable one.
+#                A `# was <parent> -> <child> "L:R"` comment records the old pair wherever the left side L cannot be drawn that way.
+#   fk:          the kit draws every column with `fk:` as a relation (an unnamed 0..* one when no entry below names the column),
+#                so the run_id keys and the other composite-key columns that the M0 spec declared but did not draw are edges now.
+#   dotted names: a column name must be an identifier, so `panels.x` became `panels_x` and `surfaces.x` became `surfaces_x`; a comment keeps the old name.
+#   lineage relations (the json_* files fed by tables, forecast -> metric, price_daily -> backtest_daily) have no foreign key, but the kit draws a
+#                relation between two columns, so each names the column the data comes from. That pairing is only where the line attaches.
 kind: erd
 title: implied-vol-forecasting data model (M0-M6)
 
@@ -13,7 +24,7 @@ entities:
   # ---------------- config (committed YAML) ----------------
   - id: protocol
     label: protocol (configs/protocol*.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: protocol_hash, type: str, pk: true}
       - {name: train_start, type: date}
@@ -25,13 +36,13 @@ entities:
       - {name: min_cell_n, type: i16}
       - {name: vix_regime_edges, type: "f64[]"}
       - {name: seed, type: i64}
-      - {name: lstm_members, type: i16}
-      - {name: cost_bps, type: f64}
+      - {name: lstm_members, type: i16_from_M4}   # amended M1: not a key of configs/protocol.yaml yet (ivf.protocol rejects it); added in M4, and adding it changes protocol_hash
+      - {name: cost_bps, type: f64_from_M6}   # amended M1: not a key of configs/protocol.yaml yet; added in M6, and adding it changes protocol_hash
       - {name: race_context_sessions, type: i16}
       - {name: holdout_looks, type: i16}
   - id: target_def
     label: target_def (configs/protocol.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: target_id, type: str, pk: true}
       - {name: label, type: str}
@@ -40,7 +51,7 @@ entities:
       - {name: definition, type: str}
   - id: model_def
     label: model_def (configs/models.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: model_id, type: str, pk: true}
       - {name: label, type: str}
@@ -52,7 +63,7 @@ entities:
       - {name: retired, type: bool}
   - id: strategy_def
     label: strategy_def (configs/strategies.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: strategy_id, type: str, pk: true}
       - {name: label, type: str}
@@ -65,25 +76,25 @@ entities:
       - {name: retired, type: bool}
   - id: iv_index_meta
     label: iv_index_meta (configs/iv_indices.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: symbol, type: str, pk: true}
       - {name: name, type: str}
       - {name: tenor_days, type: i16, nullable: true}
       - {name: underlying, type: str, fk: instrument_meta.ticker, nullable: true}
-      - {name: group, type: str}
+      - {name: group, type: str}   # amended M1: one of term_structure, equity_index, commodity, emerging, single_stock, or vol_of_vol (VVIX: underlying and tenor_days are null). A value list cannot be drawn
       - {name: cboe_url, type: str}
       - {name: fred_series, type: str, nullable: true}
   - id: instrument_meta
     label: instrument_meta (configs/instruments.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: ticker, type: str, pk: true}
       - {name: role, type: str}
       - {name: name, type: str}
   - id: tradable_segment
     label: tradable_segment (configs/instruments.yaml)
-    store: yaml
+    # store: yaml
     columns:
       - {name: ticker, type: str, pk: true, fk: instrument_meta.ticker}
       - {name: valid_from, type: date, pk: true}
@@ -95,7 +106,7 @@ entities:
   # ---------------- raw (never committed) ----------------
   - id: raw_file
     label: raw_file (ROOT/raw/{source}/{symbol}/{sha256}.csv)
-    store: raw_csv
+    # store: raw_csv
     columns:
       - {name: sha256, type: str, pk: true}
       - {name: source, type: str}
@@ -104,7 +115,7 @@ entities:
       - {name: bytes, type: i64}
   - id: raw_fetch
     label: raw_fetch (ROOT/raw/provenance.jsonl)
-    store: jsonl
+    # store: jsonl
     columns:
       - {name: fetch_id, type: str, pk: true}
       - {name: sha256, type: str, fk: raw_file.sha256}
@@ -122,7 +133,7 @@ entities:
   # ---------------- interim (never committed) ----------------
   - id: iv_index_daily
     label: iv_index_daily (ROOT/interim)
-    store: parquet
+    # store: parquet
     columns:
       - {name: symbol, type: str, pk: true, fk: iv_index_meta.symbol}
       - {name: date, type: date, pk: true}
@@ -134,7 +145,7 @@ entities:
       - {name: raw_sha256, type: str, fk: raw_file.sha256}
   - id: price_daily
     label: price_daily (ROOT/interim)
-    store: parquet
+    # store: parquet
     columns:
       - {name: ticker, type: str, pk: true, fk: instrument_meta.ticker}
       - {name: date, type: date, pk: true}
@@ -145,11 +156,28 @@ entities:
       - {name: adj_close, type: f64}
       - {name: volume, type: i64, nullable: true}
       - {name: raw_sha256, type: str, fk: raw_file.sha256}
+  - id: build_report
+    label: build_report.json (ROOT/interim; local)
+    # store: json
+    # amended M1: written by ivf.data.build_interim beside the two parquet tables, read by ivf.data.check (fetch times, duplicate counts) and by the real export (raw hashes for run_id).
+    # One element of files per raw file read. The dotted names are flattened like model_race's panels.
+    columns:
+      - {name: files, type: "object[]"}
+      - {name: files_table, type: str}   # was files.table: iv_index_daily or price_daily
+      - {name: files_source, type: str}   # was files.source
+      - {name: files_symbol, type: str}   # was files.symbol
+      - {name: files_raw_sha256, type: str, fk: raw_file.sha256}   # was files.raw_sha256
+      - {name: files_fetched_at, type: str}   # was files.fetched_at (RFC 3339 UTC)
+      - {name: files_rows, type: int}   # was files.rows
+      - {name: files_first_date, type: isoDate}   # was files.first_date
+      - {name: files_last_date, type: isoDate}   # was files.last_date
+      - {name: files_duplicates_dropped, type: int}   # was files.duplicates_dropped
+      - {name: files_duplicate_dates, type: "isoDate[]"}   # was files.duplicate_dates
 
   # ---------------- processed (never committed; run_id-partitioned) ----------------
   - id: run
     label: run (ROOT/processed/runs.parquet; provenance stays local)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true}
       - {name: protocol_hash, type: str, fk: protocol.protocol_hash}
@@ -163,7 +191,7 @@ entities:
       - {name: platform, type: str}
   - id: run_input
     label: run_input
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: raw_sha256, type: str, pk: true, fk: raw_file.sha256}
@@ -171,7 +199,7 @@ entities:
       - {name: symbol, type: str}
   - id: calendar
     label: calendar (master sessions)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: date, type: date, pk: true}
@@ -180,7 +208,7 @@ entities:
       - {name: fold_id, type: i32, nullable: true}
   - id: feature
     label: feature
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: calendar.run_id}
       - {name: date, type: date, pk: true, fk: calendar.date}
@@ -190,11 +218,14 @@ entities:
       - {name: r_spx, type: f64, nullable: true}
       - {name: rv21_back, type: f64, nullable: true}
       - {name: vov21, type: f64, nullable: true}
+      - {name: vix9d_vix, type: f64, nullable: true}   # amended M1: VIX9D / VIX
       - {name: vix_vix3m, type: f64, nullable: true}
+      - {name: vix3m_vix6m, type: f64, nullable: true}   # amended M1: VIX3M / VIX6M
+      - {name: vix6m_vix1y, type: f64, nullable: true}   # amended M1: VIX6M / VIX1Y; each ratio is the shorter tenor over the longer, null where either has no close
       - {name: iv_rv_spread, type: f64, nullable: true}
   - id: target_value
     label: target_value
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: calendar.run_id}
       - {name: target_id, type: str, pk: true, fk: target_def.target_id}
@@ -203,7 +234,7 @@ entities:
       - {name: v, type: f64}
   - id: regime_label
     label: regime_label
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: calendar.run_id}
       - {name: date, type: date, pk: true, fk: calendar.date}
@@ -212,7 +243,7 @@ entities:
       - {name: driver, type: f64}
   - id: eda_stat
     label: eda_stat (-> reports/eda_stats.csv)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: symbol, type: str, pk: true, fk: iv_index_meta.symbol}
@@ -220,9 +251,31 @@ entities:
       - {name: sample, type: str, pk: true}
       - {name: value, type: f64}
       - {name: n, type: i32}
+  - id: eda_report
+    label: eda_report.json (ROOT/eda/{run_id}; local)
+    # store: json
+    # amended M1: written by ivf.data.process beside the processed tables, under ROOT/eda/ and not under processed/. Every EDA number; on real data it is never committed (ADR 0001 D2).
+    columns:
+      - {name: run_id, type: str, fk: run.run_id}
+      - {name: data_mode, type: str}
+      - {name: data_end, type: isoDate}
+      # amended M1, review A: `sample` holds first and last (the sessions used), holdout_start, samples (session counts for pre_holdout, burn_in and dev) and a note.
+      # Every number below is computed on sessions before holdout_start; there is no holdout sample.
+      - {name: sample, type: object}
+      - {name: clustering, type: object}
+      - {name: persistence, type: object}
+      - {name: half_life, type: object}
+      - {name: unit_root, type: object}
+      - {name: iv_rv_spread, type: object}
+      - {name: term_structure, type: object}
+      # amended M1, review B: vol_of_vol holds the E6 rho, its block-bootstrap p-value (e6_p_bootstrap), the paths behind it (e6_n_boot)
+      # and the circular-block length (e6_block); the half_life intervals map a phi end <= 0 to 0, not null.
+      - {name: vol_of_vol, type: object}
   - id: data_check
     label: data_check (-> reports/data_checks.csv)
-    store: parquet
+    # store: parquet
+    # amended M1: ivf.data.check writes these check_id values: missing_in_cboe, missing_in_yf, not_a_session, not_settled_at_fetch, duplicate_date, core_gap, train_start_is_first_vix.
+    # (nonpositive_close and fred_filled are not written in M1.) A value list cannot be drawn.
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: check_id, type: str, pk: true}
@@ -231,7 +284,7 @@ entities:
       - {name: detail, type: str}
   - id: fold
     label: fold (63-session walk-forward block)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: fold_id, type: i32, pk: true}
@@ -241,7 +294,7 @@ entities:
       - {name: n_sessions, type: i16}
   - id: fit
     label: fit
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: fold.run_id}
       - {name: model_id, type: str, pk: true, fk: model_def.model_id}
@@ -263,7 +316,7 @@ entities:
       - {name: epochs_run, type: i16, nullable: true}
   - id: forecast
     label: forecast
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: fold.run_id}
       - {name: model_id, type: str, pk: true, fk: model_def.model_id}
@@ -280,7 +333,7 @@ entities:
       - {name: n_members, type: i16}
   - id: forecast_member
     label: forecast_member (LSTM seeds)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: forecast.run_id}
       - {name: model_id, type: str, pk: true, fk: forecast.model_id}
@@ -293,7 +346,7 @@ entities:
       - {name: v_hat, type: f64}
   - id: metric
     label: metric (-> reports/metrics.csv)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: model_id, type: str, pk: true, fk: model_def.model_id}
@@ -311,7 +364,7 @@ entities:
       - {name: qlike, type: f64, nullable: true}
   - id: dm_test
     label: dm_test (-> reports/dm_tests.csv)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: target_id, type: str, pk: true, fk: target_def.target_id}
@@ -329,7 +382,7 @@ entities:
       - {name: nw_lags, type: i16}
   - id: mz_regression
     label: mz_regression (-> reports/mz_regressions.csv)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: model_id, type: str, pk: true, fk: model_def.model_id}
@@ -348,7 +401,7 @@ entities:
       - {name: nw_lags, type: i16}
   - id: backtest_daily
     label: backtest_daily
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: calendar.run_id}
       - {name: strategy_id, type: str, pk: true, fk: strategy_def.strategy_id}
@@ -365,7 +418,7 @@ entities:
       - {name: turnover, type: f64}
   - id: strategy_summary
     label: strategy_summary (-> reports/strategy_summary.csv)
-    store: parquet
+    # store: parquet
     columns:
       - {name: run_id, type: str, pk: true, fk: run.run_id}
       - {name: strategy_id, type: str, pk: true, fk: strategy_def.strategy_id}
@@ -388,7 +441,7 @@ entities:
   # ---------------- app JSON contract (store: json) ----------------
   - id: json_manifest
     label: manifest.json
-    store: json
+    # store: json
     columns:
       - {name: schema_version, type: str}
       - {name: generated_at, type: str}
@@ -404,7 +457,8 @@ entities:
       - {name: targets, type: "object[]"}
   - id: json_term_structure
     label: term_structure.json (series)
-    store: json
+    # store: json
+    # amended M1: dates run from the first session on which all five tenors have a close to data_end; a tenor with a gap inside that span is null on that session.
     columns:
       - {name: dates, type: "isoDate[]"}
       - {name: tenors, type: "object[]"}
@@ -413,35 +467,35 @@ entities:
       - {name: backwardation, type: "bool[]", nullable: true}
   - id: json_model_race
     label: model_race.json (series)
-    store: json
+    # store: json
     columns:
       - {name: calendar, type: "isoDate[]"}
       - {name: holdout_start_idx, type: int}
       - {name: panels, type: "object[]"}
-      - {name: panels.target_id, type: str, fk: target_def.target_id}
-      - {name: panels.horizon, type: int}
-      - {name: panels.origin_idx0, type: int}
-      - {name: panels.n, type: int}
-      - {name: panels.actual, type: "number[]", nullable: true}
-      - {name: panels.series, type: "object[]"}
-      - {name: panels.mz, type: "object[]"}
+      - {name: panels_target_id, type: str, fk: target_def.target_id}   # was panels.target_id
+      - {name: panels_horizon, type: int}   # was panels.horizon
+      - {name: panels_origin_idx0, type: int}   # was panels.origin_idx0
+      - {name: panels_n, type: int}   # was panels.n
+      - {name: panels_actual, type: "number[]", nullable: true}   # was panels.actual
+      - {name: panels_series, type: "object[]"}   # was panels.series
+      - {name: panels_mz, type: "object[]"}   # was panels.mz
   - id: json_error_surface
     label: error_surface.json (aggregate)
-    store: json
+    # store: json
     columns:
       - {name: periods, type: "str[]"}
       - {name: regimes, type: "object[]"}
       - {name: surfaces, type: "object[]"}
-      - {name: surfaces.target_id, type: str, fk: target_def.target_id}
-      - {name: surfaces.benchmark_model_id, type: str, fk: model_def.model_id}   # amended M0, review B: was missing
-      - {name: surfaces.models, type: "str[]"}
-      - {name: surfaces.horizons, type: "int[]"}
-      - {name: surfaces.values, type: object}   # required object of metric cubes (cells inside may be null); amended M0, review D: not nullable, as in the schema
-      - {name: surfaces.n, type: cube}
-      - {name: surfaces.dm_p_vs_benchmark, type: object}   # required object of loss cubes (cells may be null); amended M0, review D
+      - {name: surfaces_target_id, type: str, fk: target_def.target_id}   # was surfaces.target_id
+      - {name: surfaces_benchmark_model_id, type: str, fk: model_def.model_id}   # was surfaces.benchmark_model_id; amended M0, review B: was missing
+      - {name: surfaces_models, type: "str[]"}   # was surfaces.models
+      - {name: surfaces_horizons, type: "int[]"}   # was surfaces.horizons
+      - {name: surfaces_values, type: object}   # was surfaces.values; required object of metric cubes (cells inside may be null); amended M0, review D: not nullable, as in the schema
+      - {name: surfaces_n, type: cube}   # was surfaces.n
+      - {name: surfaces_dm_p_vs_benchmark, type: object}   # was surfaces.dm_p_vs_benchmark; required object of loss cubes (cells may be null); amended M0, review D
   - id: json_equity_curves
     label: equity_curves.json (series)
-    store: json
+    # store: json
     columns:
       - {name: dates, type: "isoDate[]"}
       - {name: holdout_start_idx, type: int, nullable: true}
@@ -453,64 +507,68 @@ entities:
 
 relations:
   # raw and interim
-  - {from: raw_file, to: raw_fetch, cardinality: "1:1..*", label: fetched as}
-  - {from: raw_file, to: iv_index_daily, cardinality: "1:0..*", label: parsed into}
-  - {from: raw_file, to: price_daily, cardinality: "1:0..*", label: parsed into}
-  - {from: iv_index_meta, to: iv_index_daily, cardinality: "1:0..*", label: has rows}
-  - {from: instrument_meta, to: price_daily, cardinality: "1:0..*", label: has rows}
-  - {from: instrument_meta, to: tradable_segment, cardinality: "1:0..*", label: usable segments}
-  - {from: instrument_meta, to: iv_index_meta, cardinality: "0..1:0..*", label: underlying of}
+  - {from: raw_fetch.sha256, to: raw_file.sha256, cardinality: "1..*", label: fetched as}   # was raw_file -> raw_fetch "1:1..*"
+  - {from: iv_index_daily.raw_sha256, to: raw_file.sha256, cardinality: "0..*", label: parsed into}   # was raw_file -> iv_index_daily "1:0..*"
+  - {from: price_daily.raw_sha256, to: raw_file.sha256, cardinality: "0..*", label: parsed into}   # was raw_file -> price_daily "1:0..*"
+  - {from: build_report.files_raw_sha256, to: raw_file.sha256, cardinality: "0..*", label: reported in}   # amended M1; was raw_file -> build_report "1:0..*"
+  - {from: iv_index_daily.symbol, to: iv_index_meta.symbol, cardinality: "0..*", label: has rows}   # was iv_index_meta -> iv_index_daily "1:0..*"
+  - {from: price_daily.ticker, to: instrument_meta.ticker, cardinality: "0..*", label: has rows}   # was instrument_meta -> price_daily "1:0..*"
+  - {from: tradable_segment.ticker, to: instrument_meta.ticker, cardinality: "0..*", label: usable segments}   # was instrument_meta -> tradable_segment "1:0..*"
+  - {from: iv_index_meta.underlying, to: instrument_meta.ticker, cardinality: "0..*", label: underlying of}   # was instrument_meta -> iv_index_meta "0..1:0..*"; underlying is nullable, which gives the "zero or one" parent end
   # provenance
-  - {from: protocol, to: run, cardinality: "1:0..*", label: governs}
-  - {from: run, to: run_input, cardinality: "1:1..*", label: reads}
-  - {from: raw_file, to: run_input, cardinality: "1:0..*", label: used by}
-  - {from: run, to: calendar, cardinality: "1:1..*", label: defines}
-  - {from: run, to: fold, cardinality: "1:1..*", label: splits into}
-  - {from: run, to: eda_stat, cardinality: "1:0..*", label: summarises}
-  - {from: run, to: data_check, cardinality: "1:0..*", label: checks}
+  - {from: run.protocol_hash, to: protocol.protocol_hash, cardinality: "0..*", label: governs}   # was protocol -> run "1:0..*"
+  - {from: run_input.run_id, to: run.run_id, cardinality: "1..*", label: reads}   # was run -> run_input "1:1..*"
+  - {from: run_input.raw_sha256, to: raw_file.sha256, cardinality: "0..*", label: used by}   # was raw_file -> run_input "1:0..*"
+  - {from: calendar.run_id, to: run.run_id, cardinality: "1..*", label: defines}   # was run -> calendar "1:1..*"
+  - {from: fold.run_id, to: run.run_id, cardinality: "1..*", label: splits into}   # was run -> fold "1:1..*"
+  - {from: eda_stat.run_id, to: run.run_id, cardinality: "0..*", label: summarises}   # was run -> eda_stat "1:0..*"
+  - {from: data_check.run_id, to: run.run_id, cardinality: "0..*", label: checks}   # was run -> data_check "1:0..*"
+  - {from: eda_report.run_id, to: run.run_id, cardinality: "0..1", label: local report of}   # amended M1; was run -> eda_report "1:0..1"
+  - {from: data_check.n_affected, to: build_report.files_duplicates_dropped, cardinality: "0..*", label: feeds}   # amended M1; was build_report -> data_check "1:0..*". Lineage with no foreign key: the duplicate_date rows copy the counts, and not_settled_at_fetch reads the fetch times, so it attaches at the duplicate count
   # time-keyed processed tables
-  - {from: calendar, to: feature, cardinality: "1:0..1", label: features at t}
-  - {from: calendar, to: target_value, cardinality: "1:0..*", label: target at d}
-  - {from: target_def, to: target_value, cardinality: "1:0..*", label: defines}
-  - {from: calendar, to: regime_label, cardinality: "1:0..*", label: regime at t}
-  - {from: calendar, to: fold, cardinality: "1:0..1", label: cutoff}
+  - {from: feature.date, to: calendar.date, cardinality: "0..1", label: features at t}   # was calendar -> feature "1:0..1"
+  - {from: target_value.date, to: calendar.date, cardinality: "0..*", label: target at d}   # was calendar -> target_value "1:0..*"
+  - {from: target_value.target_id, to: target_def.target_id, cardinality: "0..*", label: defines}   # was target_def -> target_value "1:0..*"
+  - {from: regime_label.date, to: calendar.date, cardinality: "0..*", label: regime at t}   # was calendar -> regime_label "1:0..*"
+  - {from: fold.cutoff_date, to: calendar.date, cardinality: "0..1", label: cutoff}   # was calendar -> fold "1:0..1"
   # walk-forward
-  - {from: fold, to: fit, cardinality: "1:1..*", label: refits}
-  - {from: model_def, to: fit, cardinality: "1:0..*", label: fitted as}
-  - {from: fold, to: forecast, cardinality: "1:1..*", label: issues}
-  - {from: model_def, to: forecast, cardinality: "1:0..*", label: forecasts}
-  - {from: calendar, to: forecast, cardinality: "1:0..*", label: origin}
-  - {from: target_value, to: forecast, cardinality: "0..1:0..*", label: is target of once observed}   # amended M0, review B: unscored forecasts exist
-  - {from: forecast, to: forecast_member, cardinality: "1:0..*", label: averages}
-  - {from: fit, to: forecast_member, cardinality: "1:0..*", label: produces}
+  - {from: fit.fold_id, to: fold.fold_id, cardinality: "1..*", label: refits}   # was fold -> fit "1:1..*"
+  - {from: fit.model_id, to: model_def.model_id, cardinality: "0..*", label: fitted as}   # was model_def -> fit "1:0..*"
+  - {from: forecast.fold_id, to: fold.fold_id, cardinality: "1..*", label: issues}   # was fold -> forecast "1:1..*"
+  - {from: forecast.model_id, to: model_def.model_id, cardinality: "0..*", label: forecasts}   # was model_def -> forecast "1:0..*"
+  - {from: forecast.origin_date, to: calendar.date, cardinality: "0..*", label: origin}   # was calendar -> forecast "1:0..*"
+  - {from: forecast.target_date, to: target_value.date, cardinality: "0..*", label: is target of once observed}   # was target_value -> forecast "0..1:0..*" (amended M0, review B: unscored forecasts exist). The kit cannot draw it: forecast.target_date is NOT NULL, so the target_value end reads "exactly one"
+  - {from: forecast_member.origin_date, to: forecast.origin_date, cardinality: "0..*", label: averages}   # was forecast -> forecast_member "1:0..*"
+  - {from: forecast_member.member, to: fit.member, cardinality: "0..*", label: produces}   # was fit -> forecast_member "1:0..*"
   # evaluation
-  - {from: forecast, to: metric, cardinality: "0..*:1..*", label: aggregated into}
-  - {from: model_def, to: metric, cardinality: "1:0..*", label: scored}
-  - {from: model_def, to: dm_test, cardinality: "1:0..*", label: model_a}
-  - {from: model_def, to: dm_test, cardinality: "1:0..*", label: model_b}
-  - {from: model_def, to: mz_regression, cardinality: "1:0..*", label: calibration}
-  - {from: target_def, to: metric, cardinality: "1:0..*", label: scored on}   # amended M0, review D: FK edges now drawn
-  - {from: target_def, to: dm_test, cardinality: "1:0..*", label: tested on}
-  - {from: target_def, to: mz_regression, cardinality: "1:0..*", label: regressed on}
-  - {from: iv_index_meta, to: eda_stat, cardinality: "1:0..*", label: described by}
+  - {from: metric.horizon, to: forecast.horizon, cardinality: "1..*", label: aggregated into}   # was forecast -> metric "0..*:1..*"; no foreign key, so it attaches at the shared horizon column. The kit cannot draw the "0..*" forecast end: it reads "exactly one"
+  - {from: metric.model_id, to: model_def.model_id, cardinality: "0..*", label: scored}   # was model_def -> metric "1:0..*"
+  - {from: dm_test.model_a, to: model_def.model_id, cardinality: "0..*", label: model_a}   # was model_def -> dm_test "1:0..*"
+  - {from: dm_test.model_b, to: model_def.model_id, cardinality: "0..*", label: model_b}   # was model_def -> dm_test "1:0..*"
+  - {from: mz_regression.model_id, to: model_def.model_id, cardinality: "0..*", label: calibration}   # was model_def -> mz_regression "1:0..*"
+  - {from: metric.target_id, to: target_def.target_id, cardinality: "0..*", label: scored on}   # was target_def -> metric "1:0..*" (amended M0, review D: FK edges now drawn)
+  - {from: dm_test.target_id, to: target_def.target_id, cardinality: "0..*", label: tested on}   # was target_def -> dm_test "1:0..*"
+  - {from: mz_regression.target_id, to: target_def.target_id, cardinality: "0..*", label: regressed on}   # was target_def -> mz_regression "1:0..*"
+  - {from: eda_stat.symbol, to: iv_index_meta.symbol, cardinality: "0..*", label: described by}   # was iv_index_meta -> eda_stat "1:0..*"
   # backtest
-  - {from: model_def, to: strategy_def, cardinality: "0..1:0..*", label: drives}
-  - {from: strategy_def, to: backtest_daily, cardinality: "1:1..*", label: daily path}
-  - {from: strategy_def, to: strategy_summary, cardinality: "1:1..*", label: summarised}
-  - {from: price_daily, to: backtest_daily, cardinality: "1..*:0..*", label: returns from}
+  - {from: strategy_def.model_id, to: model_def.model_id, cardinality: "0..*", label: drives}   # was model_def -> strategy_def "0..1:0..*"; model_id is nullable, which gives the "zero or one" parent end
+  - {from: backtest_daily.strategy_id, to: strategy_def.strategy_id, cardinality: "1..*", label: daily path}   # was strategy_def -> backtest_daily "1:1..*"
+  - {from: strategy_summary.strategy_id, to: strategy_def.strategy_id, cardinality: "1..*", label: summarised}   # was strategy_def -> strategy_summary "1:1..*"
+  - {from: backtest_daily.gross_ret, to: price_daily.adj_close, cardinality: "0..*", label: returns from}   # was price_daily -> backtest_daily "1..*:0..*"; no foreign key, so it attaches at the return's source column. The kit cannot draw the "1..*" price_daily end: it reads "exactly one"
   # export to the app JSON contract
-  - {from: run, to: json_manifest, cardinality: "1:0..1", label: exported as}
-  - {from: json_manifest, to: json_term_structure, cardinality: "1:0..1", label: lists}
-  - {from: json_manifest, to: json_model_race, cardinality: "1:0..1", label: lists}
-  - {from: json_manifest, to: json_error_surface, cardinality: "1:0..1", label: lists}
-  - {from: json_manifest, to: json_equity_curves, cardinality: "1:0..1", label: lists}
-  - {from: iv_index_daily, to: json_term_structure, cardinality: "1..*:0..1", label: ribbon levels}
-  - {from: regime_label, to: json_term_structure, cardinality: "0..*:0..1", label: backwardation flag}
-  - {from: forecast, to: json_model_race, cardinality: "0..*:0..1", label: yhat}
-  - {from: target_value, to: json_model_race, cardinality: "0..*:0..1", label: actual}
-  - {from: mz_regression, to: json_model_race, cardinality: "0..*:0..1", label: mz}
-  - {from: metric, to: json_error_surface, cardinality: "1..*:0..1", label: cubes}
-  - {from: dm_test, to: json_error_surface, cardinality: "0..*:0..1", label: dm p-values}
-  - {from: backtest_daily, to: json_equity_curves, cardinality: "1..*:0..1", label: equity}
-  - {from: strategy_summary, to: json_equity_curves, cardinality: "0..*:0..1", label: summary}
-  - {from: regime_label, to: json_equity_curves, cardinality: "0..*:0..1", label: regime ribbons}
+  - {from: json_manifest.run_id, to: run.run_id, cardinality: "0..1", label: exported as}   # was run -> json_manifest "1:0..1"
+  - {from: json_term_structure.dates, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_term_structure "1:0..1"; attaches at the manifest's files list
+  - {from: json_model_race.calendar, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_model_race "1:0..1"
+  - {from: json_error_surface.periods, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_error_surface "1:0..1"
+  - {from: json_equity_curves.dates, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_equity_curves "1:0..1"
+  # The next ten were table -> json "L:0..1" with L of 1..* or 0..*. The kit's parent end is only "exactly one" (NOT NULL column) or "zero or one" (nullable column), so L is not drawn.
+  - {from: json_term_structure.levels, to: iv_index_daily.close, cardinality: "0..1", label: ribbon levels}   # was iv_index_daily -> json_term_structure "1..*:0..1"
+  - {from: json_term_structure.backwardation, to: iv_index_daily.close, cardinality: "0..1", label: backwardation flag}   # was regime_label -> json_term_structure "0..*:0..1" in M0. Amended M1: the real export does not read regime_label. It takes the VIX and VIX3M closes from interim and calls ivf.features.build.is_backwardation on the unrounded ratio, the same rule build_regime_labels calls
+  - {from: json_model_race.panels_series, to: forecast.yhat, cardinality: "0..1", label: yhat}   # was forecast -> json_model_race "0..*:0..1"
+  - {from: json_model_race.panels_actual, to: target_value.y, cardinality: "0..1", label: actual}   # was target_value -> json_model_race "0..*:0..1"
+  - {from: json_model_race.panels_mz, to: mz_regression.model_id, cardinality: "0..1", label: mz}   # was mz_regression -> json_model_race "0..*:0..1"
+  - {from: json_error_surface.surfaces_values, to: metric.model_id, cardinality: "0..1", label: cubes}   # was metric -> json_error_surface "1..*:0..1"
+  - {from: json_error_surface.surfaces_dm_p_vs_benchmark, to: dm_test.p_value, cardinality: "0..1", label: dm p-values}   # was dm_test -> json_error_surface "0..*:0..1"
+  - {from: json_equity_curves.strategies, to: backtest_daily.equity, cardinality: "0..1", label: equity}   # was backtest_daily -> json_equity_curves "1..*:0..1"
+  - {from: json_equity_curves.summary, to: strategy_summary.strategy_id, cardinality: "0..1", label: summary}   # was strategy_summary -> json_equity_curves "0..*:0..1"
+  - {from: json_equity_curves.regime_segments, to: regime_label.regime, cardinality: "0..1", label: regime ribbons}   # was regime_label -> json_equity_curves "0..*:0..1"

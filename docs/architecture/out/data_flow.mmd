@@ -1,0 +1,97 @@
+---
+title: "implied-vol-forecasting data flow (one datum, CSV row to JSON column)"
+---
+flowchart TB
+    subgraph ingest["1. Ingest#58; raw to tidy"]
+        csv_row(["CBOE CSV row\none session of one index, e.g. VIX; some files are close-only"])
+        spx_row(["price_daily row (^GSPC)\nyfinance; a price index, not dividend-adjusted"])
+        vxx_row(["price_daily row (VXX, SVXY)\nyfinance; split-adjusted close"])
+        synth_csv(["synthetic CSV (seeded)\nivf.data.synthetic#58; Cboe- and Yahoo-shaped files with known truth; no download"])
+        raw_file[("raw/{sha256}.csv\nbytes as downloaded; one line appended to provenance.jsonl. Synthetic runs#58; ROOT/synthetic/raw/")]
+        iv_row[/"iv_index_daily row\ntidy panel row#58; symbol, date, close in vol points, raw_sha256"/]
+    end
+    subgraph features["2. Features and targets (data ≤ t)"]
+        protocol_cfg[("configs/protocol.yaml\ndata_end is null until frozen, then fixed and part of protocol_hash; the freeze record beside it must match")]
+        cal_row[/"calendar row\ndate, t_idx, period; every XNYS session to data_end plus h_max, from dates alone"/]
+        feature_row[/"feature row at origin t\nlog_vix, har_w, har_m, r_spx, rv21_back, vov21, iv_rv_spread, vix9d_vix, vix_vix3m, vix3m_vix6m, vix6m_vix1y"/]
+        target_row[/"target_value row\ny(d) in vol points and v = (y/100)^2"/]
+        regime_row[/"regime_label row\nlow, mid, high; contango, backwardation"/]
+    end
+    subgraph walkforward["3. Walk-forward fold (params frozen)"]
+        fold_row[/"fold assignment\norigin t in fold k; cutoff c_k = idx(holdout_start) + 63k"/]
+        pair_ok["target_date ≤ cutoff?\nL2#58; label availability"]
+        excluded[/"pair left out of training\nits target is dated after the cutoff"/]
+        scaler["scaler, imputer, OLS moments\nfitted at the cutoff on training rows only"]
+        fitted[["fitted model, params frozen\nfrozen for origins in [c_k, c_{k+1}); state updates daily with data ≤ t"]]
+        forecast_row[/"forecast row\nmodel, target, origin, horizon, target_date, yhat, v_hat"/]
+    end
+    subgraph scoring["4. Scoring and backtest"]
+        loss_row[/"loss row\nsquared, absolute and pct error, QLIKE; transient, no stored table"/]
+        test_cell[/"DM / MZ cell\nn, statistic, p-value for a model pair or a model"/]
+        metric_cell[/"metric cell (model x horizon x regime)\nn, bias, rmse, mae, mape, qlike per target and period"/]
+        n_check["n ≥ min_cell_n (20)?\nsuppression rule, ADR D4 4.8"]
+        blank[/"blank cell\nvalue null, n kept"/]
+        signal_row[/"signal at origin t\n+1 long vol, -1 short vol, 0 flat"/]
+        bt_row[/"backtest_daily row\ngross_ret, cost, net_ret, equity, drawdown"/]
+    end
+    subgraph delivery["5. Export and render"]
+        json_col[/"JSON column array\none array per column; NaN and suppressed cells become null"/]
+        app_draw("app#58; typed array / three.js buffer\nindexes, decimates and colours; computes nothing")
+    end
+    csv_row -->|"download, SHA-256 (idempotent)"| raw_file
+    synth_csv -->|"--synthetic#58; same store, written under ROOT/synthetic/raw/"| raw_file
+    raw_file -->|"parse#58; close #gt; 0 in vol points"| iv_row
+    iv_row -->|"check --freeze-data-end#58; last session with a settled VIX close"| protocol_cfg
+    spx_row -->|"and a settled ^GSPC close; written once, never moved"| protocol_cfg
+    protocol_cfg -->|"XNYS sessions from train_start to data_end, plus h_max"| cal_row
+    iv_row -.->|"data_check#58; a VIX close on every session; a gap stays null (G1)"| cal_row
+    spx_row -.->|"data_check#58; a ^GSPC close on every session"| cal_row
+    iv_row -->|"log#58; ln V_t; HAR means over t-4..t, t-21..t; tenor ratios, shorter over longer (L1)"| feature_row
+    spx_row -->|"r_d = ln(P_d / P_d-1); RV over trailing 21 sessions (L1)"| feature_row
+    iv_row -->|"vix_level#58; y = V_d"| target_row
+    spx_row -->|"rv21#58; 100·sqrt((252/21)·Σ r²) over 21 sessions"| target_row
+    iv_row -->|"fixed cut-offs 15 and 25; VIX vs VIX3M (L5)"| regime_row
+    cal_row -->|"t+h is the h-th session after t"| fold_row
+    feature_row -->|"assign origin t to a 63-session fold"| fold_row
+    fold_row -->|"candidate pair (x_τ, y_τ+h)"| pair_ok
+    pair_ok -->|"yes#58; keep"| scaler
+    pair_ok -->|"no#58; drop"| excluded
+    scaler -->|"train-only scaler (L3); LSTM early-stop block + purge (L4)"| fitted
+    fitted -->|"h-session ahead, h = 1, 5, 21#58; target_date = T[idx(origin)+h]"| forecast_row
+    feature_row -->|"x_t#58; inputs dated ≤ t (L1)"| forecast_row
+    forecast_row -->|"e = y - yhat; QLIKE in variance space"| loss_row
+    target_row -->|"join on (target_id, target_date)"| loss_row
+    loss_row -->|"mean by model, horizon, period, regime (L6#58; tune on dev rows)"| metric_cell
+    regime_row -->|"regime at the origin (L5)"| metric_cell
+    loss_row -->|"DM#58; d = L_a - L_b, rectangular lag h-1 + HLN; MZ#58; y on yhat, NW lag h-1 (O5)"| test_cell
+    metric_cell -->|"count the rows"| n_check
+    n_check -->|"no#58; suppress"| blank
+    forecast_row -->|"sign(yhat - V_t) with a band"| signal_row
+    signal_row -->|"execute at close of t+1 (L7)"| bt_row
+    vxx_row -->|"adj_close return, usable segment; minus cost"| bt_row
+    n_check -->|"yes#58; round (RMSE 4 dp, QLIKE 6 dp)"| json_col
+    blank -->|"null in the cube"| json_col
+    test_cell -->|"p-values, 4 dp"| json_col
+    bt_row -->|"equity, drawdown, 6 dp"| json_col
+    iv_row -->|"M1 real export#58; tenor levels 2 dp, VIX/VIX3M 4 dp, flag from the unrounded ratio"| json_col
+    protocol_cfg -->|"M1 real export#58; ribbon runs from the first session with all five tenors to data_end"| json_col
+    json_col -->|"typed array; index, decimate"| app_draw
+    classDef source fill:#E0F2FE,stroke:#0284C7,color:#0F172A
+    class csv_row,spx_row,vxx_row,synth_csv source
+    classDef store fill:#FEF3C7,stroke:#D97706,color:#0F172A
+    class raw_file,protocol_cfg store
+    classDef process fill:#E0E7FF,stroke:#4F46E5,color:#0F172A
+    class pair_ok,scaler,n_check process
+    classDef model fill:#EDE9FE,stroke:#7C3AED,color:#0F172A
+    class fitted model
+    classDef output fill:#D1FAE5,stroke:#059669,color:#0F172A
+    class iv_row,cal_row,feature_row,target_row,regime_row,fold_row,excluded,forecast_row,loss_row,test_cell,metric_cell,blank,signal_row,bt_row,json_col output
+    classDef ui fill:#FCE7F3,stroke:#DB2777,color:#0F172A
+    class app_draw ui
+    style ingest fill:#F1F5F9,stroke:#E2E8F0,color:#64748B
+    style features fill:#EFF6FF,stroke:#DBEAFE,color:#64748B
+    style walkforward fill:#F5F3FF,stroke:#E9E5FD,color:#64748B
+    style scoring fill:#ECFDF5,stroke:#D1FAE5,color:#64748B
+    style delivery fill:#FFF7ED,stroke:#FFEDD5,color:#64748B
+    linkStyle 6 stroke:#94A3B8
+    linkStyle 7 stroke:#94A3B8

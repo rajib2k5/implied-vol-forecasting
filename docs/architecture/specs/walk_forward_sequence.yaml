@@ -1,0 +1,48 @@
+# One walk-forward fold, per ADR 0001 D4 (4.5 walk-forward design, 4.7 no-look-ahead rules L1-L4, 4.1 information set).
+# Rendered by the vendored diagram toolkit (tools/diagrams/) into docs/architecture/out/; docs/architecture/walk-forward-sequence.mmd is the
+# M0 hand-written copy this spec was written from. This file was never a spec before, so it is named like the others (identifier stem: an underscore, not a hyphen).
+# k is the fold number; c_k = idx(holdout_start) + 63k is its cutoff session; c_{k+1} is the next fold's cutoff; T is the master calendar.
+#
+# What the kit's sequence schema could not carry from the .mmd (the text of every note is kept):
+#   - A note can only hang off a message, drawn to the right of that message's `to` lifeline. The .mmd had notes over one lifeline or over two (Note over S, Note over C,M, ...).
+#     Each note below is attached to the nearest message and its old placement is written next to it.
+#   - A participant label and a note are one line: the .mmd's <br/> line breaks became a space (participants: a bracketed module name).
+#   - The title is new (the schema requires one). The participant ids are the .mmd's S, F, C, M, E written out; only the labels are drawn.
+kind: sequence
+title: implied-vol-forecasting walk-forward fold
+autonumber: true
+
+participants:
+  - {id: splitter, label: "Splitter (ivf.evaluation.splits)", type: process}
+  - {id: features, label: "Feature builder (ivf.features)", type: process}
+  - {id: scaler, label: "Scaler and imputer", type: process}
+  - {id: model, label: "Model (ivf.models)", type: model}
+  - {id: evaluator, label: "Evaluator (ivf.evaluation)", type: process}
+
+messages:
+  # .mmd: "Note over S" came first, before this message.
+  - {from: splitter, to: features, label: "build features from data dated ≤ c_k (L1: trailing windows only)", note: "Fold k. Expanding window from train_start. Cutoff c_k, origins t in [c_k, c_{k+1}), 63 sessions, same for every model."}
+  - {from: features, to: splitter, label: "feature rows x_τ for every session τ ≤ c_k", kind: return}
+  - {from: splitter, to: splitter, label: "keep pairs with τ + h ≤ c_k (L2)"}
+  # .mmd: "Note over C,M" came after this message.
+  - {from: splitter, to: scaler, label: "fit(rows used for gradient or OLS updates only) (L3: train only)", note: "LSTM: the early-stopping block is the last 252 training origins whose targets ≤ c_k. An h-session purge separates it from the inner-train rows (L4)."}
+  - {from: scaler, to: model, label: "scaler moments, imputer values, clipping thresholds (frozen)", kind: return}
+  # .mmd: "Note over M" came after the alt block below, before the loop; here it follows the fit it describes.
+  - {from: splitter, to: model, label: "fit(training pairs with target date ≤ c_k)", note: "Parameters are frozen for the whole fold. AIC order, MLE parameters and calibration OLS were re-estimated at c_k from data ≤ c_k."}
+  - alt:
+      - when: fit converged
+        messages:
+          - {from: model, to: splitter, label: "fit row (converged, fallback none)", kind: return}
+      - when: fit failed
+        messages:
+          - {from: model, to: splitter, label: "fit row (fallback previous_fold): reuse the previous fold's parameters, never drop rows", kind: return}
+  - loop: each origin t in [c_k, c_{k+1}), once per session
+    messages:
+      - {from: splitter, to: features, label: "features through the close of t"}
+      - {from: features, to: model, label: "x_t (data dated ≤ t, nothing from t+1)", kind: return}
+      - {from: model, to: model, label: "update state with data ≤ t (Kalman state, GARCH recursion, HAR regressors, LSTM input window)"}
+      - {from: model, to: evaluator, label: "forecast(origin t, h in 1, 5, 21): yhat in vol points, v_hat, target_date = T at idx(t) + h"}
+  # .mmd: "Note over E" came before this message.
+  - {from: evaluator, to: evaluator, label: "error e = y - yhat in level space, QLIKE = v/v_hat - ln(v/v_hat) - 1 in variance space", note: "Once the target date has passed, join the realised y(t+h) on (target_id, target_date)."}
+  # .mmd: "Note over S,E" came after this message; here it hangs right of the Splitter and runs across the lifelines.
+  - {from: evaluator, to: splitter, label: "loss rows keyed (model, target, origin, horizon): same origin set for every model", kind: return, note: "Next fold: c_{k+1} = c_k + 63. Truncation test: a run on data ≤ t must reproduce the full run's forecast at t."}

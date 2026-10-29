@@ -1,8 +1,6 @@
-"""Feature engineering (milestone 1).
+"""Feature engineering (milestone 1): ``build`` turns interim tables into the feature,
+target_value and regime_label tables on the master calendar.
 
-Will hold the transformations from interim tables to model inputs: log VIX,
-trailing realised volatility, the HAR regressors (daily, weekly and monthly
-averages) and the other trailing-window features. Every feature may use only
-data dated at or before the forecast origin (ADR 0001 rule L1). Nothing is
-implemented here yet.
+Every feature uses trailing windows only, so it holds data dated at or before
+its session (ADR 0001 rule L1). Targets are the one forward-looking series.
 """

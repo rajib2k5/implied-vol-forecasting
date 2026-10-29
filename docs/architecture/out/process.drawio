@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="vol-diagram-kit" agent="vol-diagram-kit">
+  <diagram id="process" name="implied-vol-forecasting milestone process">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1879" pageHeight="2344" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="implied-vol-forecasting milestone process" style="text;html=1;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=20;fontStyle=1;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="32" y="30" width="441.33" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_orchestrator" value="Orchestrator" style="swimlane;html=1;startSize=30;horizontal=1;rounded=1;absoluteArcSize=1;arcSize=28;fillColor=#F1F5F9;swimlaneFillColor=#F1F5F9;strokeColor=#E2E8F0;swimlaneLine=0;fontColor=#64748B;fontStyle=1;fontSize=11;fontFamily=Helvetica;align=left;spacingLeft=14;collapsible=0;container=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="80" width="735" height="1934" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_implementer" value="Implementer (subagent)" style="swimlane;html=1;startSize=30;horizontal=1;rounded=1;absoluteArcSize=1;arcSize=28;fillColor=#EFF6FF;swimlaneFillColor=#EFF6FF;strokeColor=#DBEAFE;swimlaneLine=0;fontColor=#64748B;fontStyle=1;fontSize=11;fontFamily=Helvetica;align=left;spacingLeft=14;collapsible=0;container=1;" vertex="1" parent="1">
+          <mxGeometry x="795" y="80" width="466" height="2176" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_reviewers" value="Reviewers (adversarial, verifier, security)" style="swimlane;html=1;startSize=30;horizontal=1;rounded=1;absoluteArcSize=1;arcSize=28;fillColor=#F5F3FF;swimlaneFillColor=#F5F3FF;strokeColor=#E9E5FD;swimlaneLine=0;fontColor=#64748B;fontStyle=1;fontSize=11;fontFamily=Helvetica;align=left;spacingLeft=14;collapsible=0;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1289" y="80" width="558" height="2176" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_learner" value="Learner" style="swimlane;html=1;startSize=30;horizontal=1;rounded=1;absoluteArcSize=1;arcSize=28;fillColor=#ECFDF5;swimlaneFillColor=#ECFDF5;strokeColor=#D1FAE5;swimlaneLine=0;fontColor=#64748B;fontStyle=1;fontSize=11;fontFamily=Helvetica;align=left;spacingLeft=14;collapsible=0;container=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="2116" width="735" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_brief" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#475569&quot;&gt;&lt;b&gt;EXTERNAL&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Milestone brief&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;from the approved plan: scope, rules, files the milestone may touch&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_orchestrator">
+          <mxGeometry x="20" y="50" width="466" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_build" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Build the milestone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;src/ivf, tests with hand-worked values, configs, app views&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="29" y="198" width="408" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_tests" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;pytest + mutation check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;break the code, watch the test fail, restore; report the counts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="20" y="346" width="426" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_nb_check" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;build_notebooks.py --check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;notebooks in sync with src/ivf&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="94" y="494" width="278" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_app_verify" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;app: npm run verify&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;lint, tests, coverage thresholds, build&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="89" y="642" width="288" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_walkthrough" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Milestone walkthrough + concepts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;docs/milestones/NN-&amp;lt;topic&amp;gt;.md and docs/concepts/*.md&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="30" y="790" width="406" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_questions" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Predict-first + explain-it-back&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;5-8 interview questions; predict-first goes before the results&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="23" y="920" width="420" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_review" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Adversarial review&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;evidence-gated-validation; numbered claims; default verdict is broken; Opus&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_reviewers">
+          <mxGeometry x="20" y="1068" width="518" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_refuted" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Any claim refuted?&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;the orchestrator checks a refutation itself before acting&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_orchestrator">
+          <mxGeometry x="323" y="1216" width="392" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_fix" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Fix&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;name the refuted claim in the commit message&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_implementer">
+          <mxGeometry x="59" y="1400" width="348" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_remeasure" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Verifier re-measures the numbers&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;counts, coverage, timings, report tables; AGREE or DISAGREE&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_reviewers">
+          <mxGeometry x="56" y="1400" width="446" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_first_push" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;First push of this repo?&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;the security review is a first-push gate&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_orchestrator">
+          <mxGeometry x="278" y="1548" width="296" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_security" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Security review&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;secrets, licence-restricted data, vendor files; findings are fixed first&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_reviewers">
+          <mxGeometry x="49" y="1696" width="460" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_push" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#4338CA&quot;&gt;&lt;b&gt;PROCESS&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;Commit and push&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;only the orchestrator commits and pushes&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_orchestrator">
+          <mxGeometry x="266" y="1844" width="320" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_pause" value="&lt;font style=&quot;font-size:9px&quot; color=&quot;#BE185D&quot;&gt;&lt;b&gt;UI&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;b&gt;PAUSE for the learner&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#64748B&quot;&gt;one-paragraph recap; waits for continue or a steer&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=20;fillColor=#FFFFFF;strokeColor=#DB2777;strokeWidth=1.5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=left;spacingLeft=16;verticalAlign=middle;shadow=1;" vertex="1" parent="lane_learner">
+          <mxGeometry x="155" y="50" width="368" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_0" value="delegate" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5472;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_brief" target="node_build">
+          <mxGeometry x="0.8949" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="307" y="216"/>
+              <mxPoint x="1028" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_1" value="code and tests" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_build" target="node_tests">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="counts reported" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_tests" target="node_nb_check">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="in sync" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_nb_check" target="node_app_verify">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="gates green" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_app_verify" target="node_walkthrough">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_walkthrough" target="node_questions">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="numbered claims" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_questions" target="node_review">
+          <mxGeometry x="0.8641" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1028" y="1086"/>
+              <mxPoint x="1568" y="1086"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="verdict per claim" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.4575;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_review" target="node_refuted">
+          <mxGeometry x="0.9217" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1546" y="1234"/>
+              <mxPoint x="551" y="1234"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="yes, checked first" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.4439;exitY=1;exitDx=0;exitDy=0;entryX=0.408;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_refuted" target="node_fix">
+          <mxGeometry x="0.7728" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="529" y="1394"/>
+              <mxPoint x="996" y="1394"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="re-review" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.592;exitY=0;exitDx=0;exitDy=0;entryX=0.5425;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_fix" target="node_review">
+          <mxGeometry x="-0.8939" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="1394"/>
+              <mxPoint x="1568" y="1394"/>
+              <mxPoint x="1568" y="1234"/>
+              <mxPoint x="1590" y="1234"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="no" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5561;exitY=1;exitDx=0;exitDy=0;entryX=0.4731;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_refuted" target="node_remeasure">
+          <mxGeometry x="0.8797" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="573" y="1382"/>
+              <mxPoint x="1556" y="1382"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="numbers agree" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_remeasure" target="node_first_push">
+          <mxGeometry x="0.9293" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1568" y="1566"/>
+              <mxPoint x="458" y="1566"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="yes" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5743;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_first_push" target="node_security">
+          <mxGeometry x="0.928" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="1714"/>
+              <mxPoint x="1568" y="1714"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="no" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.4257;exitY=1;exitDx=0;exitDy=0;entryX=0.4313;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_first_push" target="node_push">
+          <mxGeometry x="0.6889" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="436" y="1714"/>
+              <mxPoint x="458" y="1714"/>
+              <mxPoint x="458" y="1862"/>
+              <mxPoint x="436" y="1862"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="clean" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5687;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_security" target="node_push">
+          <mxGeometry x="0.928" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1568" y="1862"/>
+              <mxPoint x="480" y="1862"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="recap" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.6141;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_push" target="node_pause">
+          <mxGeometry x="0.1521" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="458" y="2030"/>
+              <mxPoint x="413" y="2030"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_16" value="continue: next milestone" style="edgeStyle=none;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;endSize=6;labelBackgroundColor=#FFFFFF;exitX=0.3859;exitY=0;exitDx=0;exitDy=0;entryX=0.4528;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_pause" target="node_brief">
+          <mxGeometry x="-0.8858" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="329" y="2030"/>
+              <mxPoint x="285" y="2030"/>
+              <mxPoint x="285" y="216"/>
+              <mxPoint x="263" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

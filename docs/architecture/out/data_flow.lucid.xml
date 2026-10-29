@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="vol-diagram-kit" agent="vol-diagram-kit">
+  <diagram id="data_flow" name="implied-vol-forecasting data flow (one datum, CSV row to JSON column)">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3489" pageHeight="3252" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="implied-vol-forecasting data flow (one datum, CSV row to JSON column)" style="rounded=0;fillColor=none;strokeColor=none;html=0;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=20;fontStyle=1;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="32" y="30" width="755.39" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_ingest" value="1. Ingest: raw to tidy" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F1F5F9;strokeColor=#E2E8F0;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="69" y="80" width="1170" height="2050" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_features" value="2. Features and targets (data ≤ t)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EFF6FF;strokeColor=#DBEAFE;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1267" y="694" width="2190" height="336" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_walkforward" value="3. Walk-forward fold (params frozen)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F5F3FF;strokeColor=#E9E5FD;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1267" y="1132" width="2190" height="756" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_scoring" value="4. Scoring and backtest" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#ECFDF5;strokeColor=#D1FAE5;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1267" y="1990" width="2190" height="628" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_delivery" value="5. Export and render" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFF7ED;strokeColor=#FFEDD5;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="69" y="2876" width="1170" height="288" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_csv_row" value="CBOE CSV row&#10;one session of one index, e.g. VIX; some files are close-only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="211" y="130" width="428" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_spx_row" value="price_daily row (^GSPC)&#10;yfinance; a price index, not dividend-adjusted" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="92" y="450" width="340" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_vxx_row" value="price_daily row (VXX, SVXY)&#10;yfinance; split-adjusted close" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="490" y="2040" width="282" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_synth_csv" value="synthetic CSV (seeded)&#10;ivf.data.synthetic: Cboe- and Yahoo-shaped files with known truth; no download" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="679" y="130" width="540" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_raw_file" value="raw/{sha256}.csv&#10;bytes as downloaded; one line appended to provenance.jsonl. Synthetic runs: ROOT/synthetic/raw/" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#FEF3C7;strokeColor=#D97706;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="360" y="302" width="654" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_iv_row" value="iv_index_daily row&#10;tidy panel row: symbol, date, close in vol points, raw_sha256" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="472" y="450" width="430" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_protocol_cfg" value="configs/protocol.yaml&#10;data_end is null until frozen, then fixed and part of protocol_hash; the freeze record beside it must match" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#FEF3C7;strokeColor=#D97706;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2085" y="744" width="686" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_cal_row" value="calendar row&#10;date, t_idx, period; every XNYS session to data_end plus h_max, from dates alone" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1619" y="940" width="558" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_feature_row" value="feature row at origin t&#10;log_vix, har_w, har_m, r_spx, rv21_back, vov21, iv_rv_spread, vix9d_vix, vix_vix3m, vix3m_vix6m, vix6m_vix1y" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1317" y="744" width="728" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_target_row" value="target_value row&#10;y(d) in vol points and v = (y/100)^2" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2811" y="744" width="276" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_regime_row" value="regime_label row&#10;low, mid, high; contango, backwardation" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="3127" y="744" width="310" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_fold_row" value="fold assignment&#10;origin t in fold k; cutoff c_k = idx(holdout_start) + 63k" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1892" y="1182" width="380" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_pair_ok" value="target_date ≤ cutoff?&#10;L2: label availability" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1968" y="1330" width="228" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_excluded" value="pair left out of training&#10;its target is dated after the cutoff" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1789" y="1478" width="264" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_scaler" value="scaler, imputer, OLS moments&#10;fitted at the cutoff on training rows only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2093" y="1478" width="300" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_fitted" value="fitted model, params frozen&#10;frozen for origins in [c_k, c_{k+1}); state updates daily with data ≤ t" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#EDE9FE;strokeColor=#7C3AED;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1994" y="1626" width="464" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_forecast_row" value="forecast row&#10;model, target, origin, horizon, target_date, yhat, v_hat" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="1798" width="388" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_loss_row" value="loss row&#10;squared, absolute and pct error, QLIKE; transient, no stored table" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2398" y="2040" width="458" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_test_cell" value="DM / MZ cell&#10;n, statistic, p-value for a model pair or a model" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2271" y="2232" width="346" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_metric_cell" value="metric cell (model x horizon x regime)&#10;n, bias, rmse, mae, mape, qlike per target and period" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2657" y="2232" width="384" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_n_check" value="n ≥ min_cell_n (20)?&#10;suppression rule, ADR D4 4.8" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2724" y="2380" width="250" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_blank" value="blank cell&#10;value null, n kept" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2710" y="2528" width="176" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_signal_row" value="signal at origin t&#10;+1 long vol, -1 short vol, 0 flat" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1947" y="2040" width="248" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_bt_row" value="backtest_daily row&#10;gross_ret, cost, net_ret, equity, drawdown" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1911" y="2232" width="320" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_json_col" value="JSON column array&#10;one array per column; NaN and suppressed cells become null" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#D1FAE5;strokeColor=#059669;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="259" y="2926" width="436" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_app_draw" value="app: typed array / three.js buffer&#10;indexes, decimates and colours; computes nothing" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#FCE7F3;strokeColor=#DB2777;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="291" y="3074" width="372" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_0" value="download, SHA-256 (idempotent)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3624;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_csv_row" target="node_raw_file">
+          <mxGeometry x="0.5182" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="216"/>
+              <mxPoint x="597" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_1" value="--synthetic: same store, written under ROOT/synthetic/raw/" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.6376;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_synth_csv" target="node_raw_file">
+          <mxGeometry x="0.6934" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="949" y="216"/>
+              <mxPoint x="777" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="parse: close &gt; 0 in vol points" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_raw_file" target="node_iv_row">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="check --freeze-data-end: last session with a settled VIX close" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5512;exitY=1;exitDx=0;exitDy=0;entryX=0.6356;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_protocol_cfg">
+          <mxGeometry x="0.9096" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="709" y="608"/>
+              <mxPoint x="2521" y="608"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="and a settled ^GSPC close; written once, never moved" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5647;exitY=1;exitDx=0;exitDy=0;entryX=0.3644;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_spx_row" target="node_protocol_cfg">
+          <mxGeometry x="0.898" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="284" y="584"/>
+              <mxPoint x="2335" y="584"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="XNYS sessions from train_start to data_end, plus h_max" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4679;exitY=1;exitDx=0;exitDy=0;entryX=0.8477;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_protocol_cfg" target="node_cal_row">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2406" y="854"/>
+              <mxPoint x="2092" y="854"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="data_check: a VIX close on every session; a gap stays null (G1)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#94A3B8;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;dashed=1;exitX=0.3465;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_cal_row">
+          <mxGeometry x="0.9505" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="621" y="608"/>
+              <mxPoint x="687" y="608"/>
+              <mxPoint x="687" y="854"/>
+              <mxPoint x="1898" y="854"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="data_check: a ^GSPC close on every session" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#94A3B8;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;dashed=1;exitX=0.3059;exitY=1;exitDx=0;exitDy=0;entryX=0.1523;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_spx_row" target="node_cal_row">
+          <mxGeometry x="0.9315" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="196" y="608"/>
+              <mxPoint x="395" y="608"/>
+              <mxPoint x="395" y="842"/>
+              <mxPoint x="1704" y="842"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="log: ln V_t; HAR means over t-4..t, t-21..t; tenor ratios, shorter over longer (L1)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4488;exitY=1;exitDx=0;exitDy=0;entryX=0.6607;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_feature_row">
+          <mxGeometry x="0.8644" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="665" y="560"/>
+              <mxPoint x="1798" y="560"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="r_d = ln(P_d / P_d-1); RV over trailing 21 sessions (L1)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4353;exitY=1;exitDx=0;exitDy=0;entryX=0.3393;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_spx_row" target="node_feature_row">
+          <mxGeometry x="0.8501" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="596"/>
+              <mxPoint x="1564" y="596"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="vix_level: y = V_d" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.6535;exitY=1;exitDx=0;exitDy=0;entryX=0.7609;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_target_row">
+          <mxGeometry x="0.9262" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="753" y="548"/>
+              <mxPoint x="3021" y="548"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="rv21: 100·sqrt((252/21)·Σ r²) over 21 sessions" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.6941;exitY=1;exitDx=0;exitDy=0;entryX=0.2391;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_spx_row" target="node_target_row">
+          <mxGeometry x="0.9163" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="328" y="572"/>
+              <mxPoint x="2877" y="572"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="fixed cut-offs 15 and 25; VIX vs VIX3M (L5)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.7558;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_regime_row">
+          <mxGeometry x="0.9144" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="797" y="536"/>
+              <mxPoint x="3282" y="536"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="t+h is the h-th session after t" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3553;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_cal_row" target="node_fold_row">
+          <mxGeometry x="0.2292" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1898" y="1046"/>
+              <mxPoint x="2027" y="1046"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="assign origin t to a 63-session fold" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4698;exitY=1;exitDx=0;exitDy=0;entryX=0.6447;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_feature_row" target="node_fold_row">
+          <mxGeometry x="0.8333" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1659" y="830"/>
+              <mxPoint x="2266" y="830"/>
+              <mxPoint x="2266" y="1046"/>
+              <mxPoint x="2137" y="1046"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="candidate pair (x_τ, y_τ+h)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_fold_row" target="node_pair_ok">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_16" value="yes: keep" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5965;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_pair_ok" target="node_scaler">
+          <mxGeometry x="0.6129" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2104" y="1416"/>
+              <mxPoint x="2243" y="1416"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_17" value="no: drop" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4035;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_pair_ok" target="node_excluded">
+          <mxGeometry x="0.6129" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2060" y="1416"/>
+              <mxPoint x="1921" y="1416"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_18" value="train-only scaler (L3); LSTM early-stop block + purge (L4)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_scaler" target="node_fitted">
+          <mxGeometry x="0.1158" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2243" y="1564"/>
+              <mxPoint x="2226" y="1564"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_19" value="h-session ahead, h = 1, 5, 21: target_date = T[idx(origin)+h]" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2655;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_fitted" target="node_forecast_row">
+          <mxGeometry x="0.0149" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2226" y="1712"/>
+              <mxPoint x="2258" y="1712"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_20" value="x_t: inputs dated ≤ t (L1)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5481;exitY=1;exitDx=0;exitDy=0;entryX=0.7345;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_feature_row" target="node_forecast_row">
+          <mxGeometry x="0.9525" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1716" y="842"/>
+              <mxPoint x="2471" y="842"/>
+              <mxPoint x="2471" y="1712"/>
+              <mxPoint x="2440" y="1712"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_21" value="e = y - yhat; QLIKE in variance space" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5567;exitY=1;exitDx=0;exitDy=0;entryX=0.369;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_forecast_row" target="node_loss_row">
+          <mxGeometry x="0.3696" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2371" y="1904"/>
+              <mxPoint x="2567" y="1904"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_22" value="join on (target_id, target_date)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.631;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_target_row" target="node_loss_row">
+          <mxGeometry x="0.8856" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2949" y="830"/>
+              <mxPoint x="2627" y="830"/>
+              <mxPoint x="2627" y="1904"/>
+              <mxPoint x="2687" y="1904"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_23" value="mean by model, horizon, period, regime (L6: tune on dev rows)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.548;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_loss_row" target="node_metric_cell">
+          <mxGeometry x="0.6283" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2649" y="2146"/>
+              <mxPoint x="2753" y="2146"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_24" value="regime at the origin (L5)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_regime_row" target="node_metric_cell">
+          <mxGeometry x="0.9308" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3282" y="842"/>
+              <mxPoint x="2869" y="842"/>
+              <mxPoint x="2869" y="2146"/>
+              <mxPoint x="2945" y="2146"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_25" value="DM: d = L_a - L_b, rectangular lag h-1 + HLN; MZ: y on yhat, NW lag h-1 (O5)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.452;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_loss_row" target="node_test_cell">
+          <mxGeometry x="0.5336" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2605" y="2146"/>
+              <mxPoint x="2444" y="2146"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_26" value="count the rows" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_metric_cell" target="node_n_check">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_27" value="no: suppress" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.412;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_n_check" target="node_blank">
+          <mxGeometry x="0.215" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2827" y="2466"/>
+              <mxPoint x="2798" y="2466"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_28" value="sign(yhat - V_t) with a band" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4433;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_forecast_row" target="node_signal_row">
+          <mxGeometry x="0.4579" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2327" y="1904"/>
+              <mxPoint x="2071" y="1904"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_29" value="execute at close of t+1 (L7)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7219;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_signal_row" target="node_bt_row">
+          <mxGeometry x="0.5648" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2071" y="2146"/>
+              <mxPoint x="2142" y="2146"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_30" value="adj_close return, usable segment; minus cost" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2781;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_vxx_row" target="node_bt_row">
+          <mxGeometry x="0.9115" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="631" y="2146"/>
+              <mxPoint x="2000" y="2146"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_31" value="yes: round (RMSE 4 dp, QLIKE 6 dp)" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.588;exitY=1;exitDx=0;exitDy=0;entryX=0.6789;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_n_check" target="node_json_col">
+          <mxGeometry x="0.9185" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2871" y="2466"/>
+              <mxPoint x="2899" y="2466"/>
+              <mxPoint x="2899" y="2682"/>
+              <mxPoint x="555" y="2682"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_32" value="null in the cube" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5183;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_blank" target="node_json_col">
+          <mxGeometry x="0.894" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2798" y="2670"/>
+              <mxPoint x="485" y="2670"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_33" value="p-values, 4 dp" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.4335;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_test_cell" target="node_json_col">
+          <mxGeometry x="0.8748" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2444" y="2658"/>
+              <mxPoint x="448" y="2658"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_34" value="equity, drawdown, 6 dp" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3211;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_bt_row" target="node_json_col">
+          <mxGeometry x="0.8362" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2071" y="2646"/>
+              <mxPoint x="399" y="2646"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_35" value="M1 real export: tenor levels 2 dp, VIX/VIX3M 4 dp, flag from the unrounded ratio" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.2442;exitY=1;exitDx=0;exitDy=0;entryX=0.0138;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_iv_row" target="node_json_col">
+          <mxGeometry x="0.8543" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="577" y="560"/>
+              <mxPoint x="381" y="560"/>
+              <mxPoint x="381" y="854"/>
+              <mxPoint x="477" y="854"/>
+              <mxPoint x="477" y="2634"/>
+              <mxPoint x="265" y="2634"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_36" value="M1 real export: ribbon runs from the first session with all five tenors to data_end" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5321;exitY=1;exitDx=0;exitDy=0;entryX=0.9862;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_protocol_cfg" target="node_json_col">
+          <mxGeometry x="0.9638" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2450" y="854"/>
+              <mxPoint x="3054" y="854"/>
+              <mxPoint x="3054" y="2694"/>
+              <mxPoint x="689" y="2694"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_37" value="typed array; index, decimate" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_json_col" target="node_app_draw">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

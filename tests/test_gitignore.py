@@ -119,6 +119,12 @@ MUST_BE_KEPT = [
     "app/package.json",
     "app/tsconfig.json",
     "notebooks/00_environment_and_contract.ipynb",  # .ipynb, not .json: notebooks/**/*.json must not catch it
+    "notebooks/01_data_and_eda.ipynb",
+    # Milestone 1: the committed protocol and registries (data-model.md section 1)
+    "configs/protocol.yaml",
+    "configs/protocol.synthetic.yaml",
+    "configs/iv_indices.yaml",
+    "configs/instruments.yaml",
 ]
 
 

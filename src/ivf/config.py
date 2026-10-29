@@ -9,6 +9,8 @@ therefore lives under one directory *outside* the repo::
         interim/        typed, de-duplicated parquet
         processed/      parquet written by the pipeline stages
         app-data/real/  JSON for the app, built from real data
+        eda/            local EDA results on real data (never committed, ADR 0001 D2)
+        synthetic/      the same layout again, for the seeded synthetic data
 
 ``VOL_DATA_DIR`` defaults to ``~/data/vol-projects``, a folder shared by the
 sibling volatility projects.
@@ -57,6 +59,9 @@ class DataLayout:
     #: ``vite build`` copies ``app/public/`` into ``dist/``, so real data
     #: placed there could be deployed by accident (ADR 0001 D2 and O4).
     app_data_real: Path
+    #: Local EDA results (milestone 1). Real-data EDA numbers are outside the
+    #: publication set P (ADR 0001 D2), so they live here and nowhere else.
+    eda: Path
 
 
 def vol_data_dir() -> Path:
@@ -68,15 +73,23 @@ def vol_data_dir() -> Path:
     return Path(os.environ.get(ENV_VAR) or DEFAULT_DATA_DIR).expanduser()
 
 
-def data_layout() -> DataLayout:
-    """Every data directory for this project, derived from ``vol_data_dir()``."""
+def data_layout(*, synthetic: bool = False) -> DataLayout:
+    """Every data directory for this project, derived from ``vol_data_dir()``.
+
+    ``synthetic=True`` gives the same layout under ``ROOT/synthetic/`` (ADR 0001
+    D3: "Synthetic runs use the same layout under ROOT/synthetic/"), so the
+    synthetic data runs through exactly the code the real data does.
+    """
     root = vol_data_dir() / PROJECT_DIRNAME
+    if synthetic:
+        root = root / "synthetic"
     return DataLayout(
         root=root,
         raw=root / "raw",
         interim=root / "interim",
         processed=root / "processed",
         app_data_real=root / "app-data" / "real",
+        eda=root / "eda",
     )
 
 
@@ -100,6 +113,11 @@ def repo_root() -> Path:
     runs from the repo root.
     """
     return find_repo_root(Path(__file__))
+
+
+def configs_dir() -> Path:
+    """The committed YAML configuration (data-model.md section 1)."""
+    return repo_root() / "configs"
 
 
 def schema_dir() -> Path:

@@ -63,7 +63,7 @@ A = documentation channel, B = runtime channel. "B-only" means Channel A returne
 | C7.6 | `src/lib` is pure: no I/O, wall clock or unseeded randomness | n/a | `src/lib/storage.ts:33` reads `window.localStorage`. `src/lib/metrics.ts:56,76` default `now = Date.now()` and persist to localStorage. `storage.test.ts` touches the jsdom localStorage. These are not covered by the documented shell/chart/diagram exception. No `Math.random` | **REFUTED** (undocumented exception; the clock is injectable) | LOW |
 | C8.1 | `.gitignore` excludes all vendor data and secrets | n/a | `git check-ignore -v --no-index`. **NOT ignored:** `VIX_History.csv`, `notebooks/VIX_History.csv`, `reports/VIX_History.csv`, `VIXCLS.csv`, `raw/cboe/VIX/abc.csv`, `*.feather`, `*.pkl`, `*.h5`, `*.xlsx`, `*.sqlite`, the yfinance cache, `notebooks/fred.json`, `app/src/data/term-structure.real.json`, `app/public/data/term_structure.json`, `credentials.json`, `kaggle.json`, `.netrc`, `.npmrc`, `.pypirc`, `secrets.toml`, `*.pem`, `id_rsa`, `fred_api_key.txt`. **Ignored:** `/data/`, `*.parquet`, `*.csv.gz`, `app/public/data/real/`, `.env*` | **REFUTED**: only `*.csv.gz` is covered, not `*.csv` | MED |
 | C8.2 | the committed synthetic fixtures are not ignored | n/a | Neither `app/src/data/term-structure.synthetic.json` nor `app/public/data/synthetic/manifest.json` is ignored. Falsifier (unanchored `data/` via `core.excludesFile`) ignores both | SURVIVES | – |
-| C8.3 | `git ls-files --others --exclude-standard` lists no real market data | n/a | 108 files; the only data-like files are the 2 synthetic fixtures. `npm run gen:fixture` in scratch reproduces `term-structure.synthetic.json` byte for byte (sha256 `916e3cc3…`). `tests/test_schemas.py:144` holds one level, `23.39` for 2024-08-05; its provenance could not be checked here (no local VIX data) | SURVIVES | – |
+| C8.3 | `git ls-files --others --exclude-standard` lists no real market data | n/a | 108 files; the only data-like files are the 2 synthetic fixtures. `npm run gen:fixture` in scratch reproduces `term-structure.synthetic.json` byte for byte (sha256 `916e3cc3…`). `tests/test_schemas.py:144` holds one level for 2024-08-05 (value removed in M1 review A: it equalled a real VIX value of that date, so the fixture now holds a made-up one); its provenance could not be checked here (no local VIX data) | SURVIVES | – |
 
 ### C1.2 mutants (`scratchpad/reviewA/mutate.py`, output `b_mutants.jsonl`)
 
@@ -131,7 +131,7 @@ Root cause: `tools/export_app_data.py:157-159` decides by path text, using `reso
 - macOS or Windows behaviour of the guard. The case-insensitivity bypass was reproduced on a Linux casefold tmpfs, not on APFS or NTFS.
 - A real browser without WebGL. Only jsdom tests and reading the R3F source.
 - The GPU 40-model and multi-process tables beyond one 20-model comparison (2 repeats). The determinism hashes in ADR 0002 §5. cu128 and cu132.
-- Whether `23.39` in `tests/test_schemas.py:144` is a real Cboe close.
+- Whether the level in `tests/test_schemas.py:144` is a real Cboe close. (Answered in M1 review A: it was; the fixture now holds a made-up value.)
 - Channel A's open Tegra caveat on the cubin compatibility rule for GB10. Runtime success (C5.1) makes it moot on this box.
 
 ## Single most important fix

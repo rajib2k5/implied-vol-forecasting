@@ -1,0 +1,58 @@
+# iv_index_meta (data-model.md section 1): the implied-volatility indices that
+# milestone 1 fetches. The full list in the data model (VXN, RVX, ...) is added
+# when a milestone needs it.
+#
+# tenor_days: the constant maturity in calendar days, from Cboe's own methodology.
+# VIX: 30 days (Cboe, "Volatility Index Methodology: Cboe Volatility Index").
+# VIX9D 9, VIX3M 93, VIX6M 184 and VIX1Y 366 days: Cboe, "Cboe Selected SPX
+# Target Expected Volatility Term Indices Methodology", version 7.0, last revised
+# March 4, 2026, section 2.1, pp. 5-6 ("Constant Maturity"; VIX1Y uses the "366 Day
+# Bracket Method"). Amended M1, review A: the first version said 9, 93, 184 and
+# 365 had no Cboe primary source; this document is one, and VIX1Y is 366, not 365.
+#
+# group "vol_of_vol" is new in M1 (VVIX): the data model's group list has no
+# value for an index whose underlying is VIX itself. underlying is null for
+# VVIX because VIX is not an instrument_meta ticker.
+indices:
+  - symbol: VIX9D
+    name: Cboe S&P 500 9-Day Volatility Index
+    tenor_days: 9
+    underlying: "^GSPC"
+    group: term_structure
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX9D_History.csv
+    fred_series: null
+  - symbol: VIX
+    name: Cboe Volatility Index
+    tenor_days: 30
+    underlying: "^GSPC"
+    group: term_structure
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv
+    fred_series: VIXCLS
+  - symbol: VIX3M
+    name: Cboe S&P 500 3-Month Volatility Index
+    tenor_days: 93
+    underlying: "^GSPC"
+    group: term_structure
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv
+    fred_series: VXVCLS
+  - symbol: VIX6M
+    name: Cboe S&P 500 6-Month Volatility Index
+    tenor_days: 184
+    underlying: "^GSPC"
+    group: term_structure
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX6M_History.csv
+    fred_series: null
+  - symbol: VIX1Y
+    name: Cboe S&P 500 1-Year Volatility Index
+    tenor_days: 366
+    underlying: "^GSPC"
+    group: term_structure
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX1Y_History.csv
+    fred_series: null
+  - symbol: VVIX
+    name: Cboe VIX of VIX Index
+    tenor_days: null
+    underlying: null
+    group: vol_of_vol
+    cboe_url: https://cdn.cboe.com/api/global/us_indices/daily_prices/VVIX_History.csv
+    fred_series: null

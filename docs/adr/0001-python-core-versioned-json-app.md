@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **Proposed** (2026-10-27, milestone 0). Becomes Accepted when open item O1 (holdout start) is settled **and the user accepts D2**, the data-licensing rule, which is the user's decision (amended M0, review D). |
+| Status | **Proposed** (2026-10-27, milestone 0). Becomes Accepted when open item O1 (holdout start) is settled **and the user accepts D2**, the data-licensing rule, which is the user's decision (amended M0, review D). **Defaults in effect from M1, which the owner can override (amended M1):** `holdout_start` is the fixed 2024-07-01 (O1); D2 as proposed, with O7 and O8 "no" and O9 the proposed M1/M2 definition; CPU torch (ADR 0002). The orchestrator set these defaults; the status stays Proposed until the owner confirms them. |
 | Scope | Milestones 0-6 |
 | Related | [`docs/architecture/data-model.md`](../architecture/data-model.md), [`schemas/app-data/`](../../schemas/app-data/), [`docs/architecture/specs/erd.yaml`](../architecture/specs/erd.yaml) |
 
@@ -81,6 +81,13 @@ deliberately editing that pattern.
 **Status of D2: the user's decision (amended M0, review D).** D2 stays **Proposed** until the user
 accepts it. It is an engineering rule, not legal advice; nobody has assessed whether it satisfies the
 vendors' terms.
+
+**Owner decision on history (amended M1, 2026-10-29).** M1 review A found one real, dated VIX
+level in the pushed M0 commit `43ded87` (a test value and its mention in the M0 review-A ledger).
+The owner decided: keep the strict rule, with no real vendor values or data files (including
+`prices.json` and `eda.json`) in any new commit and made-up values in tests, and leave public
+history as it is. So `43ded87` is not rewritten or force-pushed. The working tree holds a made-up
+value, and `tools/licensing/scan_real_rows.py` must report 0 hits on the tree before every push.
 
 **Objective (restated, amended M0, review D).** Nothing committed, including git history, lets
 anyone reconstruct the daily series of any vendor index or ETP (Cboe, FRED, Yahoo), or any material
@@ -202,7 +209,7 @@ is qualitative (a direction, or yes/no), and none carries a number except E2's h
 | E3 | It mean-reverts: yes or no |
 | E4 | The VIX term structure is usually upward-sloping (contango) and inverts in stress episodes: yes or no, with no frequencies |
 | E5 | Implied variance usually exceeds subsequent realised variance (a positive VRP): yes or no |
-| E6 | Vol-of-vol rises with the level: yes or no |
+| E6 | Vol-of-vol rises with the level: yes, or "not shown" (amended M1, review B: the test that keeps its size when shocks cluster has little power then, so failing to reject is not a "no"). "Yes" only when the fitted AR(1) phi of ln VIX is at most 0.985 (amended M1, final check): under skewed GARCH(0.03, 0.965) shocks with no level effect (200 paths, n = 9,000) the test rejected on 0.0% at phi 0.98, 2.0% at 0.985, 15.0% at 0.99 and 44.5% at 0.995, so above 0.985 it says "not shown" with that reason. And only on at least 6,000 level/next-shock pairs (`eda.E6_MIN_N`; default decision 2026-10-29): at n = 2,000 the test said "yes" on 24 of 100 null paths inside the cutoff; at 4,000, 10 of 200 (the rule's bound, so not taken); at 6,000, at most 3 of 200 |
 | E7 | ln VIX is judged stationary at 5% by ADF and KPSS: the verdict only, with no statistic or p-value |
 
 Anything else needs an ADR amendment. Results of local-only (scale-tied) rows may be described only
@@ -351,6 +358,49 @@ means CI exercises the real code path, not a mock.
       `public/data/synthetic/`, the exporter's `--check` catches them.
     - A small markerless asset imported with `?raw`, `?url` or `new URL(…)` is inlined into the JS
       bundle as base64.
+- **The data pipeline refuses a data root inside the repo (amended M1, review A).** Review A found
+  that only the exporter had the guard: `VOL_DATA_DIR=<repo>/localdata` let `fetch`, `build-interim`
+  and `eda` write raw snapshots, raw hashes and every EDA number into untracked, unignored files of
+  the checkout. The guard now lives in `ivf/repo_guard.py`, one implementation shared by the
+  exporter and by every pipeline stage that writes under `ROOT` (the `python -m ivf.data` commands
+  and their library entry points), with the same (device, inode) and `.git` rules, the same exit
+  code 3 and the same residuals as above.
+  - **Every folder written into is checked, at write time (amended M1, review B).** Review B kept
+    `ROOT` outside the repo but made `ROOT/raw` (and `ROOT/eda`) a symlink into the checkout:
+    `fetch` wrote 8 snapshots and `eda` its report into it, exit 0, because only `ROOT` was checked.
+    Now the root check also covers `raw/`, `interim/`, `processed/`, `eda/` and `app-data/`, so
+    those stop the command before its first write; and every file, from the pipeline and from the
+    exporter, is written by one function, `ivf.repo_guard.write_file`, which checks the folder it
+    writes into when it writes, opens it, checks that the open folder is the checked one (same
+    device and inode, same resolved path) and writes through that handle. This narrows the TOCTOU
+    residual above to a folder *moved into* the repo after it was opened.
+- **A local scan for copied real data (amended M1, review A).** `tools/licensing/scan_real_rows.py`
+  compares every text file git would commit with the raw snapshots under `ROOT` (whole lines, whole
+  raw rows, dated values, file sizes and their totals, raw hashes) and prints only `file:line`.
+  Review A found two real 1990 VIX rows in a test fixture, byte for byte, and the total size of the
+  raw files in the M1 walkthrough; the scan then found more real closes in the M1 fixtures and one
+  real VIX level in an M0 test (`tests/test_schemas.py`, committed in the M0 commit). All are now
+  made-up values. **Residual:** it runs only where the raw data are (not in CI), it is a pre-commit
+  gate by convention, and a value rounded to one decimal or paraphrased in words escapes it.
+  - **Other spellings (amended M1, review B).** Review B planted stand-in values in 16 shapes and 9
+    escaped entirely: `date(...)` objects, epoch-millisecond keys, lists of closes without dates,
+    pretty JSON with the value more than 3 lines from its date, compact, slash-ISO and textual
+    dates, 1-decimal values and values divided by 100. The scan now reads every date spelling it
+    names (ISO with `-`, `/` or `.`; US and day-first; compact; `(Y, M, D)` calls; textual; epoch
+    seconds to nanoseconds), matches a value at its own decimals, rounded either way, or divided by
+    100, looks up to 12 lines away for the nearest dated line, and flags runs of 3 or more values
+    equal to consecutive sessions of one raw series with no date at all (5 or more at one decimal).
+    Every planted row of all 16 shapes is caught, and of 24 of 25 shapes added in the fix; the 25th,
+    a 1-decimal value whose date is on another line, stays out by design. **Residual, stated:** values transformed beyond rounding
+    and /100 (returns, logs, differences, sums, truncation); a lone value with no date nearby and no
+    run (fewer than 3, or 5 at one decimal); a one-decimal value whose date is on another line;
+    two-digit years and date spellings not listed; scientific notation and numbers in words; and
+    ignored, binary or non-UTF-8 files (images, PDFs, parquet).
+  - **M1 final check.** Three more planted shapes escaped: a decimal-comma CSV
+    (`DD.MM.YYYY;16,94`), Excel serial dates with a value, and every k-th session's close. The
+    decimal comma is now read as a number (not with exactly 3 digits after it); the day-first
+    dotted date already was. **Residual, stated:** Excel serial dates and every-k-th-session
+    lists stay uncaught (`tools/licensing/README.md`, "still not caught").
 - The README carries a Cboe trademark and terms notice, plus a "not financial advice" line.
 
 ### D3. Storage
@@ -382,6 +432,25 @@ Synthetic runs use the same layout under `ROOT/synthetic/`.
    Every interim row keeps its `raw_sha256`.
 5. `ivf data verify` re-hashes every raw file and fails on any mismatch.
 
+**As built in M1 (amended M1).** The command is `uv run python -m ivf.data verify`; the code is
+`ivf.data.raw` and `ivf.data.fetch`. Five details the text above left open:
+- **The bytes stored for yfinance.** yfinance returns a DataFrame, so "bytes as downloaded" is
+  defined by `fetch.yfinance_csv_bytes`: header `date,open,high,low,close,adj_close,volume`, the
+  New York session date, prices with six decimals, volume as an integer, an empty field for a
+  missing value, rows sorted by date, `\n` line ends. The index must be tz-aware
+  `America/New_York` at midnight, with exactly those six columns; anything else is refused, not
+  stored. The request is `history(period="max", interval="1d", auto_adjust=False, actions=False)`,
+  recorded as the pseudo-URL `yfinance://^GSPC?...`.
+- **"Rename only if absent"** is `os.link` from the temporary file to `{sha256}.csv`, which
+  refuses an existing name in one atomic step; the temporary file is then removed.
+- **A skipped fetch** (younger than `--max-age`) makes no network call and writes no log line:
+  nothing was fetched.
+- **A failed fetch** (HTTP status other than 200, an empty body, an empty DataFrame) stores
+  nothing and logs nothing, and `fetch` exits 5 after trying the other symbols.
+- **`verify`** also fails on a snapshot no log line accounts for, on a file in `raw/` that is not
+  a snapshot, and on a log line whose file is missing or whose `bytes` disagree. A leftover
+  `.tmp-*` file from an interrupted fetch is a warning only.
+
 **Provenance chain.** Each link records the key of the one before it:
 - raw `sha256` → interim `raw_sha256`;
 - interim → `run_input(run_id, raw_sha256)`;
@@ -408,10 +477,55 @@ Synthetic runs use the same layout under `ROOT/synthetic/`.
     the truncation test (4.7) compare like with like.
   - M1's `data_check` must find a VIX close and a `^GSPC` close on every session of 𝒯. If any is
     missing, M1 decides the gap policy explicitly; a gap is never silently dropped or filled.
+  - **Gap policy (amended M1).** M1 measured the real files on 2026-10-29 (counts and dates
+    are `data_check` output, local only under D2). Cboe's VIX file has no close on a few XNYS
+    sessions, all in burn-in, years before the first fold cutoff; the `^GSPC` file is complete
+    on 𝒯; FRED VIXCLS lacks most of the same sessions, so the FRED fallback cannot close them and
+    is not used. The rules
+    (`ivf/data/check.py`):
+    - **G1.** A session of 𝒯 in `[train_start, data_end]` without a VIX close or a `^GSPC` close
+      is a *core gap*. It stays a gap: never filled, interpolated, or removed from 𝒯. It is null
+      in every table built on 𝒯.
+    - **G2.** Anything computed over a window containing a gap is null: a return needs two
+      consecutive sessions, a 21-session sum needs all 21. Pairs (an AR(1) fit, an ACF lag) are
+      formed on 𝒯; a pair with a gap is dropped, never bridged to "the previous row that exists".
+      Tests that need an unbroken series (ADF and KPSS lag and difference consecutive values) run
+      on the longest gap-free segment of their sample, and report its length and dates (amended
+      M1, review A: the first M1 version dropped the missing values and so joined the neighbours of
+      every gap).
+    - **G3.** Core gaps are allowed only in burn-in, at least 22 sessions (the `har_m` window,
+      the longest trailing window) before the first fold cutoff, so no feature at a forecast
+      origin and no scored target can touch one. A later core gap fails `check` (exit 1); it would
+      need a missing-origin rule under 4.5's "same rows", which is a decision, not a default. The
+      measured gaps satisfy G3. M2's fitters must accept nulls in burn-in training rows (or say
+      how they drop them).
+    - **G4.** A row on a date that is not an XNYS session (Cboe has published VIX on NYSE holidays
+      since 2022, and on one earlier unscheduled NYSE closure) is not on 𝒯, so nothing downstream
+      reads it. It stays in interim and is counted as `not_a_session`.
+    - **G5.** The other indices (VIX9D, VIX3M, VIX6M, VIX1Y, VVIX) are not core: their gaps are
+      null and counted (`missing_in_cboe`) and never fail `check`. VIX1Y misses a few US
+      bond-market holidays; VVIX is sparse in its first months.
+  - **`data_end` (amended M1)** is the last session with both core closes **settled**: the fetch
+    that produced them ran on a later New York calendar day than the session (yfinance can return a
+    bar for a session still in progress; not observed in M1). `check --freeze-data-end` writes it into
+    `configs/protocol.yaml` once and refuses to move it. Frozen on 2026-10-29 at **2026-10-28**.
+    **Re-validated on every run (amended M1, review A):** `check` and `eda` fail (exit 1) unless the
+    frozen value is an XNYS session with both core closes present in the interim tables being read,
+    each from a fetch made on a later New York day. Review A found the rule applied only when
+    freezing: a frozen `data_end` fetched the same day, or a hand edit, passed both commands.
+    **Checked against its freeze record (amended M1, review B):** a hand edit moving `data_end` back
+    to an earlier *settled* session still passed, since such a session meets every rule above. The
+    freeze now also writes `configs/protocol.freeze.json` (the value and the `protocol_hash` it
+    froze), and `check`, `eda` and notebook 01 fail when the protocol no longer matches it (the
+    notebook stops). It is a tripwire for an accidental edit, not a lock: editing both files on
+    purpose is a new protocol, which rule R1 allows. The record of the 2026-10-28 freeze was written
+    on 2026-10-29 by `check --freeze-data-end`, which records an earlier freeze only while the data
+    still support the frozen value.
   - `exchange_calendars` becomes a pinned dependency when 𝒯 is implemented. The calendar figures in
     4.4 and 4.5 were measured with it.
 - **Information set at origin t.** Every value dated ≤ t, as of that session's close. VIX's daily
-  close is struck after the SPX cash close (16:15 versus 16:00 ET, to verify in M1); both count as
+  close is struck after the SPX cash close (16:15 versus 16:00 ET; not verified in M1, which found no
+  primary source in the time it had: still open, amended M1); both count as
   "close of t". Nothing dated t+1 or later may be used.
 - **Vintage limitation.** History is the vintage as fetched, not point-in-time. Cboe restatements
   are rare. `^GSPC` is a price index, so it is not dividend-adjusted. VXX/SVXY use split-adjusted
@@ -538,10 +652,10 @@ forecast origins, and `calendar.period` labels them `burn_in`. (amended M0, revi
 
 | Parameter | Value |
 |---|---|
-| `train_start` | 1990-01-02, the first VIX date (to verify in M1) |
+| `train_start` | 1990-01-02, the first VIX date. Verified in M1 on Cboe's file; `check` re-verifies it on every run (amended M1). |
 | `dev_start` | 2000-01-03, so the first fit has about 10 years of data |
 | `holdout_start` | A **fixed date** in `configs/protocol.yaml`. **Proposed: 2024-07-01** (see O1). |
-| `data_end` | Frozen once in M1 at the last session with complete core data. Changing it creates a new `protocol_hash`. |
+| `data_end` | Frozen once in M1 at the last session with complete core data: **2026-10-28** (amended M1; rule in 4.1). Changing it creates a new `protocol_hash`. |
 | Period of a forecast | `holdout` if `origin_date ≥ holdout_start`, else `dev` |
 
 - **Why a fixed date and not "the last 24 months".** A rolling definition moves every time the data
@@ -558,6 +672,13 @@ forecast origins, and `calendar.period` labels them `burn_in`. (amended M0, revi
   `target_date < holdout_start`. The last h dev origins of each horizon are dropped from tuning.
 - **One look.** The holdout is scored with hyper-parameters frozen. If a hyper-parameter changes
   after the holdout has been seen, `protocol.holdout_looks` increments and the report must print it.
+- **M1's EDA computes nothing on holdout rows (amended M1, review A).** Every EDA statistic uses
+  sessions and interim rows strictly before `holdout_start`, so no origin and no target date is in
+  the holdout (`ivf.data.process.eda_inputs`; `eda_report` refuses a holdout row). Its samples are
+  `pre_holdout` (burn-in and dev together), `burn_in` and `dev`, the calendar's own periods. The
+  first M1 version printed and stored holdout statistics (half-life, ADF/KPSS, spread, contango)
+  before any model existed, a look this rule forbids, and its "dev" sample silently included
+  burn-in. Holdout descriptives wait for the scored holdout run. `holdout_looks` stays 0.
   A re-tuned strategy becomes a new `strategy_def` row (rows are retired, never deleted), so DSR's
   `n_trials` counts it automatically.
 - **In-sample criteria are part of fitting.** AIC order selection, MLE parameters, scaler
@@ -582,7 +703,7 @@ forecast origins, and `calendar.period` labels them `burn_in`. (amended M0, revi
 | Item | Rule |
 |---|---|
 | `vix_level` regimes (labelled at the origin) | `low`: V < 15. `mid`: 15 ≤ V < 25. `high`: V ≥ 25. These are fixed round numbers, not quantiles. |
-| `term_structure` regimes | `backwardation` if VIX > VIX3M, else `contango`. Null before VIX3M's first date (to verify in M1). Review C found Cboe's `VIX3M_History.csv` starts 2009-09-18, so this regime is null for roughly the first decade of the dev period unless M1 adds an earlier VXV source; M1 measures it and decides (amended M0, review C). |
+| `term_structure` regimes | `backwardation` if VIX > VIX3M, else `contango`. Null before VIX3M's first date (to verify in M1). Review C found Cboe's `VIX3M_History.csv` starts 2009-09-18, so this regime is null for roughly the first decade of the dev period unless M1 adds an earlier VXV source; M1 measures it and decides (amended M0, review C). **M1 decision (amended M1):** M1 confirmed 2009-09-18 on the file and adds no earlier source. The regime is null before then (no `regime_label` row), so regime cells for `term_structure` cover only the later part of dev. An earlier VXV series would be a second licensed source with its own splice risk, for a regime that never reaches committed reports (O7). |
 | Diebold-Mariano | `d_t = L_a − L_b` per origin, on identical rows. Losses: squared error (level) and QLIKE. The long-run variance uses the **rectangular** estimator, with the HLN correction and a Bartlett fallback, as set out below the table. (amended M0: was Newey-West) |
 | Mincer-Zarnowitz | `y = α + β·ŷ + ε`, with a joint Wald test of α=0 and β=1 using NW lag h−1. Run in level space for `vix_level` and in variance space for `rv21`. The Bartlett kernel's downward bias (below) applies here too: see O5. (amended M0) |
 | Suppression | In the local `metric` table and the local app, any cell with n < `min_cell_n` (20) is written as null, with its n kept, because so small a cell is unreliable. Regime cells never reach committed real reports at all (D2 P), so the M0 secondary-suppression rule is superseded (amended M0, review D). The holdout's `high` regime may be thin. The dev period is reported alongside it, labelled "dev (used for tuning)". (amended M0, review B) |
@@ -688,6 +809,14 @@ forecast origins, and `calendar.period` labels them `burn_in`. (amended M0, revi
   - The holdout is about 28 months, not 24 (pending O1).
   - The 63-session cadence is a compromise and is revisited in M4 with measured LSTM fit times.
 - **Follow-ups.**
+  - M1 (done, amended M1): `train_start` 1990-01-02 verified; first dates on Cboe's files VIX9D
+    2011-01-04, VIX3M 2009-09-18, VIX6M 2008-01-02, VIX1Y 2007-01-03 (and VVIX 2006-03-06);
+    `tenor_days`: VIX's 30 calendar days is stated in Cboe's VIX methodology, and VIX9D 9, VIX3M 93,
+    VIX6M 184 and VIX1Y **366** days in Cboe's "Selected SPX Target Expected Volatility Term Indices
+    Methodology" (version 7.0, last revised March 4, 2026, section 2.1, pp. 5-6; VIX1Y uses the "366
+    Day Bracket Method"). M1 first wrote 365 and called 9, 93, 184 and 365 unverified for want of a
+    primary source; that was a search failure, not a fact (amended M1, review A). `data_end` frozen
+    at 2026-10-28. The original follow-up read:
   - M1: verify `train_start`, the VIX3M, VIX9D, VIX6M and VIX1Y start dates, and `tenor_days`, then
     freeze `data_end`.
   - M3: verify `arch` EGARCH multi-step behaviour.

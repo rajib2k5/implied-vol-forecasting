@@ -1,0 +1,178 @@
+---
+title: "implied-vol-forecasting system architecture (M0-M6)"
+---
+flowchart TB
+    subgraph external["External"]
+        cboe(["CBOE index CSVs\ncdn.cboe.com .../daily_prices/{SYM}_History.csv, 307 to cdn-api.cboe.com"])
+        fred(["FRED *CLS series\nfallback#58; only fills dates missing from Cboe"])
+        yfinance(["yfinance\n^GSPC and other underlyings, VXX, SVXY; auto_adjust=False"])
+        sharpe{{"sharpe-observatory scripts/metrics.py\nPSR, expected max SR, DSR (MIT, reused)"}}
+    end
+    subgraph core["Python core (src/ivf)"]
+        cli["ivf.data.cli\npython -m ivf.data fetch | build-interim | verify | check | eda; --synthetic switches the root and the protocol"]
+        protocol_mod["ivf.protocol\nstrict readers of every config; protocol_hash = SHA-256 of the canonical JSON; freeze_data_end and its freeze record"]
+        repo_guard["ivf.repo_guard\nlicensing guard (ADR 0001 D2)#58; refuses a data root (and its raw, interim, processed, eda, app-data folders) or an export folder inside a git checkout, by device and inode of every ancestor and by any .git entry; write_file, the one writer, checks each folder again at write time; exit 3"]
+        raw_store["ivf.data.raw\nstore_snapshot#58; temp file, SHA-256, os.link to {sha256}.csv if absent; append-only provenance log"]
+        fetch["ivf.data.fetch\nnetwork_get is the only network call; skip within --max-age 1 day; yfinance bytes fixed by yfinance_csv_bytes"]
+        synthetic["ivf.data.synthetic\nseeded generator with known truth#58; AR(1) ln VIX, GARCH(1,1) returns; hand-set parameters, not fitted"]
+        build_interim["ivf.data.build_interim\nstrict parse; typed, deduplicated, one table per source kind; latest snapshot unless --snapshot"]
+        verify["ivf data verify\nre-hash every raw file and cross-check the log; fail on any mismatch"]
+        check_mod["ivf.data.check\ndata_check, gap policy G1-G5, settled data_end; --freeze-data-end writes it once, with a freeze record; check fails if the protocol no longer matches the record"]
+        calendar_mod["ivf.data.calendar\nmaster calendar from XNYS sessions, from dates alone; first fold cutoff"]
+        features["ivf.features.build\ntrailing windows only (L1)#58; feature, target_value, regime_label; is_backwardation, term_structure_panel (L5)"]
+        eda_mod["ivf.eda\npure statistics#58; ACF, Ljung-Box, AR(1) half-life, ADF/KPSS, implied-realised gap, vol-of-vol, term structure"]
+        process_mod["ivf.data.process\nrun_id; refuses a failed data_check; writes the processed tables and the local EDA report"]
+        splits["ivf.evaluation.splits\nexpanding window, 63-session folds, shared by every model"]
+        models[["ivf.models\nrw, hist_mean, ARIMA, HAR, GARCH/GJR/EGARCH, ARIMA-GARCH, LSTM; params frozen within a fold"]]
+        evaluation["ivf.evaluation\nRMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"]
+        backtest["ivf.backtest\nVXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"]
+        ivf_reports["ivf.reports\ncommits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"]
+    end
+    subgraph storage["Storage"]
+        configs[("configs/*.yaml\nM1#58; protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; models and strategies arrive with the milestones that use them. Committed")]
+        raw[("ROOT/raw/{source}/{symbol}/{sha256}.csv\nbytes as downloaded; never committed")]
+        prov[("ROOT/raw/provenance.jsonl\nappend-only, one line per fetch, written even if unchanged")]
+        synth_raw[("ROOT/synthetic/raw/\nCboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed")]
+        interim[("ROOT/interim/{table}.parquet\niv_index_daily, price_daily; every row keeps raw_sha256")]
+        build_report[("ROOT/interim/build_report.json\nper raw file#58; raw_sha256, fetched_at, rows, duplicates dropped; local, never committed")]
+        processed[("ROOT/processed/run_id=#lt;id#gt;/{table}.parquet\nM1#58; run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; fold from M2; runs.parquet beside it")]
+        eda_dir[("ROOT/eda/#lt;run_id#gt;/eda_report.json\nevery EDA number, for reading locally; never committed (ADR 0001 D2)")]
+        forecasts[("forecast and fit tables\nunder processed/run_id=#lt;id#gt;/; key (run_id, model_id, target_id, origin_date, horizon)")]
+        results[("metric, dm_test, mz_regression, backtest_daily, strategy_summary\nunder processed/run_id=#lt;id#gt;/")]
+        reports_dir[/"reports/*.agg.csv\ncommitted#58; publication set P only (unitless, rounded), source_dirty = false"/]
+        schemas[("schemas/app-data/\nJSON Schemas#58; the single source of truth for the contract")]
+        synth_json[/"app/public/data/synthetic/*.json\ncommitted fixture; data_mode synthetic"/]
+        real_json[/"ROOT/app-data/real/*.json\nnever in the repo tree; the Vite dev server serves it in dev only"/]
+    end
+    subgraph tooling["Tooling"]
+        export["tools/export_app_data.py\nreshape, round, validate, write; computes no new number (D1). M1 real#58; ribbon from interim iv_index_daily, first session with all five tenors to data_end"]
+        export_check["export_app_data.py --mode synthetic --check\nregenerate in a temp dir and compare with the committed fixture"]
+        scan_real["tools/licensing/scan_real_rows.py\nlocal only, not a test#58; flags a repo line that holds a raw row, a dated raw value (any date spelling), a run of 3 or more consecutive raw values, a raw file size or a raw SHA-256; prints file#58;line and a count, never the text; exit 0 clean, 1 flagged, 2 no raw data"]
+        build_nb["tools/build_notebooks.py\n--check is the notebook sync test"]
+        notebooks[/"notebooks/\ngenerated from src/ivf; never hand-edited"/]
+    end
+    subgraph app["App"]
+        loader["app/src/lib loaders\ncheck envelope and invariants, show the data_mode badge; compute nothing"]
+        page_ribbon("Term-structure ribbon (3D)\nterm_structure.json, series")
+        page_race("Model race\nmodel_race.json, series")
+        page_surface("Error surface (3D)\nerror_surface.json, aggregate")
+        page_equity("Equity curve\nequity_curves.json, series")
+        dist_guard["npm run verify\nfails if any file in dist/ has data_mode real"]
+    end
+    configs -->|"strict read of every config"| protocol_mod
+    cli ==>|"every command, first#58; data root and its subfolders"| repo_guard
+    fetch ==>|"fetch_one#58; data root; write_file per snapshot and log line"| repo_guard
+    synthetic ==>|"write_synthetic_raw#58; data root; write_file per file"| repo_guard
+    build_interim ==>|"build_interim#58; data root; write_file per table"| repo_guard
+    check_mod ==>|"run_check#58; data root"| repo_guard
+    process_mod ==>|"run_eda#58; data root; write_file per table and the report"| repo_guard
+    export ==>|"real mode#58; output folder; write_file per file"| repo_guard
+    cli ==>|"fetch"| fetch
+    cli ==>|"fetch --synthetic"| synthetic
+    cli ==>|"build-interim"| build_interim
+    cli ==>|"verify"| verify
+    cli ==>|"check"| check_mod
+    cli ==>|"eda"| process_mod
+    cboe -->|"HTTP GET, follow 307"| fetch
+    fred -->|"fallback series"| fetch
+    yfinance -->|"DataFrame to CSV, hashed"| fetch
+    protocol_mod -->|"iv_indices, instruments#58; URLs, tickers"| fetch
+    fetch -->|"bytes and one record per fetch"| raw_store
+    synthetic -->|"same store, source synthetic"| raw_store
+    raw_store -->|"{sha256}.csv if absent"| raw
+    raw_store -->|"append one line"| prov
+    raw_store -->|"--synthetic#58; under ROOT/synthetic/"| synth_raw
+    raw -->|"re-hash"| verify
+    raw -->|"latest snapshot"| build_interim
+    synth_raw -->|"same loaders"| build_interim
+    build_interim -->|"typed parquet"| interim
+    build_interim -->|"per-file report"| build_report
+    interim -->|"iv_index_daily, price_daily"| check_mod
+    build_report -->|"fetch times, duplicate counts"| check_mod
+    protocol_mod -->|"train_start, dev_start, holdout_start, fold_len, data_end"| check_mod
+    check_mod ==>|"xnys_sessions, first_cutoff"| calendar_mod
+    check_mod -->|"--freeze-data-end#58; write data_end once, and its freeze record"| configs
+    interim -->|"iv_index_daily, price_daily"| process_mod
+    protocol_mod -->|"protocol, protocol_hash"| process_mod
+    process_mod ==>|"data_check; refuse on a violation"| check_mod
+    process_mod ==>|"master_calendar"| calendar_mod
+    process_mod ==>|"build_features, build_target_values, build_regime_labels"| features
+    process_mod ==>|"EDA statistics on sessions and rows before holdout_start only (eda_inputs); a later one is refused"| eda_mod
+    process_mod -->|"run_input, calendar, data_check, feature, target_value, regime_label, eda_stat, runs"| processed
+    process_mod -->|"eda_report.json"| eda_dir
+    configs -->|"protocol#58; dev_start, holdout_start, fold_len"| splits
+    processed -->|"calendar t_idx"| splits
+    splits -->|"folds#58; cutoff, origins"| models
+    processed -->|"features at t (L1)"| models
+    models -->|"fit rows, forecast rows"| forecasts
+    forecasts -->|"same origins for every model"| evaluation
+    processed -->|"targets y, v; regimes"| evaluation
+    evaluation -->|"metric, dm_test, mz_regression"| results
+    forecasts -->|"signal at origin t"| backtest
+    interim -->|"VXX, SVXY adj_close"| backtest
+    sharpe -->|"PSR, DSR"| backtest
+    backtest -->|"backtest_daily, strategy_summary"| results
+    results -->|"aggregates"| ivf_reports
+    ivf_reports -->|"set P only, one release"| reports_dir
+    interim -->|"M1 real#58; iv_index_daily for the ribbon"| export
+    build_report -->|"M1 real#58; raw hashes for run_id"| export
+    configs -->|"M1 real#58; frozen protocol.yaml (data_end)"| export
+    features ==>|"M1 real#58; term_structure_panel (calls is_backwardation)"| export
+    results -->|"metrics, DM, MZ, equity"| export
+    forecasts -->|"yhat for the race"| export
+    processed -->|"target_value, regime_label, run"| export
+    schemas -->|"validate before writing"| export
+    export -->|"synthetic#58; committed"| synth_json
+    export -->|"real#58; outside the repo"| real_json
+    raw -->|"real snapshots only, compared with every file git would commit"| scan_real
+    prov -->|"latest snapshot per symbol#58; sizes"| scan_real
+    export -->|"temp-dir rerun"| export_check
+    synth_json -->|"compare with fixture"| export_check
+    models -->|"generated from src/ivf (all modules)"| build_nb
+    build_nb -->|"generate"| notebooks
+    synth_json -->|"manifest.json first"| loader
+    real_json -->|"dev server only"| loader
+    schemas -->|"contract tests"| loader
+    loader --> page_ribbon
+    loader --> page_race
+    loader --> page_surface
+    loader --> page_equity
+    synth_json -->|"vite build copies to dist/"| dist_guard
+    classDef source fill:#E0F2FE,stroke:#0284C7,color:#0F172A
+    class cboe,fred,yfinance source
+    classDef store fill:#FEF3C7,stroke:#D97706,color:#0F172A
+    class configs,raw,prov,synth_raw,interim,build_report,processed,eda_dir,forecasts,results,schemas store
+    classDef process fill:#E0E7FF,stroke:#4F46E5,color:#0F172A
+    class cli,protocol_mod,repo_guard,raw_store,fetch,synthetic,build_interim,verify,check_mod,calendar_mod,features,eda_mod,process_mod,splits,evaluation,backtest,ivf_reports,export,export_check,scan_real,build_nb,loader,dist_guard process
+    classDef model fill:#EDE9FE,stroke:#7C3AED,color:#0F172A
+    class models model
+    classDef output fill:#D1FAE5,stroke:#059669,color:#0F172A
+    class reports_dir,synth_json,real_json,notebooks output
+    classDef external fill:#F1F5F9,stroke:#475569,color:#0F172A
+    class sharpe external
+    classDef ui fill:#FCE7F3,stroke:#DB2777,color:#0F172A
+    class page_ribbon,page_race,page_surface,page_equity ui
+    style external fill:#F1F5F9,stroke:#E2E8F0,color:#64748B
+    style core fill:#EFF6FF,stroke:#DBEAFE,color:#64748B
+    style storage fill:#F5F3FF,stroke:#E9E5FD,color:#64748B
+    style tooling fill:#ECFDF5,stroke:#D1FAE5,color:#64748B
+    style app fill:#FFF7ED,stroke:#FFEDD5,color:#64748B
+    linkStyle 1 stroke:#6366F1
+    linkStyle 2 stroke:#6366F1
+    linkStyle 3 stroke:#6366F1
+    linkStyle 4 stroke:#6366F1
+    linkStyle 5 stroke:#6366F1
+    linkStyle 6 stroke:#6366F1
+    linkStyle 7 stroke:#6366F1
+    linkStyle 8 stroke:#6366F1
+    linkStyle 9 stroke:#6366F1
+    linkStyle 10 stroke:#6366F1
+    linkStyle 11 stroke:#6366F1
+    linkStyle 12 stroke:#6366F1
+    linkStyle 13 stroke:#6366F1
+    linkStyle 31 stroke:#6366F1
+    linkStyle 35 stroke:#6366F1
+    linkStyle 36 stroke:#6366F1
+    linkStyle 37 stroke:#6366F1
+    linkStyle 38 stroke:#6366F1
+    linkStyle 58 stroke:#6366F1
