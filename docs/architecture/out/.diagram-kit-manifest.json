@@ -1,11 +1,11 @@
 {
  "_comment": "Files written by vol-diagram-kit's build.py, with the sha256 of the bytes it wrote. A build deletes a listed file no spec produces any more only while it still has that hash, and nothing else. Do not edit.",
  "files": {
-  "architecture.drawio": "88eac365e89aa7092b7a12163d6ff0f7b9afd124e1deb6539e4b0e5f394e4a07",
-  "architecture.lucid.xml": "dc63a961d26cfad8eeaae608ef29db8de143120eca606c9f61e3f67f38f3321d",
-  "architecture.mmd": "4f3bf7532bc4ae0a954956be015d4073445fe484b3c2433b0f226473192b6eda",
-  "architecture.png": "691f5c5faa01ce3576884a0c51f8efc2426762cfbab432a9a1056e770461bfbb",
-  "architecture.svg": "44d8acfa4af66abde81cda5597875f75e7a19111e7a79b28ce719720807ed126",
+  "architecture.drawio": "994f9fe82f9be81a0869e720cd57f3d4fc5a35d9a24e10fb041f7a4326854962",
+  "architecture.lucid.xml": "4290bcc1172ab893b4e0d486b90ea7c4542715066316376a905f1c7de7f5b532",
+  "architecture.mmd": "510e21420ed1381b015507af4c69372551fad087d7c4cf74555dda29a09963d5",
+  "architecture.png": "5c960d04f61df80051d1138f462fc147194158f0568b7abe391ca0b80bd6d935",
+  "architecture.svg": "186d8bd1d320a7e6b1f937fe20057639fa17aa22e7f9efd3c99d676cff02c1bb",
   "data_flow.drawio": "d3eba1fa9f30941527a8be5e8ee0b7a31c8d5967948d17ef4dc496f3a951a07c",
   "data_flow.lucid.xml": "05862e5a96755b89a21da909234466bedb71c6ec979a3218dec0dc5488ce2d83",
   "data_flow.mmd": "8fa8ce3b3ba35b86a61ae44200f704359ecab39a69c66630fb9a0ec9e17e0992",

@@ -51,7 +51,7 @@ nodes:
   - {id: process_mod, label: ivf.data.process, lane: core, type: process, sublabel: "run_id; refuses a failed data_check; writes the processed tables and the local EDA report"}
   - {id: splits, label: ivf.evaluation.splits, lane: core, type: process, sublabel: "expanding window, 63-session folds, shared by every model"}
   - {id: models, label: ivf.models, lane: core, type: model, sublabel: "rw, hist_mean, ARIMA, HAR (M2); GARCH/GJR/EGARCH on S&P 500 returns for rv21, har_rv, vix_implied, ARIMA-GARCH on ln VIX, d = 0 (M3); lstm_log on vix_level and rv21, 5-seed mean, retrained every 4th cutoff (M4); params frozen within a fold"}
-  - {id: evaluation, label: ivf.evaluation, lane: core, type: process, sublabel: "RMSE, MAE, MAPE, QLIKE, bias; Diebold-Mariano; Mincer-Zarnowitz; regimes"}
+  - {id: evaluation, label: ivf.evaluation, lane: core, type: process, sublabel: "python -m ivf.evaluation report (M5): RMSE, MAE, MAPE, QLIKE, bias by regime; DM (fixed-b primary) with Holm; MZ (Hansen-Hodrick); walk-forward calibration variant; dev only, holdout refused on real data"}
   - {id: backtest, label: ivf.backtest, lane: core, type: process, sublabel: "VXX/SVXY signals executed at close of t+1 (L7), costs, PSR/DSR"}
   - {id: ivf_reports, label: ivf.reports, lane: core, type: process, sublabel: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
 
@@ -65,7 +65,7 @@ nodes:
   - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; M3 (python -m ivf.models garch) merges its rv21 and arima_garch_log rows into the same fit, forecast and metric tables; M4 (python -m ivf.models lstm, after garch) merges lstm_log rows (one fit row per seed) and writes forecast_member; runs.parquet beside it"}
   - {id: eda_dir, label: "ROOT/eda/<run_id>/eda_report.json", lane: storage, type: store, sublabel: "every EDA number, for reading locally; never committed (ADR 0001 D2)"}
   - {id: forecasts, label: "forecast and fit tables", lane: storage, type: store, sublabel: "under processed/run_id=<id>/; key (run_id, model_id, target_id, origin_date, horizon)"}
-  - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, sublabel: "under processed/run_id=<id>/"}
+  - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, sublabel: "under processed/run_id=<id>/; M5 writes evaluation/period=dev/ (metric, dm_test, mz_regression, calibration, calibration_summary, report_meta.json)"}
   - {id: reports_dir, label: "reports/*.agg.csv", lane: storage, type: output, sublabel: "committed: publication set P only (unitless, rounded), source_dirty = false"}
   - {id: schemas, label: "schemas/app-data/", lane: storage, type: store, sublabel: "JSON Schemas: the single source of truth for the contract"}
   - {id: synth_json, label: "app/public/data/synthetic/*.json", lane: storage, type: output, sublabel: "committed fixture; data_mode synthetic"}
