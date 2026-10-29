@@ -20,7 +20,10 @@ horizons: [1, 5, 21]
 fold_len: 63                # refit cadence in sessions (ADR 0001 4.5)
 min_cell_n: 20              # local reliability suppression (ADR 0001 4.8)
 vix_regime_edges: [15, 25]  # low < 15 <= mid < 25 <= high (fixed, rule L5)
-holdout_looks: 0            # incremented if a hyper-parameter changes after the holdout is seen
+holdout_looks: 1            # incremented if a hyper-parameter changes after the holdout is seen
+# 0 -> 1 on 2026-10-29 (amended M6, review A; rule default taken 2026-10-29, owner can override): while building
+# M6, ETP returns on holdout dates and an SVXY-on-VXX slope over the holdout were printed BEFORE every M6
+# setting was written (ADR 0001 4.6, "As built in M6"). The planned look is the second exposure.
 seed: 20261028              # root of every SeedSequence (ADR 0001 D5)
 race_context_sessions: 252  # dev sessions the model race shows before the holdout
 targets:

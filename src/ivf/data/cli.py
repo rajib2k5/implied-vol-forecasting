@@ -82,7 +82,7 @@ def cmd_build_interim(args, layout) -> int:
     try:
         pins = build_interim.parse_pins(args.snapshot or [])
         report = build_interim.build_interim(
-            layout.root, [i.symbol for i in indices], [i.ticker for i in instruments], pins
+            layout.root, [i.symbol for i in indices], [i.ticker for i in instruments if i.role == "underlying"], pins
         )
     except (build_interim.InterimError, raw.RawStoreError) as exc:
         print(f"error: {exc}", file=sys.stderr)

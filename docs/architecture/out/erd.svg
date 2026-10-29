@@ -313,25 +313,25 @@
     <circle cx="1743" cy="2797" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
   </g>
   <g id="relation_39">
-    <path d="M404 655L684 655Q692 655 692 663L692 2366Q692 2374 700 2374L945 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M404 655L684 655Q692 655 692 663L692 2366Q692 2374 700 2374L935 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <path d="M412 650.5L412 659.5" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <circle cx="423" cy="655" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
-    <path d="M945 2381L933 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M945 2367L933 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <circle cx="926" cy="2374" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
+    <path d="M935 2381L923 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M935 2367L923 2374" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="916" cy="2374" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
   </g>
   <g id="relation_40">
-    <path d="M1281 2290L1532 2290Q1540 2290 1540 2298L1540 2680Q1540 2688 1548 2688L2215 2688Q2223 2688 2223 2680L2223 1798Q2223 1790 2231 1790L2568 1790" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M1289 2284L1289 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M1294 2284L1294 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M1291 2290L1532 2290Q1540 2290 1540 2298L1540 2680Q1540 2688 1548 2688L2215 2688Q2223 2688 2223 2680L2223 1798Q2223 1790 2231 1790L2568 1790" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M1299 2284L1299 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M1304 2284L1304 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M2568 1797L2556 1790" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M2568 1783L2556 1790" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M2551 1796L2551 1784" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
   </g>
   <g id="relation_41">
-    <path d="M1281 2290L1518 2290Q1526 2290 1526 2282L1526 2249Q1526 2241 1534 2241L1691 2241" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M1289 2284L1289 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M1294 2284L1294 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M1291 2290L1518 2290Q1526 2290 1526 2282L1526 2249Q1526 2241 1534 2241L1691 2241" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M1299 2284L1299 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M1304 2284L1304 2296" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M1691 2248L1679 2241" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M1691 2234L1679 2241" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <path d="M1674 2247L1674 2235" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
@@ -450,12 +450,12 @@
     <circle cx="3142" cy="2229" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
   </g>
   <g id="relation_58">
-    <path d="M407 959L656 959Q664 959 664 967L664 2394Q664 2402 672 2402L945 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M407 959L656 959Q664 959 664 967L664 2394Q664 2402 672 2402L935 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
     <path d="M415 954.5L415 963.5" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
     <circle cx="426" cy="959" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
-    <path d="M945 2409L933 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M945 2395L933 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
-    <circle cx="926" cy="2402" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
+    <path d="M935 2409L923 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M935 2395L923 2402" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="916" cy="2402" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.6"/>
   </g>
   <g id="relation_59">
     <path d="M2047 1577L2285 1577Q2293 1577 2293 1585L2293 2404Q2293 2412 2301 2412L2567 2412" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
@@ -747,51 +747,51 @@
     <rect x="102" y="596" width="302" height="264" rx="10" fill="none" stroke="#E2E8F0" stroke-width="1"/>
   </g>
   <g id="entity_strategy_def">
-    <rect x="945" y="2237" width="336" height="292" rx="10" fill="#0F172A" fill-opacity="0.05"/>
-    <rect x="944" y="2238" width="338" height="293" rx="11" fill="#0F172A" fill-opacity="0.04"/>
-    <rect x="943" y="2240" width="340" height="294" rx="12" fill="#0F172A" fill-opacity="0.03"/>
-    <rect x="945" y="2236" width="336" height="292" rx="10" fill="#FFFFFF" stroke="none" stroke-width="1"/>
-    <path d="M945 2276V2246Q945 2236 955 2236H1271Q1281 2236 1281 2246V2276Z" fill="#EEF2FF"/>
-    <path d="M945 2276H1281" fill="none" stroke="#E2E8F0" stroke-width="1"/>
-    <rect x="957" y="2244" width="24" height="24" rx="7" fill="#E0E7FF"/>
-    <g transform="translate(961 2248)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="935" y="2237" width="356" height="292" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="934" y="2238" width="358" height="293" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="933" y="2240" width="360" height="294" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="935" y="2236" width="356" height="292" rx="10" fill="#FFFFFF" stroke="none" stroke-width="1"/>
+    <path d="M935 2276V2246Q935 2236 945 2236H1281Q1291 2236 1291 2246V2276Z" fill="#EEF2FF"/>
+    <path d="M935 2276H1291" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="947" y="2244" width="24" height="24" rx="7" fill="#E0E7FF"/>
+    <g transform="translate(951 2248)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="2.5" width="12" height="11" rx="1.5"/>
       <path d="M2 6.5h12M2 10h12M6.5 6.5v7"/>
     </g>
-    <text x="989" y="2261" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="700" fill="#1E1B4B">strategy_def (configs/strategies.yaml)</text>
-    <rect x="957" y="2282" width="25" height="16" rx="4" fill="#FEF3C7"/>
-    <text x="969.5" y="2293.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#B45309">PK</text>
-    <text x="990" y="2294.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="600" fill="#0F172A">strategy_id</text>
-    <text x="1267" y="2294.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
-    <path d="M946 2304H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2322.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">label</text>
-    <text x="1267" y="2322.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
-    <path d="M946 2332H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2350.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">kind</text>
-    <text x="1267" y="2350.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
-    <path d="M946 2360H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <rect x="957" y="2366" width="24" height="16" rx="4" fill="#E0F2FE"/>
-    <text x="969" y="2377.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#0369A1">FK</text>
-    <text x="990" y="2378.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">model_id</text>
-    <text x="1267" y="2378.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str?</text>
-    <path d="M946 2388H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <rect x="957" y="2394" width="24" height="16" rx="4" fill="#E0F2FE"/>
-    <text x="969" y="2405.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#0369A1">FK</text>
-    <text x="990" y="2406.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">target_id</text>
-    <text x="1267" y="2406.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str?</text>
-    <path d="M946 2416H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2434.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">horizon</text>
-    <text x="1267" y="2434.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">i16?</text>
-    <path d="M946 2444H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2462.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">rule</text>
-    <text x="1267" y="2462.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
-    <path d="M946 2472H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2490.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">params_json</text>
-    <text x="1267" y="2490.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
-    <path d="M946 2500H1280" fill="none" stroke="#F1F5F9" stroke-width="1"/>
-    <text x="990" y="2518.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">retired</text>
-    <text x="1267" y="2518.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">bool</text>
-    <rect x="945" y="2236" width="336" height="292" rx="10" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="979" y="2261" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="700" fill="#1E1B4B">strategy_def (configs/backtest.yaml, M6)</text>
+    <rect x="947" y="2282" width="25" height="16" rx="4" fill="#FEF3C7"/>
+    <text x="959.5" y="2293.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#B45309">PK</text>
+    <text x="980" y="2294.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="600" fill="#0F172A">strategy_id</text>
+    <text x="1277" y="2294.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
+    <path d="M936 2304H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2322.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">label</text>
+    <text x="1277" y="2322.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
+    <path d="M936 2332H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2350.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">kind</text>
+    <text x="1277" y="2350.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
+    <path d="M936 2360H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <rect x="947" y="2366" width="24" height="16" rx="4" fill="#E0F2FE"/>
+    <text x="959" y="2377.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#0369A1">FK</text>
+    <text x="980" y="2378.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">model_id</text>
+    <text x="1277" y="2378.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str?</text>
+    <path d="M936 2388H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <rect x="947" y="2394" width="24" height="16" rx="4" fill="#E0F2FE"/>
+    <text x="959" y="2405.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" text-anchor="middle" fill="#0369A1">FK</text>
+    <text x="980" y="2406.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">target_id</text>
+    <text x="1277" y="2406.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str?</text>
+    <path d="M936 2416H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2434.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">horizon</text>
+    <text x="1277" y="2434.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">i16?</text>
+    <path d="M936 2444H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2462.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">rule</text>
+    <text x="1277" y="2462.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
+    <path d="M936 2472H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2490.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">params_json</text>
+    <text x="1277" y="2490.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">str</text>
+    <path d="M936 2500H1290" fill="none" stroke="#F1F5F9" stroke-width="1"/>
+    <text x="980" y="2518.4" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12.5" font-weight="400" fill="#0F172A">retired</text>
+    <text x="1277" y="2518.2" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#64748B">bool</text>
+    <rect x="935" y="2236" width="356" height="292" rx="10" fill="none" stroke="#E2E8F0" stroke-width="1"/>
   </g>
   <g id="entity_iv_index_meta">
     <rect x="937" y="3289" width="352" height="236" rx="10" fill="#0F172A" fill-opacity="0.05"/>

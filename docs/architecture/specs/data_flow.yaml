@@ -36,7 +36,7 @@ nodes:
   # ---------------- 1. Ingest ----------------
   - {id: csv_row, label: "CBOE CSV row", lane: ingest, type: source, sublabel: "one session of one index, e.g. VIX; some files are close-only"}
   - {id: spx_row, label: "price_daily row (^GSPC)", lane: ingest, type: source, sublabel: "yfinance; a price index, not dividend-adjusted"}
-  - {id: vxx_row, label: "price_daily row (VXX, SVXY)", lane: ingest, type: source, sublabel: "yfinance; split-adjusted close"}
+  - {id: vxx_row, label: "tradable_daily row (VXX, SVXY)", lane: ingest, type: source, sublabel: "yfinance; split-adjusted close; own interim table (M6)"}
   - {id: synth_csv, label: "synthetic CSV (seeded)", lane: ingest, type: source, sublabel: "ivf.data.synthetic: Cboe- and Yahoo-shaped files with known truth; no download"}
   - {id: raw_file, label: "raw/{sha256}.csv", lane: ingest, type: store, sublabel: "bytes as downloaded; one line appended to provenance.jsonl. Synthetic runs: ROOT/synthetic/raw/"}
   - {id: iv_row, label: "iv_index_daily row", lane: ingest, type: output, sublabel: "tidy panel row: symbol, date, close in vol points, raw_sha256"}

@@ -23,8 +23,8 @@ Questions are listed here by title only. The full text is in each milestone's wa
 | 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Done (ab223f4) | [`docs/milestones/02-baselines.md`](docs/milestones/02-baselines.md) | queued, 0 of 14 answered |
 | 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on ln VIX | Done (8318a1a) | [`docs/milestones/03-garch-done-right.md`](docs/milestones/03-garch-done-right.md) | queued, 0 of 14 answered |
 | 4 | LSTM (PyTorch) on the same walk-forward splits | Done (a481168) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
-| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | **Current** (built, not committed) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | |
-| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Planned | Written with the milestone | |
+| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (4da5b45) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
+| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | **Current** | Written with the milestone | |
 
 ## Concepts
 
@@ -54,6 +54,7 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 - Milestone 02 (queued, 0 of 14 answered; code at ab223f4). Answer in its quiz widget, or say "quiz me on milestone 02" to resume it.
 - Milestone 03 (queued, 0 of 14 answered; code at 8318a1a). Answer in its quiz widget, or say "quiz me on milestone 03" to resume it.
 - Milestone 04 (queued, 0 of 14 answered; code at a481168). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
+- Milestone 05 (queued, 0 of 14 answered; code at 4da5b45). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
 
 ## Defaults taken
 
@@ -75,6 +76,8 @@ On 2026-10-29 the build moved on without waiting for these decisions. Each row i
 | Trading rule (PR/FAQ question 3) | Forecast minus current VIX with a dead band first; term-structure slope and a regime filter are variants, each counted as a trial in DSR | M6 |
 
 O5 and O6 settled in M5 by measurement (Hansen-Hodrick for MZ, fixed-b for DM; defaults taken 2026-10-29, owner can override). Still open: O10 (M4).
+
+M6 (2026-10-29): the backtest's defaults D1-D11 (primary rule rv21 forecast minus VIX with a 2-point band, the dev-only model-choice rule, costs 5 bp per side, cash at 0, segments, DSR conventions, trial counting, the holdout rule and the guarded one look) are in `docs/milestones/06-backtest.md` section 3; each is a default taken 2026-10-29, owner can override.
 
 ## Questions and answers by milestone
 

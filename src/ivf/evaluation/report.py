@@ -27,8 +27,9 @@ sessions before it (``walkforward.pre_holdout_inputs``). The frozen ``data_end``
 interim tables, as every step does; that check is the only reader of later rows (amended M5, review A:
 the first version said no such row was read). The one look
 at the holdout is taken once, at the end of milestone 6, for the forecasts and the backtest together
-with every model and rule frozen; ``protocol.holdout_looks`` stays 0. ``--period holdout`` is refused on
-real data before anything is read; with ``--synthetic`` it runs the same code on the synthetic market,
+with every model and rule frozen. ``protocol.holdout_looks`` counts exposures before that look (amended M6,
+review A: it is 1, ADR 0001 4.6). ``--period holdout`` is refused on real data before anything is read,
+unless the guarded look (``python -m ivf.backtest run --period holdout --one-look``) calls it; with ``--synthetic`` it runs the same code on the synthetic market,
 which is how the holdout path is tested. On the holdout, DM and MZ p-values are **descriptive only**
 (``descriptive_only``: not size-controlled at n of about 583, ADR 0001 O-M5-5) and the confirmatory check is
 ``holdout_check``, pre-registered in M5 (amended M5, review A).
@@ -64,7 +65,8 @@ BENCHMARKS = {"vix_level": ("rw", "har_log"), "rv21": ("rw", "har_rv")}
 CAL_SUFFIX = "+cal"
 HOLDOUT_REFUSAL = ("refusing --period holdout on real data: the one look at the holdout (ADR 0001 4.6) is taken at "
                    "the end of milestone 6, for the forecasts and the backtest together, with every model and rule "
-                   "frozen (policy of 2026-10-29); holdout_looks stays 0. Use --synthetic to exercise this path.")
+                   "frozen (policy of 2026-10-29); only `python -m ivf.backtest run --period holdout --one-look` "
+                   "takes it. Use --synthetic to exercise this path.")
 
 
 # --------------------------------------------------------------------------
@@ -269,11 +271,16 @@ def choose_run(processed, run_id: str | None) -> str | None:
 
 
 def run_report(layout, *, synthetic: bool, run_id: str | None = None, period: str = "dev", print_tables: bool = False,
-               out=None) -> int:
+               out=None, one_look: bool = False, caveat: str = "", run_protocol_hash: str | None = None) -> int:
+    """``one_look`` (amended M6) is passed only by ``python -m ivf.backtest run --period holdout --one-look``,
+    the owner's single look, which guards it (a preflight, then a create-only look record); this command's
+    own line has no such flag, so ``--period holdout`` stays refused here on real data. ``caveat`` (the
+    look's second-exposure text, review B) and ``run_protocol_hash`` (the protocol the dev run was made
+    under) are written into ``report_meta.json``."""
     out = out or sys.stdout
     clock = time.perf_counter()
     repo_guard.require_data_root_outside_repo(layout.root)
-    if period == "holdout" and not synthetic:
+    if period == "holdout" and not synthetic and not one_look:
         print(f"error: {HOLDOUT_REFUSAL}", file=sys.stderr)
         return EXIT_USAGE
     proto = protocol_mod.load_protocol(protocol_mod.protocol_path(synthetic=synthetic))
@@ -295,6 +302,9 @@ def run_report(layout, *, synthetic: bool, run_id: str | None = None, period: st
         return EXIT_INPUT
     folder = layout.processed / f"run_id={chosen}"
     forecasts = pd.read_parquet(folder / "forecast.parquet")
+    held = folder / "period=holdout" / "forecast.parquet"  # amended M6: the one look's holdout-fold forecasts
+    if period == "holdout" and held.exists():
+        forecasts = pd.concat([forecasts, pd.read_parquet(held)], ignore_index=True)
     forecasts = forecasts[forecasts.target_id.isin(TARGETS)].reset_index(drop=True)
     defs, _ = registry.load_models()
     for target_id in TARGETS:
@@ -330,6 +340,7 @@ def run_report(layout, *, synthetic: bool, run_id: str | None = None, period: st
         "evaluation_commit": git.commit, "evaluation_dirty": git.dirty,
         "generated_at": datetime.now(timezone.utc).isoformat(), "holdout_start": str(proto.holdout_start),
         "holdout_looks": int(proto.document["holdout_looks"]), "dm_primary": dm.PRIMARY_METHOD, "fixed_b": dm.FIXED_B,
+        "caveat": caveat, "protocol_hash": proto.protocol_hash, "run_protocol_hash": run_protocol_hash,
         "mz_primary": mz.PRIMARY_METHOD, "calibration_min_pairs": calibration.MIN_PAIRS,
         "rows": {name: len(frame) for name, frame in tables.items()}, "scored_rows": len(scored),
     }
@@ -339,7 +350,8 @@ def run_report(layout, *, synthetic: bool, run_id: str | None = None, period: st
           f"ending {dates[-1]}; " + (
               "the frozen data_end check reads the full interim tables, no later value enters an output; "
               f"{late_origins} forecast rows with an origin on or after it ignored; "
-              if period == "dev" else "synthetic holdout path, DM and MZ descriptive only; ") + f"holdout_looks {meta['holdout_looks']}",
+              if period == "dev" else f"{meta['data_mode']} holdout path, DM and MZ descriptive only; ")
+          + f"holdout_looks {meta['holdout_looks']}" + (f"; caveat: {caveat}" if caveat else ""),
           file=out)
     if "holdout_check" in tables:
         check_rows = tables["holdout_check"]

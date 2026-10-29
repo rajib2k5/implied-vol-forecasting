@@ -98,35 +98,35 @@
         <mxCell id="row-model_def-retired" value="retired : bool" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
           <mxGeometry x="102" y="832" width="302" height="28" as="geometry"/>
         </mxCell>
-        <mxCell id="entity_strategy_def" value="strategy_def (configs/strategies.yaml)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EEF2FF;strokeColor=#CBD5E1;fontColor=#1E1B4B;fontSize=13;fontStyle=1;fontFamily=Helvetica;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2236" width="336" height="40" as="geometry"/>
+        <mxCell id="entity_strategy_def" value="strategy_def (configs/backtest.yaml, M6)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EEF2FF;strokeColor=#CBD5E1;fontColor=#1E1B4B;fontSize=13;fontStyle=1;fontFamily=Helvetica;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="935" y="2236" width="356" height="40" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-strategy_id" value="PK  strategy_id : str" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2276" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2276" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-label" value="label : str" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2304" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2304" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-kind" value="kind : str" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2332" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2332" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-model_id" value="FK  model_id : str?" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2360" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2360" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-target_id" value="FK  target_id : str?" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2388" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2388" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-horizon" value="horizon : i16?" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2416" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2416" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-rule" value="rule : str" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2444" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2444" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-params_json" value="params_json : str" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2472" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2472" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="row-strategy_def-retired" value="retired : bool" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#E2E8F0;fontColor=#0F172A;fontSize=12;fontStyle=0;fontFamily=Helvetica;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="945" y="2500" width="336" height="28" as="geometry"/>
+          <mxGeometry x="935" y="2500" width="356" height="28" as="geometry"/>
         </mxCell>
         <mxCell id="entity_iv_index_meta" value="iv_index_meta (configs/iv_indices.yaml)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EEF2FF;strokeColor=#CBD5E1;fontColor=#1E1B4B;fontSize=13;fontStyle=1;fontFamily=Helvetica;align=left;spacingLeft=12;" vertex="1" parent="1">
           <mxGeometry x="937" y="3288" width="352" height="40" as="geometry"/>
@@ -1418,7 +1418,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="relation_39" value="drives (0..1 : 0..*)" style="edgeStyle=none;rounded=0;html=0;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;startArrow=none;endArrow=none;exitX=1;exitY=0.6786;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="row-model_def-model_id" target="row-strategy_def-model_id">
-          <mxGeometry x="0.8354" relative="1" as="geometry">
+          <mxGeometry x="0.8436" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="692" y="655"/>
               <mxPoint x="692" y="2374"/>
@@ -1426,7 +1426,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="relation_40" value="daily path (1 : 1..*)" style="edgeStyle=none;rounded=0;html=0;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;startArrow=none;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="row-strategy_def-strategy_id" target="row-backtest_daily-strategy_id">
-          <mxGeometry x="0.8753" relative="1" as="geometry">
+          <mxGeometry x="0.8749" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1540" y="2290"/>
               <mxPoint x="1540" y="2688"/>
@@ -1436,7 +1436,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="relation_41" value="summarised (1 : 1..*)" style="edgeStyle=none;rounded=0;html=0;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;startArrow=none;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="row-strategy_def-strategy_id" target="row-strategy_summary-strategy_id">
-          <mxGeometry x="0.5926" relative="1" as="geometry">
+          <mxGeometry x="0.5835" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1526" y="2290"/>
               <mxPoint x="1526" y="2241"/>
