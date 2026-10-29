@@ -1,0 +1,75 @@
+# The model registry (model_def, data-model.md section 1) and the milestone 2 baseline settings.
+#
+# Not part of protocol_hash: the protocol (configs/protocol.yaml) is frozen, and these are
+# model choices, not evaluation rules. Every value below was set before any forecast was
+# scored, from the literature or a round number, never by looking at results (rule L6).
+# Changing one after the dev losses have been seen is a hyper-parameter change: say so in the
+# milestone walkthrough, and after the holdout has been seen, increment holdout_looks.
+#
+# model_def columns: model_id, label, family, fit_space, multistep, targets, milestone, retired.
+# A model is never deleted, only retired (it still counts as a trial).
+models:
+  - model_id: rw
+    label: Random walk
+    family: naive
+    fit_space: level
+    multistep: none
+    targets: [vix_level]
+    milestone: 2
+    retired: false
+  - model_id: hist_mean
+    label: Historical mean (expanding)
+    family: naive
+    fit_space: level
+    multistep: none
+    targets: [vix_level]
+    milestone: 2
+    retired: false
+  - model_id: hist_mean_252
+    label: Historical mean (last 252 sessions)
+    family: naive
+    fit_space: level
+    multistep: none
+    targets: [vix_level]
+    milestone: 2
+    retired: false
+  - model_id: arima_log
+    label: ARIMA on log IV
+    family: arima
+    fit_space: log_level
+    multistep: iterated
+    targets: [vix_level]
+    milestone: 2
+    retired: false
+  - model_id: har_log
+    label: HAR on log IV (Corsi)
+    family: har
+    fit_space: log_level
+    multistep: direct
+    targets: [vix_level]
+    milestone: 2
+    retired: false
+
+baselines:
+  # VIX is the protocol target (vix_level). The other implied-vol indices of
+  # configs/iv_indices.yaml are secondary targets "<symbol>_level": forecast and scored with
+  # the same calendar, folds and rules, but not protocol targets (adding one would change the
+  # frozen protocol_hash). Owner decision O-M2-1 in docs/milestones/02-baselines.md.
+  symbols: [VIX, VIX9D, VIX3M, VIX6M, VIX1Y, VVIX]
+  # A fold is fitted for a symbol only when at least this many closes are dated <= its cutoff
+  # (two years of sessions). Earlier folds give no forecast for that symbol, for every model.
+  min_train_sessions: 504
+  # hist_mean_252: the mean of the last 252 sessions of the calendar up to the cutoff.
+  hist_window: 252
+  arima:
+    # (p, q) by AIC over 0..max_p x 0..max_q at every cutoff.
+    # d_rule "d0" (default): d = 0, an ARMA with a constant on ln IV, which reverts to its mean;
+    # the unit-root case is the random walk baseline's. "kpss" (an option): d = 1 if KPSS rejects
+    # level stationarity at kpss_alpha, else 0, and no constant when d = 1. Amended M2, review A:
+    # "kpss" was the default; on stationary AR(1) series as persistent as ln VIX it chose d = 1 on
+    # 17-52% of seeds at fold sample sizes, and d = 1 at every real VIX cutoff (walkthrough,
+    # "What review A found"). kpss_alpha is read only when d_rule is "kpss".
+    max_p: 2
+    max_q: 2
+    d_rule: d0
+    kpss_alpha: 0.05

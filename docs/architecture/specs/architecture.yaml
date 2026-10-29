@@ -54,13 +54,13 @@ nodes:
   - {id: ivf_reports, label: ivf.reports, lane: core, type: process, sublabel: "commits only publication set P (unitless ratios, 2 dp tests); one release per frozen data_end; needs a clean tree"}
 
   # ---------------- Storage ----------------
-  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; models and strategies arrive with the milestones that use them. Committed"}
+  - {id: configs, label: "configs/*.yaml", lane: storage, type: store, sublabel: "M1: protocol.yaml, protocol.synthetic.yaml and their freeze records (protocol*.freeze.json), iv_indices.yaml, instruments.yaml; M2: models.yaml (model_def and the baseline settings); strategies arrive in M6. Committed"}
   - {id: raw, label: "ROOT/raw/{source}/{symbol}/{sha256}.csv", lane: storage, type: store, sublabel: "bytes as downloaded; never committed"}
   - {id: prov, label: "ROOT/raw/provenance.jsonl", lane: storage, type: store, sublabel: "append-only, one line per fetch, written even if unchanged"}
   - {id: synth_raw, label: "ROOT/synthetic/raw/", lane: storage, type: store, sublabel: "Cboe-shaped and Yahoo-shaped CSVs named by sha256, with their own provenance.jsonl; never committed"}
   - {id: interim, label: "ROOT/interim/{table}.parquet", lane: storage, type: store, sublabel: "iv_index_daily, price_daily; every row keeps raw_sha256"}
   - {id: build_report, label: "ROOT/interim/build_report.json", lane: storage, type: store, sublabel: "per raw file: raw_sha256, fetched_at, rows, duplicates dropped; local, never committed"}
-  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; fold from M2; runs.parquet beside it"}
+  - {id: processed, label: "ROOT/processed/run_id=<id>/{table}.parquet", lane: storage, type: store, sublabel: "M1: run_input, calendar, data_check, feature, target_value, regime_label, eda_stat; M2 (python -m ivf.models baselines): fold, fit, forecast, metric, and calendar.fold_id; runs.parquet beside it"}
   - {id: eda_dir, label: "ROOT/eda/<run_id>/eda_report.json", lane: storage, type: store, sublabel: "every EDA number, for reading locally; never committed (ADR 0001 D2)"}
   - {id: forecasts, label: "forecast and fit tables", lane: storage, type: store, sublabel: "under processed/run_id=<id>/; key (run_id, model_id, target_id, origin_date, horizon)"}
   - {id: results, label: "metric, dm_test, mz_regression, backtest_daily, strategy_summary", lane: storage, type: store, sublabel: "under processed/run_id=<id>/"}
