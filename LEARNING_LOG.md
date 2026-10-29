@@ -21,8 +21,8 @@ Questions are listed here by title only. The full text is in each milestone's wa
 | 0 | Scaffold and design | Done (43ded87) | [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-scaffold-and-design.md) | queued, 0 of 16 answered |
 | 1 | Data and EDA: volatility clustering, persistence, AR(1) half-life, mean reversion, IV-RV spread, vol-of-vol | Done (fecf88a) | [`docs/milestones/01-data-and-eda.md`](docs/milestones/01-data-and-eda.md) | queued, 0 of 14 answered |
 | 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Done (ab223f4) | [`docs/milestones/02-baselines.md`](docs/milestones/02-baselines.md) | queued, 0 of 14 answered |
-| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on log-IV changes | **Current** | Written with the milestone | |
-| 4 | LSTM (PyTorch) on the same walk-forward splits | Planned | Written with the milestone | |
+| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on ln VIX | Done (8318a1a) | [`docs/milestones/03-garch-done-right.md`](docs/milestones/03-garch-done-right.md) | queued, 0 of 14 answered |
+| 4 | LSTM (PyTorch) on the same walk-forward splits | **Current** | Written with the milestone | |
 | 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Planned | Written with the milestone | |
 | 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Planned | Written with the milestone | |
 
@@ -41,12 +41,15 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 | 06 | [Variance risk premium and vol-of-vol](docs/concepts/06-variance-risk-premium-and-vol-of-vol.md) | The implied-minus-realised gap and whether vol-of-vol rises with the level (E6). |
 | 07 | [ARIMA and information criteria](docs/concepts/07-arima-and-information-criteria.md) | ARIMA on log-IV, choosing the order by AIC, the lognormal back-transform, and why d = 0. |
 | 08 | [HAR and heterogeneous memory](docs/concepts/08-har-and-heterogeneous-memory.md) | Day, week and month averages as a cheap long-memory model, fitted per horizon. |
+| 09 | [GARCH family and variance aggregation](docs/concepts/09-garch-family-and-variance-aggregation.md) | GARCH, GJR and EGARCH h-step paths, and summing them into a 21-day vol in rv21's units. |
+| 10 | [GARCH on IV is a category error](docs/concepts/10-garch-on-iv-is-a-category-error.md) | Why the GARCH family belongs on returns, not on the VIX level, shown on synthetic data. |
 
 ## Queued checkpoints
 
 - Milestone 00 (queued, 0 of 16 answered). Answer in its quiz widget, or say "quiz me on milestone 0" to resume it.
 - Milestone 01 (queued, 0 of 14 answered; code at fecf88a). Answer in its quiz widget, or say "quiz me on milestone 01" to resume it.
 - Milestone 02 (queued, 0 of 14 answered; code at ab223f4). Answer in its quiz widget, or say "quiz me on milestone 02" to resume it.
+- Milestone 03 (queued, 0 of 14 answered; code at 8318a1a). Answer in its quiz widget, or say "quiz me on milestone 03" to resume it.
 
 ## Defaults taken
 

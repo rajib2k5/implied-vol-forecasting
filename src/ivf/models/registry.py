@@ -1,5 +1,6 @@
 """``configs/models.yaml``: the model registry (``model_def``), the milestone 2 baseline settings and
-the milestone 3 GARCH settings (``load_garch_settings``).
+the milestone 3 GARCH settings (``load_garch_settings``) and the milestone 4 LSTM settings
+(``load_lstm_settings``).
 
 Read strictly, like the protocol (``ivf.protocol``): an unknown key, a missing key or a value of
 the wrong type is an error, because a typo would otherwise change a forecast silently.
@@ -14,6 +15,7 @@ from ivf import config
 from ivf.protocol import ProtocolError, _exact_keys, _int, _read_yaml
 
 MODELS_FILE = "models.yaml"
+TOP_KEYS = {"models", "baselines", "garch", "lstm"}  # amended M4: + lstm
 FAMILIES = {"naive", "arima", "har", "garch", "calibrated", "ml", "implied"}
 FIT_SPACES = {"level", "log_level", "returns", "variance"}
 MULTISTEP = {"direct", "iterated", "none"}
@@ -53,7 +55,7 @@ def target_id_for(symbol: str) -> str:
 
 def load_models(path: Path | None = None) -> tuple[tuple[ModelDef, ...], BaselineSettings]:
     path = path or config.configs_dir() / MODELS_FILE
-    document = _exact_keys(str(path), _read_yaml(path), {"models", "baselines", "garch"})
+    document = _exact_keys(str(path), _read_yaml(path), TOP_KEYS)
     models = []
     for i, entry in enumerate(document["models"]):
         where = f"{path}: models[{i}]"
@@ -111,7 +113,7 @@ class GarchSettings:
 def load_garch_settings(path: Path | None = None) -> GarchSettings:
     """The ``garch`` block of ``configs/models.yaml`` (milestone 3), read as strictly as the rest."""
     path = path or config.configs_dir() / MODELS_FILE
-    document = _exact_keys(str(path), _read_yaml(path), {"models", "baselines", "garch"})
+    document = _exact_keys(str(path), _read_yaml(path), TOP_KEYS)
     block = _exact_keys(f"{path}: garch", document["garch"], _GARCH_KEYS)
     dists = tuple(block["dists"])
     if not dists or len(set(dists)) != len(dists) or any(d not in GARCH_DISTS for d in dists):
@@ -125,3 +127,24 @@ def load_garch_settings(path: Path | None = None) -> GarchSettings:
 def models_for(defs, target_id: str, max_milestone: int) -> list[str]:
     """The expected model list for one target: registered, not retired, up to a milestone, in registry order."""
     return [d.model_id for d in defs if target_id in d.targets and not d.retired and d.milestone <= max_milestone]
+
+
+_LSTM_KEYS = {"members", "window", "hidden", "batch", "lr", "max_epochs", "patience", "val_sessions", "refit_every"}
+
+
+def load_lstm_settings(path: Path | None = None):
+    """The ``lstm`` block of ``configs/models.yaml`` (milestone 4), read as strictly as the rest."""
+    from ivf.features import build
+    from ivf.models.lstm import LstmSettings
+
+    path = path or config.configs_dir() / MODELS_FILE
+    document = _exact_keys(str(path), _read_yaml(path), TOP_KEYS)
+    block = _exact_keys(f"{path}: lstm", document["lstm"], _LSTM_KEYS)
+    lr = block["lr"]
+    if isinstance(lr, bool) or not isinstance(lr, (int, float)) or not 0 < lr < 1:
+        raise ProtocolError(f"{path}: lstm.lr must be in (0, 1)")
+    ints = {k: _int(f"{path}: lstm.{k}", block[k], 1) for k in _LSTM_KEYS - {"lr"}}
+    if ints["window"] > build.HAR_MONTH:
+        # The runner guarantees the 22 closes t-21..t at an origin, nothing earlier: a longer window would drop rows.
+        raise ProtocolError(f"{path}: lstm.window must be at most {build.HAR_MONTH}")
+    return LstmSettings(lr=float(lr), **ints)

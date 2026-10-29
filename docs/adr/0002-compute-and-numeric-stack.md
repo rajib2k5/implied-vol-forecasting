@@ -403,6 +403,24 @@ pandas-2 code to protect. It would win only if a dependency broke under pandas 3
   few hours" trigger under Alternative A but not far below it, so milestone 4 should
   measure real fit times before relying on it.
 
+**Update (amended M4, measured): LSTM fit times and the refit cadence.**
+- Measured on 2026-10-29 on the synthetic market (same calendar and sample sizes as the real data),
+  one member (hidden 32, batch 64, Adam 1e-3, patience 5), one thread, while another project's
+  process pool kept the load average at 13 to 16 (of 20 cores): 0.44 to 1.25 s per epoch on the VIX
+  track and 0.29 to 1.04 s on the rv21 track, growing with the training set (2,265 to 8,313 origins);
+  7 to 10 and 17 to 25 epochs before early stopping; 4.0 to 12.5 s and 7.3 to 21.8 s per member.
+- So a full retrain at every one of the 97 dev cutoffs (5 seeds × 2 tracks) is about 104 s × 97 ≈
+  2.8 h on one core (derived from the per-member times above, not run), about 34 min with 5 single-thread workers on idle cores: too close to the
+  45-minute budget on a shared box. **Default: retrain every 4th cutoff** (ADR 0001 O2), with the
+  frozen network in between; the measured run times are in milestone 4, section 7.
+- As this ADR says: one thread per member (`lstm.THREADS = 1`), `torch.use_deterministic_algorithms(True)`,
+  seeded `manual_seed` and a seeded CPU `torch.Generator`, recorded in `fit.hyperparams_json` with the
+  torch version and device. Members train in a spawn process pool (`--workers`, default 5); a test
+  shows the pool and the main process give the same bytes.
+- New finding: a batched forward pass changed outputs by up to 1.2e-8 (log points) depending on the
+  batch size (13 and 41 of 63 rows differed at hidden 4 and 32), so `lstm.predict` runs one row per
+  call and the truncation test demands equality, not a tolerance.
+
 ## Evidence
 
 Throwaway uv projects with Python 3.12.13 (uv-managed). The other probe scripts were in the

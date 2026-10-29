@@ -24,6 +24,7 @@ M0 = "00_environment_and_contract.ipynb"
 M1 = "01_data_and_eda.ipynb"
 M2 = "02_baselines.ipynb"
 M3 = "03_garch.ipynb"
+M4 = "04_lstm.ipynb"
 
 
 @pytest.fixture
@@ -49,10 +50,10 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 4 notebook(s)")  # amended M3: 03_garch.ipynb
+    assert result.stdout.startswith("ok: 5 notebook(s)")  # amended M4: 04_lstm.ipynb
 
 
-@pytest.mark.parametrize("name", [M0, M1, M2, M3])
+@pytest.mark.parametrize("name", [M0, M1, M2, M3, M4])
 def test_committed_bytes_equal_generated_bytes(name):
     assert (REPO / "notebooks" / name).read_bytes() == build_notebooks.generate()[name]
 
@@ -268,3 +269,28 @@ def test_m3_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch,
     assert set(namespace["FC"].model_id) == {"rw", "har_rv", "vix_implied", "garch", "gjr", "egarch"}
     assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
 
+
+
+# --- milestone 4: the LSTM notebook -------------------------------------------------------------
+
+
+def test_m4_notebook_runs_top_to_bottom_on_synthetic_data(tmp_path, monkeypatch, capsys, no_network):
+    # Synthetic data, two folds, a tiny network: the split by hand, both tracks with the LSTM beside the
+    # baselines, one training then the frozen network, the member table, the determinism check.
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("IVF_NOTEBOOK_FOLDS", "2")
+    monkeypatch.setenv("IVF_NOTEBOOK_QUICK", "1")
+    notebook = nbformat.reads(build_notebooks.generate()[M4].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert namespace["MODE"] == "synthetic" and "data: SYNTHETIC" in out
+    assert "training 0..49, validation 70..79, gap 21 sessions" in out
+    assert out.count("refit True") == 1 and out.count("refit False") == 1  # 2 folds, 1 seed: trained, then frozen
+    assert "weights sha256 equal: True" in out and "member rows" in out and "RMSE of each member:" in out
+    assert len(namespace["PER"]) == 4  # (vix_level h = 1, 5, 21; rv21) x 1 member (amended M4, review A)
+    assert {"lstm_log", "har_rv"} <= set(namespace["RV_RUN"].forecasts.model_id)
+    assert max(namespace["DATES"]) < namespace["PROTO"].holdout_start
