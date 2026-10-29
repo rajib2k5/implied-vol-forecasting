@@ -1,0 +1,54 @@
+---
+title: "implied-vol-forecasting milestone process"
+---
+flowchart TB
+    subgraph orchestrator["Orchestrator"]
+        brief{{"Milestone brief\nfrom the approved plan#58; scope, rules, files the milestone may touch"}}
+        refuted["Any claim refuted?\nthe orchestrator checks a refutation itself before acting"]
+        first_push["First push of this repo?\nthe security review is a first-push gate"]
+        push["Commit and push\nonly the orchestrator commits and pushes"]
+    end
+    subgraph implementer["Implementer (subagent)"]
+        build["Build the milestone\nsrc/ivf, tests with hand-worked values, configs, app views"]
+        tests["pytest + mutation check\nbreak the code, watch the test fail, restore; report the counts"]
+        nb_check["build_notebooks.py --check\nnotebooks in sync with src/ivf"]
+        app_verify["app#58; npm run verify\nlint, tests, coverage thresholds, build"]
+        walkthrough["Milestone walkthrough + concepts\ndocs/milestones/NN-#lt;topic#gt;.md and docs/concepts/*.md"]
+        questions["Predict-first + explain-it-back\n5-8 interview questions; predict-first goes before the results"]
+        fix["Fix\nname the refuted claim in the commit message"]
+    end
+    subgraph reviewers["Reviewers (adversarial, verifier, security)"]
+        review["Adversarial review\nevidence-gated-validation; numbered claims; default verdict is broken; Opus"]
+        remeasure["Verifier re-measures the numbers\ncounts, coverage, timings, report tables; AGREE or DISAGREE"]
+        security["Security review\nsecrets, licence-restricted data, vendor files; findings are fixed first"]
+    end
+    subgraph learner["Learner"]
+        pause("PAUSE for the learner\none-paragraph recap; waits for continue or a steer")
+    end
+    brief -->|"delegate"| build
+    build -->|"code and tests"| tests
+    tests -->|"counts reported"| nb_check
+    nb_check -->|"in sync"| app_verify
+    app_verify -->|"gates green"| walkthrough
+    walkthrough --> questions
+    questions -->|"numbered claims"| review
+    review -->|"verdict per claim"| refuted
+    refuted -->|"yes, checked first"| fix
+    fix -->|"re-review"| review
+    refuted -->|"no"| remeasure
+    remeasure -->|"numbers agree"| first_push
+    first_push -->|"yes"| security
+    first_push -->|"no"| push
+    security -->|"clean"| push
+    push -->|"recap"| pause
+    pause -->|"continue#58; next milestone"| brief
+    classDef process fill:#E0E7FF,stroke:#4F46E5,color:#0F172A
+    class build,tests,nb_check,app_verify,walkthrough,questions,review,refuted,fix,remeasure,first_push,security,push process
+    classDef external fill:#F1F5F9,stroke:#475569,color:#0F172A
+    class brief external
+    classDef ui fill:#FCE7F3,stroke:#DB2777,color:#0F172A
+    class pause ui
+    style orchestrator fill:#F1F5F9,stroke:#E2E8F0,color:#64748B
+    style implementer fill:#EFF6FF,stroke:#DBEAFE,color:#64748B
+    style reviewers fill:#F5F3FF,stroke:#E9E5FD,color:#64748B
+    style learner fill:#ECFDF5,stroke:#D1FAE5,color:#64748B

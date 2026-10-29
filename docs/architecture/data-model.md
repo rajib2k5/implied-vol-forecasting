@@ -23,8 +23,9 @@ table and every JSON file the app reads. The machine-readable forms are:
 |---|---|---|---|
 | Config | `configs/*.yaml` | YAML | ✅ |
 | Raw | `ROOT/raw/{source}/{symbol}/{sha256}.csv` and `ROOT/raw/provenance.jsonl` | CSV bytes as fetched, plus append-only JSONL | ❌ |
-| Interim | `ROOT/interim/{table}.parquet` | Parquet | ❌ |
+| Interim | `ROOT/interim/{table}.parquet`, plus `ROOT/interim/build_report.json` | Parquet, plus one JSON report (amended M1) | ❌ |
 | Processed | `ROOT/processed/runs.parquet` and `ROOT/processed/run_id=<id>/{table}.parquet` | Parquet, hive-partitioned | ❌ |
+| Local EDA | `ROOT/eda/<run_id>/eda_report.json` (amended M1) | JSON, read locally only | ❌ |
 | Reports | `reports/*.agg.csv` | CSV. Real data, ADR D2's publication set P only, clean tree. Provenance stays local in `ROOT/reports-provenance/` (amended M0, review E). | ✅ |
 | App data | `app/public/data/synthetic/*.json` and `ROOT/app-data/real/*.json` | JSON (contract below) | 🧪 |
 
@@ -38,14 +39,14 @@ table and every JSON file the app reads. The machine-readable forms are:
 | train_start | date | | 1990-01-02 for real data (to verify in M1) |
 | dev_start | date | | 2000-01-03 |
 | holdout_start | date | | Proposed 2024-07-01 (ADR O1) |
-| data_end | date | | Frozen in M1 |
+| data_end | date | | Frozen in M1. `null` in the file until `ivf.data check --freeze-data-end` writes it, once; it never moves a frozen value (ADR 0001 rule R1) |
 | horizons | i16[] | | `[1, 5, 21]` |
 | fold_len | i16 | | 63 sessions |
 | min_cell_n | i16 | | 20 |
 | vix_regime_edges | f64[2] | | `[15, 25]` |
 | seed | i64 | | Root of every `SeedSequence` |
-| lstm_members | i16 | | The number of seeds averaged into `lstm_log` |
-| cost_bps | f64 | | Cost per unit of turnover (M6) |
+| lstm_members | i16 | | The number of seeds averaged into `lstm_log`. Not a key of `configs/protocol.yaml` yet (M4); `ivf.protocol` rejects an unknown key, and adding it changes `protocol_hash` |
+| cost_bps | f64 | | Cost per unit of turnover (M6). Not a key of `configs/protocol.yaml` yet; adding it changes `protocol_hash` |
 | race_context_sessions | i16 | | 252: how many dev sessions before the holdout the model race shows |
 | holdout_looks | i16 | | Incremented whenever a hyper-parameter changes after the holdout has been scored |
 
@@ -105,11 +106,11 @@ The initial registry below is illustrative; M2-M4 finalise it.
 
 | Column | Type | Key | Notes |
 |---|---|---|---|
-| symbol | str | PK | VIX, VIX9D, VIX3M, VIX6M, VIX1Y, VXN, RVX, VXD, GVZ, OVX, VXEEM, VXAPL, VXAZN, VXGOG, VXGS, VXIBM |
+| symbol | str | PK | VIX, VIX9D, VIX3M, VIX6M, VIX1Y, VVIX (M1), VXN, RVX, VXD, GVZ, OVX, VXEEM, VXAPL, VXAZN, VXGOG, VXGS, VXIBM |
 | name | str | | |
-| tenor_days | i16 | null | Set for term-structure members only: 9, 30, 93, 184, 365 (to verify against Cboe methodology in M1) |
-| underlying | str | FK `instrument_meta.ticker`, null | VIX→^GSPC, VXN→^NDX, RVX→^RUT, VXD→^DJI, GVZ→GLD, OVX→USO, VXEEM→EEM, VXAPL→AAPL, … |
-| group | str | | One of `term_structure`, `equity_index`, `commodity`, `emerging`, `single_stock` |
+| tenor_days | i16 | null | Set for term-structure members only: 9, 30, 93, 184, 366, as Cboe's methodologies state them (VIX: the VIX methodology; VIX9D, VIX3M, VIX6M, VIX1Y: "Selected SPX Target Expected Volatility Term Indices Methodology" v7.0, pp. 5-6). Amended M1, review A: was 365 for VIX1Y, with 9, 93, 184 called unverified |
+| underlying | str | FK `instrument_meta.ticker`, null | VIX→^GSPC, VVIX→null (VIX is not an `instrument_meta` ticker), VXN→^NDX, RVX→^RUT, VXD→^DJI, GVZ→GLD, OVX→USO, VXEEM→EEM, VXAPL→AAPL, … |
+| group | str | | One of `term_structure`, `equity_index`, `commodity`, `emerging`, `single_stock`, `vol_of_vol` (amended M1: VVIX, an index whose underlying is VIX itself) |
 | cboe_url | str | | `https://cdn.cboe.com/api/global/us_indices/daily_prices/{SYM}_History.csv` |
 | fred_series | str | null | e.g. `VIXCLS` (the fallback) |
 
@@ -167,7 +168,7 @@ yfinance returns a DataFrame, not bytes. It is fetched with `auto_adjust=False`,
 | | date | date | PK | |
 | | open, high, low | f64 | null | Some Cboe files are close-only |
 | | close | f64 | | > 0, in vol points |
-| | source | str | | `cboe`, or `fred` (fallback, which only fills dates missing from Cboe) |
+| | source | str | | `cboe`, `synthetic` (the seeded generator, under `ROOT/synthetic/`; amended M1), or `fred` (fallback, which only fills dates missing from Cboe; M1 does not fetch it) |
 | | raw_sha256 | str | FK `raw_file.sha256` | |
 | **price_daily** | ticker | str | PK, FK `instrument_meta.ticker` | |
 | | date | date | PK | |
@@ -175,6 +176,19 @@ yfinance returns a DataFrame, not bytes. It is fetched with `auto_adjust=False`,
 | | adj_close | f64 | | Split- and dividend-adjusted. Used for VXX/SVXY returns. |
 | | volume | i64 | null | |
 | | raw_sha256 | str | FK `raw_file.sha256` | |
+
+**`build_report`** (amended M1) is stored in `ROOT/interim/build_report.json`, beside the two tables. It is local and never committed. `ivf.data.build_interim` writes it, `ivf.data.check` reads it (fetch times and duplicate counts), and the real export reads its raw hashes for `run_id`. It is one object, `{"files": [...]}`, with one element per raw file read.
+
+| Field of an element | Type | Key | Notes |
+|---|---|---|---|
+| table | str | | `iv_index_daily` or `price_daily` |
+| source, symbol | str | | |
+| raw_sha256 | str | FK `raw_file.sha256` | |
+| fetched_at | str | | RFC 3339 UTC, the fetch this snapshot came from |
+| rows | int | | |
+| first_date, last_date | str | | `YYYY-MM-DD` |
+| duplicates_dropped | int | | Exact repeated rows, kept once |
+| duplicate_dates | str[] | | |
 
 ## 4. Processed layer (❌, `ROOT/processed/`)
 
@@ -199,11 +213,11 @@ which is not repeated in the tables below.
 | Table (milestone) | PK after run_id | Columns (type) | FKs and notes |
 |---|---|---|---|
 | **calendar** (M1) | date | `t_idx` i32 (0-based, unique), `period` str (`burn_in`, `dev`, `holdout`), `fold_id` i32 null | 𝒯 is the NYSE session calendar from `exchange_calendars`, from `train_start` to `data_end`, plus the scheduled sessions needed to date the last targets. It is computed from dates, never from data presence (amended M0, ADR 4.1). `data_check` asserts that VIX and ^GSPC have a close on every session. |
-| **feature** (M1) | date | `log_vix` f64; `har_w` f64 null (mean ln V over t−4..t; empty for the first 4 sessions); `har_m` f64 null (t−21..t; empty for the first 21 sessions); `r_spx` f64 null (empty on the first date); `rv21_back` f64 null (vol points; empty for the first 21 sessions); `vov21` f64 null (sd of Δln V over 21 sessions; empty for the first 21 sessions); `vix_vix3m` f64 null (empty before VIX3M); `iv_rv_spread` f64 null (variance units; empty for the first 21 sessions). Incomplete windows at the start of the training history are left empty rather than excluded as burn-in, because the feature table starts at the first training session (amended M0, review B and D: matches the ERD). | FK `calendar(date)`. Trailing windows only (rule L1). `rv21_back(t)` is the same number as `target_value(rv21, t)`: one series, two roles. |
+| **feature** (M1) | date | `log_vix` f64; `har_w` f64 null (mean ln V over t−4..t; empty for the first 4 sessions); `har_m` f64 null (t−21..t; empty for the first 21 sessions); `r_spx` f64 null (empty on the first date); `rv21_back` f64 null (vol points; empty for the first 21 sessions); `vov21` f64 null (sd of Δln V over 21 sessions; empty for the first 21 sessions); `vix_vix3m` f64 null (empty before VIX3M); `iv_rv_spread` f64 null (variance units; empty for the first 21 sessions). Three more ratios were added in M1, each the shorter tenor over the longer, so above 1 means that segment of the curve is inverted, and each null where either index has no close: `vix9d_vix` f64 null (VIX9D / VIX), `vix3m_vix6m` f64 null (VIX3M / VIX6M), `vix6m_vix1y` f64 null (VIX6M / VIX1Y). Incomplete windows at the start of the training history are left empty rather than excluded as burn-in, because the feature table starts at the first training session (amended M0, review B and D: matches the ERD). | FK `calendar(date)`. Trailing windows only (rule L1). `rv21_back(t)` is the same number as `target_value(rv21, t)`: one series, two roles. |
 | **target_value** (M1) | target_id, date | `y` f64 (vol points), `v` f64 (variance) | FK `target_def`, `calendar` |
 | **regime_label** (M1) | date, scheme | `regime` str, `driver` f64 (V, or VIX/VIX3M) | `scheme` is `vix_level` (`low`, `mid`, `high`) or `term_structure` (`contango`, `backwardation`). Fixed thresholds (rule L5). |
-| **eda_stat** (M1) | symbol, stat, sample | `value` f64, `n` i32 | FK `iv_index_meta(symbol)` (amended M0, review D). `stat` is one of `mean`, `sd`, `ar1_phi_log`, `half_life_sessions`, `acf_log_lag1`, `acf_log_lag5`, `acf_log_lag21`, `vov21_mean`, `iv_rv_spread_mean`, `adf_p`, `kpss_p`, … `sample` is `full`, `dev` or `holdout`. Only `half_life_sessions` is exported, to `reports/half_life.agg.csv` (D2 P; amended M0, review D). |
-| **data_check** (M1) | check_id, symbol | `n_affected` i32, `detail` str | e.g. `missing_in_cboe`, `missing_in_yf`, `nonpositive_close`, `duplicate_date`, `fred_filled`. Local only, not committed (D2 P; amended M0, review D). |
+| **eda_stat** (M1) | symbol, stat, sample | `value` f64, `n` i32 | FK `iv_index_meta(symbol)` (amended M0, review D). `stat` is one of `ar1_phi_log`, `half_life_sessions`, `adf_p`, `kpss_p` and `iv_rv_spread_mean` (one row per sample), and `acf_log_lag1`, `acf_log_lag5`, `acf_log_lag21` and `vov21_mean` (`pre_holdout` only): exactly what `ivf.data.process.eda_stat_rows` writes (amended M1, review B: this list named `mean` and `sd`, which nothing writes, and ended in "…"). `sample` is `pre_holdout`, `burn_in` or `dev` in M1 (amended M1, review A: M1's EDA computes nothing on or after `holdout_start`; it was `full`, `dev` or `holdout`, and that "dev" included burn-in). A `holdout` sample arrives only with the scored holdout run. Only `half_life_sessions` is exported, to `reports/half_life.agg.csv` (D2 P; amended M0, review D). |
+| **data_check** (M1) | check_id, symbol | `n_affected` i32, `detail` str | M1 writes `missing_in_cboe` (one row per index), `missing_in_yf` (per ticker), `not_a_session`, `not_settled_at_fetch`, `duplicate_date`, `core_gap` (symbol `VIX+^GSPC`) and `train_start_is_first_vix`. `nonpositive_close` is not a check: `build_interim` refuses such a file. `fred_filled` is not written: M1 does not fetch FRED. Local only, not committed (D2 P; amended M0, review D; amended M1). |
 | **fold** (M2) | fold_id | `cutoff_date` date, `last_origin` date, `period` str (`dev`, `holdout`), `n_sessions` i16 | FK `calendar(cutoff_date)`. The first origin equals the cutoff. |
 | **fit** (M2) | model_id, fold_id, member | `cutoff_date` date, `n_train` i32, `train_first_date` date, `train_last_target_date` date, `converged` bool, `fallback` str (`none`, `previous_fold`), `params_json` str, `hyperparams_json` str, `seed` i64 null, `device` str, `fit_seconds` f64, `loglik` f64 null, `aic` f64 null, `epochs_run` i16 null | FK `fold`, `model_def`. `member` is 0 for deterministic models and 1..K for LSTM seeds. **Witness for rule L2:** `train_last_target_date ≤ cutoff_date`, tested. |
 | **forecast** (M2) | model_id, target_id, origin_date, horizon | `target_date` date, `fold_id` i32, `yhat` f64 (vol points), `v_hat` f64 (variance), `var_method` str (`native`, `plugin`), `pi80_lo` f64 null, `pi80_hi` f64 null, `n_members` i16 | FKs: `model_def`; `fold`; `calendar(origin_date)`; `target_value(target_id, target_date)`, which has no matching row while the target is unobserved (the row is produced but not scored). `yhat = 100·√v_hat` on every row. `plugin`: `yhat` is the conditional mean. `native`: `v_hat` is the conditional mean of v, and `yhat` is the RMS vol (ADR 4.3; amended M0). `target_date = 𝒯[t_idx(origin)+horizon]` (tested). The same scored origin set holds for every model per (target, horizon, period). |
@@ -214,12 +228,15 @@ which is not repeated in the tables below.
 | **backtest_daily** (M6) | strategy_id, date | `origin_date` date (the decision origin, 2 sessions earlier: rule L7), `signal` i8 (+1 long vol, −1 short vol, 0 flat), `w_vxx`, `w_svxy`, `gross_ret`, `cost`, `net_ret` (simple returns), `equity` (starts at 1.0), `drawdown` (≤ 0), `turnover`: all f64 | FK `strategy_def`, `calendar(date)`. Returns come from `price_daily.adj_close`, only inside usable `tradable_segment` rows. |
 | **strategy_summary** (M6) | strategy_id, period | `n_days` i32, `ann_return`, `ann_vol`, `sharpe_ann`, `sr_daily`, `skew`, `kurt_pearson` (normal = 3), `psr0` (PSR against SR* = 0), `e_max_sr` (per period), `dsr`, `max_drawdown`, `turnover_ann`, `cost_bps`: all f64; `n_trials` i32 | FK `strategy_def`. PSR and DSR come from `sharpe-observatory/scripts/metrics.py`. `n_trials` is the number of non-benchmark `strategy_def` rows ever run on that period. `ann_return` is arithmetic (mean simple daily return × 252). Exported only as `sharpe_ann`, `psr0`, `dsr`, `n_trials` and `turnover_ann`, to `reports/strategy_summary.agg.csv` (D2 P; amended M0, review D). |
 
+**`eda_report`** (amended M1) is stored in `ROOT/eda/<run_id>/eda_report.json`, not under `processed/`. `ivf.data.process` writes it beside the processed tables. It holds every EDA number the `eda_stat` rows are taken from, in one object: `run_id`, `data_mode`, `data_end`, then the sections `sample` (the first and last session used, `holdout_start`, and the size of each sample; amended M1, review A), `clustering`, `persistence`, `half_life`, `unit_root` (with the tested gap-free segment), `iv_rv_spread`, `term_structure` and `vol_of_vol` (with the E6 bootstrap p-value, its number of paths and its block length `e6_block`; amended M1, review B; and the fitted AR(1) `e6_ar1_phi`, the verdict `e6_verdict`, "yes" or "not shown", and its `e6_reason`; amended M1, final check). Local only; on real data it is never committed (ADR D2).
+
 ### Cardinality
 
 | From | To | From:To | Via |
 |---|---|---|---|
 | raw_file | raw_fetch | 1 : 1..* | `sha256` |
 | raw_file | iv_index_daily / price_daily | 1 : 0..* | `raw_sha256` |
+| raw_file | build_report | 1 : 0..* | `raw_sha256` (amended M1) |
 | iv_index_meta | iv_index_daily | 1 : 0..* | `symbol` |
 | iv_index_meta | eda_stat | 1 : 0..* | `symbol` (amended M0, review D: stated here to match the ERD) |
 | instrument_meta | price_daily / tradable_segment | 1 : 0..* | `ticker` |
@@ -229,6 +246,8 @@ which is not repeated in the tables below.
 | raw_file | run_input | 1 : 0..* | `raw_sha256` |
 | run | calendar / fold | 1 : 1..* | `run_id` |
 | run | eda_stat / data_check | 1 : 0..* | `run_id` (amended M0, review D: stated here to match the ERD) |
+| run | eda_report | 1 : 0..1 | `run_id` (amended M1) |
+| build_report | data_check | 1 : 0..* | Lineage only: the `duplicate_date` counts and the fetch times behind `not_settled_at_fetch` (amended M1) |
 | calendar | feature | 1 : 0..1 | `date` |
 | calendar | target_value / regime_label | 1 : 0..* | `date` |
 | target_def | target_value | 1 : 0..* | `target_id` |
@@ -350,16 +369,17 @@ axes.
 
 ### 5.2 `term_structure.json`: the 3D VIX term-structure ribbon (M1; `license_class: series`)
 
-The source tables are `iv_index_daily` (the term-structure group) and `regime_label`
-(`term_structure`).
+The source table is `iv_index_daily` (the term-structure group). Amended M1: the real export reads the interim table
+and the frozen `configs/protocol.yaml`, not `regime_label`. The flag is computed in Python by
+`ivf.features.build.is_backwardation`, the same rule `regime_label` is built with, so the two cannot disagree.
 
 | Payload field | Type | Notes |
 |---|---|---|
-| dates | string[n] (`YYYY-MM-DD`) | Ascending sessions. n is 3,977 for 2011-01-03..2026-10-26 (measured on the NYSE calendar). |
+| dates | string[n] (`YYYY-MM-DD`) | Ascending NYSE sessions, from the first session on which all five tenors have a close to `data_end` (amended M1). M0 estimated n from the calendar alone; the start now depends on the data, so the real n is measured locally, not published (D2). |
 | tenors | object[k] | `symbol`, `tenor_days` (int), `label` (e.g. `9D`), sorted ascending by `tenor_days`: 9D, 30D, 3M, 6M, 1Y |
-| levels | (number\|null)[k][n] | `levels[j][i]` is the close of tenor j on `dates[i]`, in vol points. Null where an index has no data yet. |
+| levels | (number\|null)[k][n] | `levels[j][i]` is the close of tenor j on `dates[i]`, in vol points. Null on a session where that tenor has no close (a gap inside the span stays null). |
 | vix_vix3m | (number\|null)[n] | The ratio, null before VIX3M |
-| backwardation | (boolean\|null)[n] | `vix_vix3m > 1`. This is the colouring flag, computed in Python. |
+| backwardation | (boolean\|null)[n] | `vix_vix3m > 1`, strictly: equal is contango. This is the colouring flag, computed in Python from the unrounded ratio. |
 
 Invariants: every inner array has length n; `tenors` is sorted; `dates` is strictly increasing.
 

@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from ivf import contract
+from ivf import contract, repo_guard
 
 REPO = Path(__file__).resolve().parents[1]
 TOOLS = REPO / "tools"
@@ -141,9 +141,11 @@ def test_content_does_not_depend_on_git_state_or_time():
     assert a == b
 
 
-def test_real_mode_has_no_generator_in_milestone_0():
-    with pytest.raises(export_app_data.ModeUnavailable):
-        export_app_data.generate("real")
+def test_real_mode_without_the_pipeline_output_is_unavailable_and_says_which_step(monkeypatch, tmp_path):
+    # Milestone 1: real mode exists, but needs ROOT/interim/ (python -m ivf.data build-interim).
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    with pytest.raises(export_app_data.ModeUnavailable, match="build-interim"):
+        export_app_data.generate("real", git=GIT_A, generated_at=TIME_A)
 
 
 def test_generate_refuses_to_produce_a_manifest_that_breaks_the_schema(monkeypatch):
@@ -413,7 +415,7 @@ def test_a_folder_that_vanishes_during_the_walk_is_refused_not_a_traceback(fake_
     # never sees, so the guard fails closed (see _directories_inside).
     victim = fake_repo / "app" / "public" / "data"
     with monkeypatch.context() as patched:
-        patched.setattr(export_app_data.os, "walk", walk_that_deletes(victim))
+        patched.setattr(repo_guard.os, "walk", walk_that_deletes(victim))
         with pytest.raises(export_app_data.RepoWriteRefused, match=r"cannot read .*/data .*No such file.*run it again"):
             export_app_data._directories_inside(fake_repo)
 
@@ -422,7 +424,7 @@ def test_cli_real_export_exits_3_with_a_message_when_a_repo_folder_vanishes_mid_
     victim = fake_repo / "app" / "public" / "data"
     out = tmp_path / "out"
     with monkeypatch.context() as patched:
-        patched.setattr(export_app_data.os, "walk", walk_that_deletes(victim))
+        patched.setattr(repo_guard.os, "walk", walk_that_deletes(victim))
         assert export_app_data.main(["--mode", "real", "--out-dir", str(out)]) == export_app_data.EXIT_REFUSED
     assert capsys.readouterr().err.startswith("error: cannot read ")
     assert not out.exists()  # nothing was written
@@ -551,13 +553,17 @@ def test_cli_real_check_in_repo_is_refused_too():
     assert result.returncode == 3
 
 
-def test_cli_real_mode_outside_the_repo_passes_the_guard_but_is_unavailable_in_m0(tmp_path):
-    # Exit 4, not 3: the guard let the path through. Nothing is written
-    # because there is no real-data pipeline yet.
+def test_cli_real_mode_outside_the_repo_passes_the_guard_but_exits_4_without_data(tmp_path):
+    # Exit 4, not 3: the guard let the path through. Nothing is written,
+    # because this data folder holds no interim tables yet.
     out = tmp_path / "real-out"
-    result = run_cli("--mode", "real", "--out-dir", str(out))
+    env = dict(os.environ, VOL_DATA_DIR=str(tmp_path / "empty"))
+    result = subprocess.run(
+        [sys.executable, str(TOOLS / "export_app_data.py"), "--mode", "real", "--out-dir", str(out)],
+        capture_output=True, text=True, env=env, check=False,
+    )
     assert result.returncode == 4
-    assert "not available in milestone 0" in result.stderr
+    assert "build-interim" in result.stderr
     assert not out.exists()
 
 
@@ -637,11 +643,11 @@ def test_a_refusal_happens_before_any_file_is_written(precious):
 def test_a_failed_write_keeps_the_old_file_and_leaves_no_temporary_file(tmp_path, monkeypatch):
     (tmp_path / "a.json").write_bytes(b"old\n")
 
-    def fail(source, destination):
+    def fail(source, destination, **dir_fds):
         raise OSError("disk on fire")
 
     with monkeypatch.context() as patched:
-        patched.setattr(export_app_data.os, "replace", fail)
+        patched.setattr(repo_guard.os, "replace", fail)  # write_file does the writing (amended M1, review B)
         with pytest.raises(OSError, match="disk on fire"):
             export_app_data.write_files({"a.json": b"new\n"}, tmp_path)
     assert (tmp_path / "a.json").read_bytes() == b"old\n"
@@ -652,7 +658,7 @@ def test_a_link_planted_at_the_temporary_name_is_never_written_through(precious,
     # The temporary name is random, so nobody can plant anything there. If one did guess it
     # (forced here by fixing the random part), the exclusive create must fail rather than follow it.
     outside, out = precious
-    monkeypatch.setattr(export_app_data.secrets, "token_hex", lambda nbytes: "fixed")
+    monkeypatch.setattr(repo_guard.secrets, "token_hex", lambda nbytes: "fixed")
     (out / ".a.json.fixed.tmp").symlink_to(outside)
     with pytest.raises(FileExistsError):
         export_app_data.write_files({"a.json": b"new\n"}, out)
@@ -791,3 +797,121 @@ def test_check_reports_a_schema_it_cannot_resolve_instead_of_crashing(exported, 
     monkeypatch.setattr(export_app_data.config, "schema_dir", lambda: broken)
     problems = export_app_data.check(fresh, exported)
     assert len(problems) == 1 and problems[0].startswith("invalid:") and "nonesuch.schema.json" in problems[0]
+
+
+# --- real mode (milestone 1): term_structure.json from interim tables --------------------------
+
+
+@pytest.fixture
+def real_root(tmp_path, monkeypatch, no_network):
+    """A data folder whose ROOT holds interim tables built from synthetic files, used as "real" input.
+
+    The synthetic protocol stands in for configs/protocol.yaml so the dates match the files.
+    """
+    from ivf import protocol as protocol_mod
+    from ivf.data import build_interim, synthetic
+
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path / "vol"))
+    synthetic_protocol = protocol_mod.protocol_path(synthetic=True)
+    monkeypatch.setattr(protocol_mod, "protocol_path", lambda synthetic=False: synthetic_protocol)
+    root = tmp_path / "vol" / "implied-vol-forecasting"
+    synthetic.write_synthetic_raw(root, protocol_mod.load_protocol(synthetic_protocol))
+    build_interim.build_interim(root, ["VIX9D", "VIX", "VIX3M", "VIX6M", "VIX1Y", "VVIX"], ["^GSPC"])
+    return root
+
+
+def test_real_export_is_a_manifest_and_a_term_structure_that_validate(real_root):
+    files = export_app_data.generate("real", git=GIT_A, generated_at=TIME_A)
+    assert sorted(files) == ["manifest.json", "term_structure.json"]
+    manifest, term = parsed(files["manifest.json"]), parsed(files["term_structure.json"])
+    for document in (manifest, term):
+        contract.validate_document(document)
+        assert document["data_mode"] == "real"
+    entry = manifest["payload"]["files"][0]
+    assert entry["dataset"] == "term_structure" and entry["license_class"] == "series"
+    assert entry["bytes"] == len(files["term_structure.json"])
+    # sha256 of the exact bytes written next to the manifest (hashlib is fine here: the
+    # manifest must agree with the file, whatever the file's content).
+    import hashlib
+
+    assert entry["sha256"] == hashlib.sha256(files["term_structure.json"]).hexdigest()
+    assert manifest["payload"]["protocol"]["data_end"] == "2026-10-26"
+    assert "non-commercial" in manifest["payload"]["notice"]
+
+
+def test_term_structure_starts_when_every_tenor_exists_and_rounds_as_the_data_model_says(real_root):
+    payload = parsed(export_app_data.generate("real", git=GIT_A, generated_at=TIME_A)["term_structure.json"])["payload"]
+    assert payload["dates"][0] == "2011-01-04"  # VIX9D, the last tenor to start
+    assert payload["dates"][-1] == "2026-10-26"
+    assert [t["label"] for t in payload["tenors"]] == ["9D", "30D", "3M", "6M", "1Y"]
+    assert [t["tenor_days"] for t in payload["tenors"]] == [9, 30, 93, 184, 366]
+    n = len(payload["dates"])
+    assert all(len(row) == n for row in payload["levels"]) and len(payload["vix_vix3m"]) == n
+    # Index levels at 2 decimals, ratios at 4 (data-model.md section 5).
+    assert all(round(v, 2) == v for row in payload["levels"] for v in row)
+    assert all(round(v, 4) == v for v in payload["vix_vix3m"])
+    # The flag is computed in Python from the unrounded ratio, and only where the ratio exists.
+    assert all((flag is None) == (ratio is None) for flag, ratio in zip(payload["backwardation"], payload["vix_vix3m"]))
+    assert any(payload["backwardation"]) and not all(payload["backwardation"])
+    for flag, ratio in zip(payload["backwardation"], payload["vix_vix3m"]):
+        if ratio is not None and abs(ratio - 1) > 1e-4:
+            assert flag == (ratio > 1)
+
+
+def test_real_check_passes_on_its_own_output_and_ignores_the_listed_hash(real_root, tmp_path):
+    out = tmp_path / "out"
+    out.mkdir()
+    export_app_data.write_files(export_app_data.generate("real", git=GIT_A, generated_at=TIME_A), out)
+    # A later export at another time and commit has other bytes, so another sha256 in the manifest:
+    # still the same content.
+    assert export_app_data.check(export_app_data.generate("real", git=GIT_B, generated_at=TIME_B), out) == []
+
+
+def test_real_check_catches_a_term_structure_that_does_not_match_its_manifest(real_root, tmp_path):
+    out = tmp_path / "out"
+    out.mkdir()
+    files = export_app_data.generate("real", git=GIT_A, generated_at=TIME_A)
+    export_app_data.write_files(files, out)
+    blob = (out / "term_structure.json").read_bytes()
+    (out / "term_structure.json").write_bytes(blob.replace(b'"source_dirty":false', b'"source_dirty":true'))
+    problems = export_app_data.check(files, out)
+    assert len(problems) == 1 and "lists a sha256 or size for term_structure.json" in problems[0]
+
+
+@pytest.mark.parametrize(
+    "change, complaint",
+    [
+        (lambda p: p["dates"].reverse(), "strictly increasing"),
+        (lambda p: p["tenors"].reverse(), "sorted by tenor_days"),
+        (lambda p: p["levels"][0].pop(), "levels has"),
+        (lambda p: p["backwardation"].append(None), "backwardation has"),
+        (lambda p: p["levels"].pop(), "one levels row per tenor"),
+    ],
+)
+def test_term_structure_invariants_the_schema_cannot_express_are_checked(change, complaint):
+    payload = {
+        "dates": ["2020-01-02", "2020-01-03"],
+        "tenors": [{"symbol": "VIX", "tenor_days": 30, "label": "30D"}, {"symbol": "VIX3M", "tenor_days": 93, "label": "3M"}],
+        "levels": [[20.0, 21.0], [22.0, 20.5]],
+        "vix_vix3m": [0.9091, 1.0244],
+        "backwardation": [False, True],
+    }
+    export_app_data.check_term_structure(payload)  # the unchanged payload passes
+    change(payload)
+    with pytest.raises(ValueError, match=complaint):
+        export_app_data.check_term_structure(payload)
+
+
+def test_real_export_cli_writes_outside_the_repo_and_never_inside(real_root, tmp_path):
+    out = tmp_path / "app-data-real"
+    assert export_app_data.main(["--mode", "real", "--out-dir", str(out)]) == export_app_data.EXIT_OK
+    assert sorted(p.name for p in out.iterdir()) == ["manifest.json", "term_structure.json"]
+    assert export_app_data.main(["--mode", "real", "--out-dir", str(REPO / "app" / "public" / "data" / "real")]) == export_app_data.EXIT_REFUSED
+    assert not (REPO / "app" / "public" / "data" / "real").exists()
+
+
+def test_synthetic_mode_is_unchanged_by_milestone_1():
+    # Still one manifest listing no files, as in M0.
+    files = export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
+    assert sorted(files) == ["manifest.json"]
+    assert parsed(files["manifest.json"])["payload"]["files"] == []

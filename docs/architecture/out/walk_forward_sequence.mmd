@@ -1,0 +1,34 @@
+---
+title: "implied-vol-forecasting walk-forward fold"
+---
+sequenceDiagram
+    autonumber
+    participant splitter as Splitter (ivf.evaluation.splits)
+    participant features as Feature builder (ivf.features)
+    participant scaler as Scaler and imputer
+    participant model as Model (ivf.models)
+    participant evaluator as Evaluator (ivf.evaluation)
+    splitter->>features: build features from data dated ≤ c_k (L1#58; trailing windows only)
+    Note right of features: Fold k. Expanding window from train_start. Cutoff c_k, origins t in [c_k, c_{k+1}), 63 sessions, same for every model.
+    features-->>splitter: feature rows x_τ for every session τ ≤ c_k
+    splitter->>splitter: keep pairs with τ + h ≤ c_k (L2)
+    splitter->>scaler: fit(rows used for gradient or OLS updates only) (L3#58; train only)
+    Note right of scaler: LSTM#58; the early-stopping block is the last 252 training origins whose targets ≤ c_k. An h-session purge separates it from the inner-train rows (L4).
+    scaler-->>model: scaler moments, imputer values, clipping thresholds (frozen)
+    splitter->>model: fit(training pairs with target date ≤ c_k)
+    Note right of model: Parameters are frozen for the whole fold. AIC order, MLE parameters and calibration OLS were re-estimated at c_k from data ≤ c_k.
+    alt fit converged
+        model-->>splitter: fit row (converged, fallback none)
+    else fit failed
+        model-->>splitter: fit row (fallback previous_fold)#58; reuse the previous fold's parameters, never drop rows
+    end
+    loop each origin t in [c_k, c_{k+1}), once per session
+        splitter->>features: features through the close of t
+        features-->>model: x_t (data dated ≤ t, nothing from t+1)
+        model->>model: update state with data ≤ t (Kalman state, GARCH recursion, HAR regressors, LSTM input window)
+        model->>evaluator: forecast(origin t, h in 1, 5, 21)#58; yhat in vol points, v_hat, target_date = T at idx(t) + h
+    end
+    evaluator->>evaluator: error e = y - yhat in level space, QLIKE = v/v_hat - ln(v/v_hat) - 1 in variance space
+    Note right of evaluator: Once the target date has passed, join the realised y(t+h) on (target_id, target_date).
+    evaluator-->>splitter: loss rows keyed (model, target, origin, horizon)#58; same origin set for every model
+    Note right of splitter: Next fold#58; c_{k+1} = c_k + 63. Truncation test#58; a run on data ≤ t must reproduce the full run's forecast at t.

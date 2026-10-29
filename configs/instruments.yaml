@@ -1,0 +1,8 @@
+# instrument_meta and tradable_segment (data-model.md section 1).
+# Milestone 1 needs only the S&P 500 price index, the underlying of VIX.
+# VXX and SVXY (role: tradable) and their segments arrive in milestone 6.
+instruments:
+  - ticker: "^GSPC"
+    role: underlying
+    name: S&P 500 Index (a price index, not dividend-adjusted)
+tradable_segments: []

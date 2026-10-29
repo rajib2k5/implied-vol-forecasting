@@ -1,5 +1,7 @@
 # Learning log
 
+Learning mode: queued
+
 The index of this project as a course: one milestone at a time, with the concept notes behind it and the questions you answer along the way.
 
 **How a milestone works.**
@@ -14,15 +16,15 @@ Questions are listed here by title only. The full text is in each milestone's wa
 
 ## Milestones
 
-| # | Milestone | Status | Walkthrough |
-|---|---|---|---|
-| 0 | Scaffold and design | **Current** | [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-scaffold-and-design.md) |
-| 1 | Data and EDA: volatility clustering, persistence, AR(1) half-life, mean reversion, IV-RV spread, vol-of-vol | Planned | Written with the milestone |
-| 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Planned | Written with the milestone |
-| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on log-IV changes | Planned | Written with the milestone |
-| 4 | LSTM (PyTorch) on the same walk-forward splits | Planned | Written with the milestone |
-| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Planned | Written with the milestone |
-| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Planned | Written with the milestone |
+| # | Milestone | Status | Walkthrough | Checkpoint |
+|---|---|---|---|---|
+| 0 | Scaffold and design | **Current** | [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-scaffold-and-design.md) | queued, 0 of 16 answered |
+| 1 | Data and EDA: volatility clustering, persistence, AR(1) half-life, mean reversion, IV-RV spread, vol-of-vol | Planned | Written with the milestone | |
+| 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Planned | Written with the milestone | |
+| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on log-IV changes | Planned | Written with the milestone | |
+| 4 | LSTM (PyTorch) on the same walk-forward splits | Planned | Written with the milestone | |
+| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Planned | Written with the milestone | |
+| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Planned | Written with the milestone | |
 
 ## Concepts
 
@@ -34,6 +36,31 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 | 01 | [Forecast targets and annualisation](docs/concepts/01-forecast-targets-and-annualisation.md) | What is forecast, in what units, and why a GARCH number and a VIX number are not directly comparable. |
 | 02 | [Walk-forward evaluation and look-ahead](docs/concepts/02-walk-forward-evaluation-and-look-ahead.md) | How to score a forecaster so the score means what it would have meant in real time, and the ways a backtest quietly sees the future. |
 | 03 | [Reproducibility and data contracts](docs/concepts/03-reproducibility-and-data-contracts.md) | What it takes for a number to be re-made by someone else, and for the app to read it without guessing. |
+
+## Queued checkpoints
+
+- Milestone 00 (queued, 0 of 16 answered). Answer in its quiz widget, or say "quiz me on milestone 0" to resume it.
+
+## Defaults taken
+
+On 2026-10-29 the build moved on without waiting for these decisions. Each row is the option the M0 docs recommended. Each is a default taken on 2026-10-29: the owner can override any of them, and an override is recorded here and in the ADR it changes.
+
+| Decision | Default taken | Where it lives |
+|---|---|---|
+| Holdout start (ADR-0001 O1; PR/FAQ question 4) | Fixed 2024-07-01, not a trailing 24 months | ADR-0001 D4.6, `configs/protocol.yaml` |
+| Real-data publication rule (ADR-0001 D2) | Accepted as proposed: only the closed set P of unitless numbers is ever committed; raw Cboe data is never committed | ADR-0001 D2 |
+| Regime numbers public? (O7) | No | ADR-0001 D2 |
+| Scale-tied rows public? (O8; PR/FAQ question 5) | No | ADR-0001 D2 |
+| "Material part" of a vendor series (O9; PR/FAQ question 5) | The proposed M1/M2 definition in D2 | ADR-0001 D2 |
+| Real-data figures in `docs/` (O3) | No: synthetic figures only | ADR-0001 O3 |
+| Real JSON location (O4) | Outside the repo, `ROOT/app-data/real/` | ADR-0001 D3 |
+| LSTM refit cadence (O2) | Every 63 sessions, as for the other models | ADR-0001 O2 |
+| CPU or CUDA torch (ADR-0002) | CPU torch 2.14.1 | ADR-0002, `pyproject.toml` |
+| Reader (PR/FAQ question 1) | An interviewer first | `docs/prfaq.md` |
+| Success (PR/FAQ question 2) | A defended "nothing beats the random walk" counts as a success | `docs/prfaq.md` |
+| Trading rule (PR/FAQ question 3) | Forecast minus current VIX with a dead band first; term-structure slope and a regime filter are variants, each counted as a trial in DSR | M6 |
+
+Still open, decided later by measurement: O5 and O6 (M5), O10 (M4).
 
 ## Questions and answers by milestone
 
@@ -66,7 +93,7 @@ Walkthrough: [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-sc
 - E7. Which losses rank mean forecasts correctly, and why can a lower MAE or MAPE come from a worse one?
 - E8. Why did a 20-date minimum per published cell fail, and why does D2 now publish only a closed set of unitless numbers that must stay unchanged under rescaling even given public S&P 500 data, with the "no single day" promise deleted?
 
-**Decisions waiting on you:** [section 9](docs/milestones/00-scaffold-and-design.md#9-decisions-waiting-on-you) (holdout start, CPU or CUDA torch, the PR/FAQ's open questions, the real-data publication set and its open items O7 to O10).
+**Decisions:** the M0 decisions in [section 9](docs/milestones/00-scaffold-and-design.md#9-decisions-waiting-on-you) now have defaults; see [Defaults taken](#defaults-taken) above.
 
 #### Your answers & grades: milestone 0
 

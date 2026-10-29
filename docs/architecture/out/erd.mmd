@@ -1,0 +1,477 @@
+---
+title: "implied-vol-forecasting data model (M0-M6)"
+---
+erDiagram
+    protocol["protocol (configs/protocol#42;.yaml)"] {
+        str protocol_hash PK
+        date train_start
+        date dev_start
+        date holdout_start
+        date data_end
+        i16[] horizons
+        i16 fold_len
+        i16 min_cell_n
+        f64[] vix_regime_edges
+        i64 seed
+        i16_from_M4 lstm_members
+        f64_from_M6 cost_bps
+        i16 race_context_sessions
+        i16 holdout_looks
+    }
+    target_def["target#95;def (configs/protocol.yaml)"] {
+        str target_id PK
+        str label
+        str units
+        i16[] horizons
+        str definition
+    }
+    model_def["model#95;def (configs/models.yaml)"] {
+        str model_id PK
+        str label
+        str family
+        str fit_space
+        str multistep
+        str[] targets
+        i16 milestone
+        bool retired
+    }
+    strategy_def["strategy#95;def (configs/strategies.yaml)"] {
+        str strategy_id PK
+        str label
+        str kind
+        str model_id FK "nullable"
+        str target_id FK "nullable"
+        i16 horizon "nullable"
+        str rule
+        str params_json
+        bool retired
+    }
+    iv_index_meta["iv#95;index#95;meta (configs/iv#95;indices.yaml)"] {
+        str symbol PK
+        str name
+        i16 tenor_days "nullable"
+        str underlying FK "nullable"
+        str group
+        str cboe_url
+        str fred_series "nullable"
+    }
+    instrument_meta["instrument#95;meta (configs/instruments.yaml)"] {
+        str ticker PK
+        str role
+        str name
+    }
+    tradable_segment["tradable#95;segment (configs/instruments.yaml)"] {
+        str ticker PK, FK
+        date valid_from PK
+        date valid_to "nullable"
+        f64 leverage
+        bool usable
+        str note
+    }
+    raw_file["raw#95;file (ROOT/raw/{source}/{symbol}/{sha256}.csv)"] {
+        str sha256 PK
+        str source
+        str symbol
+        str raw_path
+        i64 bytes
+    }
+    raw_fetch["raw#95;fetch (ROOT/raw/provenance.jsonl)"] {
+        str fetch_id PK
+        str sha256 FK
+        str source
+        str symbol
+        str url
+        str final_url
+        ts fetched_at
+        i16 http_status "nullable"
+        i64 bytes
+        str raw_path
+        bool changed
+        str tool_version
+    }
+    iv_index_daily["iv#95;index#95;daily (ROOT/interim)"] {
+        str symbol PK, FK
+        date date PK
+        f64 open "nullable"
+        f64 high "nullable"
+        f64 low "nullable"
+        f64 close
+        str source
+        str raw_sha256 FK
+    }
+    price_daily["price#95;daily (ROOT/interim)"] {
+        str ticker PK, FK
+        date date PK
+        f64 open
+        f64 high
+        f64 low
+        f64 close
+        f64 adj_close
+        i64 volume "nullable"
+        str raw_sha256 FK
+    }
+    build_report["build#95;report.json (ROOT/interim; local)"] {
+        object[] files
+        str files_table
+        str files_source
+        str files_symbol
+        str files_raw_sha256 FK
+        str files_fetched_at
+        int files_rows
+        isoDate files_first_date
+        isoDate files_last_date
+        int files_duplicates_dropped
+        isoDate[] files_duplicate_dates
+    }
+    run["run (ROOT/processed/runs.parquet; provenance stays local)"] {
+        str run_id PK
+        str protocol_hash FK
+        str data_mode
+        str source_commit
+        bool source_dirty
+        ts started_at
+        ts finished_at "nullable"
+        str ivf_version
+        str python_version
+        str platform
+    }
+    run_input {
+        str run_id PK, FK
+        str raw_sha256 PK, FK
+        str source
+        str symbol
+    }
+    calendar["calendar (master sessions)"] {
+        str run_id PK, FK
+        date date PK
+        i32 t_idx
+        str period
+        i32 fold_id "nullable"
+    }
+    feature {
+        str run_id PK, FK
+        date date PK, FK
+        f64 log_vix
+        f64 har_w "nullable"
+        f64 har_m "nullable"
+        f64 r_spx "nullable"
+        f64 rv21_back "nullable"
+        f64 vov21 "nullable"
+        f64 vix9d_vix "nullable"
+        f64 vix_vix3m "nullable"
+        f64 vix3m_vix6m "nullable"
+        f64 vix6m_vix1y "nullable"
+        f64 iv_rv_spread "nullable"
+    }
+    target_value {
+        str run_id PK, FK
+        str target_id PK, FK
+        date date PK, FK
+        f64 y
+        f64 v
+    }
+    regime_label {
+        str run_id PK, FK
+        date date PK, FK
+        str scheme PK
+        str regime
+        f64 driver
+    }
+    eda_stat["eda#95;stat (-#gt; reports/eda#95;stats.csv)"] {
+        str run_id PK, FK
+        str symbol PK, FK
+        str stat PK
+        str sample PK
+        f64 value
+        i32 n
+    }
+    eda_report["eda#95;report.json (ROOT/eda/{run#95;id}; local)"] {
+        str run_id FK
+        str data_mode
+        isoDate data_end
+        object sample
+        object clustering
+        object persistence
+        object half_life
+        object unit_root
+        object iv_rv_spread
+        object term_structure
+        object vol_of_vol
+    }
+    data_check["data#95;check (-#gt; reports/data#95;checks.csv)"] {
+        str run_id PK, FK
+        str check_id PK
+        str symbol PK
+        i32 n_affected
+        str detail
+    }
+    fold["fold (63-session walk-forward block)"] {
+        str run_id PK, FK
+        i32 fold_id PK
+        date cutoff_date FK
+        date last_origin
+        str period
+        i16 n_sessions
+    }
+    fit {
+        str run_id PK, FK
+        str model_id PK, FK
+        i32 fold_id PK, FK
+        i16 member PK
+        date cutoff_date
+        i32 n_train
+        date train_first_date
+        date train_last_target_date
+        bool converged
+        str fallback
+        str params_json
+        str hyperparams_json
+        i64 seed "nullable"
+        str device
+        f64 fit_seconds
+        f64 loglik "nullable"
+        f64 aic "nullable"
+        i16 epochs_run "nullable"
+    }
+    forecast {
+        str run_id PK, FK
+        str model_id PK, FK
+        str target_id PK, FK
+        date origin_date PK, FK
+        i16 horizon PK
+        date target_date FK
+        i32 fold_id FK
+        f64 yhat
+        f64 v_hat
+        str var_method
+        f64 pi80_lo "nullable"
+        f64 pi80_hi "nullable"
+        i16 n_members
+    }
+    forecast_member["forecast#95;member (LSTM seeds)"] {
+        str run_id PK, FK
+        str model_id PK, FK
+        str target_id PK, FK
+        date origin_date PK, FK
+        i16 horizon PK, FK
+        i16 member PK, FK
+        i32 fold_id FK
+        f64 yhat
+        f64 v_hat
+    }
+    metric["metric (-#gt; reports/metrics.csv)"] {
+        str run_id PK, FK
+        str model_id PK, FK
+        str target_id PK, FK
+        i16 horizon PK
+        str period PK
+        str scheme PK
+        str regime PK
+        i32 n
+        bool suppressed
+        f64 bias "nullable"
+        f64 rmse "nullable"
+        f64 mae "nullable"
+        f64 mape "nullable"
+        f64 qlike "nullable"
+    }
+    dm_test["dm#95;test (-#gt; reports/dm#95;tests.csv)"] {
+        str run_id PK, FK
+        str target_id PK, FK
+        i16 horizon PK
+        str period PK
+        str scheme PK
+        str regime PK
+        str loss PK
+        str model_a PK, FK
+        str model_b PK, FK
+        i32 n
+        f64 mean_d
+        f64 dm_stat
+        f64 p_value
+        i16 nw_lags
+    }
+    mz_regression["mz#95;regression (-#gt; reports/mz#95;regressions.csv)"] {
+        str run_id PK, FK
+        str model_id PK, FK
+        str target_id PK, FK
+        i16 horizon PK
+        str period PK
+        str space
+        i32 n
+        f64 alpha
+        f64 alpha_se
+        f64 beta
+        f64 beta_se
+        f64 r2
+        f64 wald_stat
+        f64 wald_p
+        i16 nw_lags
+    }
+    backtest_daily {
+        str run_id PK, FK
+        str strategy_id PK, FK
+        date date PK, FK
+        date origin_date
+        i8 signal
+        f64 w_vxx
+        f64 w_svxy
+        f64 gross_ret
+        f64 cost
+        f64 net_ret
+        f64 equity
+        f64 drawdown
+        f64 turnover
+    }
+    strategy_summary["strategy#95;summary (-#gt; reports/strategy#95;summary.csv)"] {
+        str run_id PK, FK
+        str strategy_id PK, FK
+        str period PK
+        i32 n_days
+        f64 ann_return
+        f64 ann_vol
+        f64 sharpe_ann
+        f64 sr_daily
+        f64 skew
+        f64 kurt_pearson
+        f64 psr0
+        i32 n_trials
+        f64 e_max_sr
+        f64 dsr
+        f64 max_drawdown
+        f64 turnover_ann
+        f64 cost_bps
+    }
+    json_manifest["manifest.json"] {
+        str schema_version
+        str generated_at
+        str source_commit
+        bool source_dirty
+        str data_mode
+        str dataset
+        str run_id FK
+        str notice
+        object protocol
+        object[] files
+        object[] models
+        object[] targets
+    }
+    json_term_structure["term#95;structure.json (series)"] {
+        isoDate[] dates
+        object[] tenors
+        number[][] levels "nullable"
+        number[] vix_vix3m "nullable"
+        bool[] backwardation "nullable"
+    }
+    json_model_race["model#95;race.json (series)"] {
+        isoDate[] calendar
+        int holdout_start_idx
+        object[] panels
+        str panels_target_id FK
+        int panels_horizon
+        int panels_origin_idx0
+        int panels_n
+        number[] panels_actual "nullable"
+        object[] panels_series
+        object[] panels_mz
+    }
+    json_error_surface["error#95;surface.json (aggregate)"] {
+        str[] periods
+        object[] regimes
+        object[] surfaces
+        str surfaces_target_id FK
+        str surfaces_benchmark_model_id FK
+        str[] surfaces_models
+        int[] surfaces_horizons
+        object surfaces_values
+        cube surfaces_n
+        object surfaces_dm_p_vs_benchmark
+    }
+    json_equity_curves["equity#95;curves.json (series)"] {
+        isoDate[] dates
+        int holdout_start_idx "nullable"
+        number cost_bps
+        object[] strategies
+        object[] regime_segments
+        object[] summary
+        str[] caveats
+    }
+    raw_file ||--|{ raw_fetch : "fetched as"
+    raw_file ||--o{ iv_index_daily : "parsed into"
+    raw_file ||--o{ price_daily : "parsed into"
+    raw_file ||--o{ build_report : "reported in"
+    iv_index_meta ||--o{ iv_index_daily : "has rows"
+    instrument_meta ||--o{ price_daily : "has rows"
+    instrument_meta ||--o{ tradable_segment : "usable segments"
+    instrument_meta |o--o{ iv_index_meta : "underlying of"
+    protocol ||--o{ run : "governs"
+    run ||--|{ run_input : "reads"
+    raw_file ||--o{ run_input : "used by"
+    run ||--|{ calendar : "defines"
+    run ||--|{ fold : "splits into"
+    run ||--o{ eda_stat : "summarises"
+    run ||--o{ data_check : "checks"
+    run ||--o| eda_report : "local report of"
+    build_report ||--o{ data_check : "feeds"
+    calendar ||--o| feature : "features at t"
+    calendar ||--o{ target_value : "target at d"
+    target_def ||--o{ target_value : "defines"
+    calendar ||--o{ regime_label : "regime at t"
+    calendar ||--o| fold : "cutoff"
+    fold ||--|{ fit : "refits"
+    model_def ||--o{ fit : "fitted as"
+    fold ||--|{ forecast : "issues"
+    model_def ||--o{ forecast : "forecasts"
+    calendar ||--o{ forecast : "origin"
+    target_value ||--o{ forecast : "is target of once observed"
+    forecast ||--o{ forecast_member : "averages"
+    fit ||--o{ forecast_member : "produces"
+    forecast ||--|{ metric : "aggregated into"
+    model_def ||--o{ metric : "scored"
+    model_def ||--o{ dm_test : "model#95;a"
+    model_def ||--o{ dm_test : "model#95;b"
+    model_def ||--o{ mz_regression : "calibration"
+    target_def ||--o{ metric : "scored on"
+    target_def ||--o{ dm_test : "tested on"
+    target_def ||--o{ mz_regression : "regressed on"
+    iv_index_meta ||--o{ eda_stat : "described by"
+    model_def |o--o{ strategy_def : "drives"
+    strategy_def ||--|{ backtest_daily : "daily path"
+    strategy_def ||--|{ strategy_summary : "summarised"
+    price_daily ||--o{ backtest_daily : "returns from"
+    run ||--o| json_manifest : "exported as"
+    json_manifest ||--o| json_term_structure : "lists"
+    json_manifest ||--o| json_model_race : "lists"
+    json_manifest ||--o| json_error_surface : "lists"
+    json_manifest ||--o| json_equity_curves : "lists"
+    iv_index_daily |o--o| json_term_structure : "ribbon levels"
+    iv_index_daily |o--o| json_term_structure : "backwardation flag"
+    forecast ||--o| json_model_race : "yhat"
+    target_value |o--o| json_model_race : "actual"
+    mz_regression ||--o| json_model_race : "mz"
+    metric ||--o| json_error_surface : "cubes"
+    dm_test ||--o| json_error_surface : "dm p-values"
+    backtest_daily ||--o| json_equity_curves : "equity"
+    strategy_summary ||--o| json_equity_curves : "summary"
+    regime_label ||--o| json_equity_curves : "regime ribbons"
+    target_def |o--o{ strategy_def : ""
+    calendar ||--o{ feature : ""
+    calendar ||--o{ target_value : ""
+    calendar ||--o{ regime_label : ""
+    fold ||--o{ fit : ""
+    fold ||--o{ forecast : ""
+    target_value ||--o{ forecast : ""
+    forecast ||--o{ forecast_member : ""
+    forecast ||--o{ forecast_member : ""
+    forecast ||--o{ forecast_member : ""
+    forecast ||--o{ forecast_member : ""
+    fit ||--o{ forecast_member : ""
+    run ||--o{ metric : ""
+    run ||--o{ dm_test : ""
+    run ||--o{ mz_regression : ""
+    calendar ||--o{ backtest_daily : ""
+    calendar ||--o{ backtest_daily : ""
+    run ||--o{ strategy_summary : ""
+    target_def ||--o{ json_model_race : ""
+    target_def ||--o{ json_error_surface : ""
+    model_def ||--o{ json_error_surface : ""

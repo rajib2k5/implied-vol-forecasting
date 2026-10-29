@@ -1,8 +1,12 @@
-"""Data access (milestone 1).
+"""Data access (milestone 1). Run it as ``uv run python -m ivf.data <command>`` (see ``cli``).
 
-Will hold the code that fetches Cboe, FRED and Yahoo Finance files into the
-raw store as SHA-256-named snapshots with an append-only provenance log, the
-step that turns raw files into typed interim parquet tables, and the seeded
-synthetic data generator that lets CI run the real pipeline without any
-licensed data (ADR 0001 D2 and D3). Nothing is implemented here yet.
+* ``raw``: the content-addressed raw store and its append-only provenance log (ADR 0001 D3).
+* ``fetch``: Cboe CSVs and yfinance prices into the raw store; ``network_get`` is the only
+  function that touches the network.
+* ``build_interim``: raw snapshots to typed, de-duplicated interim parquet.
+* ``calendar``: the master calendar 𝒯 from the XNYS sessions (ADR 0001 D4.1).
+* ``check``: data_check, the gap policy and the settled ``data_end``.
+* ``process``: features, targets, regimes and the local EDA report under ``processed/``.
+* ``synthetic``: a seeded generator with known truth that writes the same file shapes, so CI
+  runs the real pipeline without licensed data (ADR 0001 D2).
 """

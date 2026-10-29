@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="vol-diagram-kit" agent="vol-diagram-kit">
+  <diagram id="process" name="implied-vol-forecasting milestone process">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1879" pageHeight="2344" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="implied-vol-forecasting milestone process" style="rounded=0;fillColor=none;strokeColor=none;html=0;align=left;verticalAlign=top;fontFamily=Helvetica;fontSize=20;fontStyle=1;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="32" y="30" width="441.33" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_orchestrator" value="Orchestrator" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F1F5F9;strokeColor=#E2E8F0;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="32" y="80" width="735" height="1934" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_implementer" value="Implementer (subagent)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#EFF6FF;strokeColor=#DBEAFE;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="795" y="80" width="466" height="2176" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_reviewers" value="Reviewers (adversarial, verifier, security)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#F5F3FF;strokeColor=#E9E5FD;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1289" y="80" width="558" height="2176" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane_learner" value="Learner" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#ECFDF5;strokeColor=#D1FAE5;fontColor=#64748B;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=left;verticalAlign=top;spacingLeft=14;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="32" y="2116" width="735" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_brief" value="Milestone brief&#10;from the approved plan: scope, rules, files the milestone may touch" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#F1F5F9;strokeColor=#475569;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="52" y="130" width="466" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_build" value="Build the milestone&#10;src/ivf, tests with hand-worked values, configs, app views" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="824" y="278" width="408" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_tests" value="pytest + mutation check&#10;break the code, watch the test fail, restore; report the counts" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="815" y="426" width="426" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_nb_check" value="build_notebooks.py --check&#10;notebooks in sync with src/ivf" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="889" y="574" width="278" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_app_verify" value="app: npm run verify&#10;lint, tests, coverage thresholds, build" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="884" y="722" width="288" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_walkthrough" value="Milestone walkthrough + concepts&#10;docs/milestones/NN-&lt;topic&gt;.md and docs/concepts/*.md" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="825" y="870" width="406" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_questions" value="Predict-first + explain-it-back&#10;5-8 interview questions; predict-first goes before the results" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="818" y="1000" width="420" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_review" value="Adversarial review&#10;evidence-gated-validation; numbered claims; default verdict is broken; Opus" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1309" y="1148" width="518" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_refuted" value="Any claim refuted?&#10;the orchestrator checks a refutation itself before acting" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="355" y="1296" width="392" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_fix" value="Fix&#10;name the refuted claim in the commit message" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="854" y="1480" width="348" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_remeasure" value="Verifier re-measures the numbers&#10;counts, coverage, timings, report tables; AGREE or DISAGREE" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1345" y="1480" width="446" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_first_push" value="First push of this repo?&#10;the security review is a first-push gate" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1628" width="296" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_security" value="Security review&#10;secrets, licence-restricted data, vendor files; findings are fixed first" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1338" y="1776" width="460" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_push" value="Commit and push&#10;only the orchestrator commits and pushes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E0E7FF;strokeColor=#4F46E5;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="298" y="1924" width="320" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_pause" value="PAUSE for the learner&#10;one-paragraph recap; waits for continue or a steer" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#FCE7F3;strokeColor=#DB2777;fontColor=#0F172A;fontSize=13;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="187" y="2166" width="368" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_0" value="delegate" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5472;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_brief" target="node_build">
+          <mxGeometry x="0.8949" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="307" y="216"/>
+              <mxPoint x="1028" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_1" value="code and tests" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_build" target="node_tests">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="counts reported" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_tests" target="node_nb_check">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="in sync" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_nb_check" target="node_app_verify">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="gates green" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_app_verify" target="node_walkthrough">
+          <mxGeometry x="-0.0769" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_walkthrough" target="node_questions">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="numbered claims" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_questions" target="node_review">
+          <mxGeometry x="0.8641" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1028" y="1086"/>
+              <mxPoint x="1568" y="1086"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="verdict per claim" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4575;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_review" target="node_refuted">
+          <mxGeometry x="0.9217" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1546" y="1234"/>
+              <mxPoint x="551" y="1234"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="yes, checked first" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4439;exitY=1;exitDx=0;exitDy=0;entryX=0.408;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_refuted" target="node_fix">
+          <mxGeometry x="0.7728" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="529" y="1394"/>
+              <mxPoint x="996" y="1394"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="re-review" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.592;exitY=0;exitDx=0;exitDy=0;entryX=0.5425;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_fix" target="node_review">
+          <mxGeometry x="-0.8939" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="1394"/>
+              <mxPoint x="1568" y="1394"/>
+              <mxPoint x="1568" y="1234"/>
+              <mxPoint x="1590" y="1234"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="no" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5561;exitY=1;exitDx=0;exitDy=0;entryX=0.4731;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_refuted" target="node_remeasure">
+          <mxGeometry x="0.8797" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="573" y="1382"/>
+              <mxPoint x="1556" y="1382"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="numbers agree" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_remeasure" target="node_first_push">
+          <mxGeometry x="0.9293" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1568" y="1566"/>
+              <mxPoint x="458" y="1566"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="yes" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5743;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_first_push" target="node_security">
+          <mxGeometry x="0.928" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="1714"/>
+              <mxPoint x="1568" y="1714"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="no" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.4257;exitY=1;exitDx=0;exitDy=0;entryX=0.4313;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_first_push" target="node_push">
+          <mxGeometry x="0.6889" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="436" y="1714"/>
+              <mxPoint x="458" y="1714"/>
+              <mxPoint x="458" y="1862"/>
+              <mxPoint x="436" y="1862"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="clean" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5687;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_security" target="node_push">
+          <mxGeometry x="0.928" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1568" y="1862"/>
+              <mxPoint x="480" y="1862"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="recap" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.6141;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_push" target="node_pause">
+          <mxGeometry x="0.1521" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="458" y="2030"/>
+              <mxPoint x="413" y="2030"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_16" value="continue: next milestone" style="edgeStyle=none;rounded=0;html=0;endArrow=classic;endFill=1;strokeColor=#64748B;strokeWidth=1.6;fontSize=11;fontColor=#475569;fontFamily=Helvetica;exitX=0.3859;exitY=0;exitDx=0;exitDy=0;entryX=0.4528;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node_pause" target="node_brief">
+          <mxGeometry x="-0.8858" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="329" y="2030"/>
+              <mxPoint x="285" y="2030"/>
+              <mxPoint x="285" y="216"/>
+              <mxPoint x="263" y="216"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

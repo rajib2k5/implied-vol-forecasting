@@ -141,7 +141,7 @@ MANIFEST_PAYLOAD: dict[str, Any] = {
 TERM_STRUCTURE_PAYLOAD: dict[str, Any] = {
     "dates": ["2024-08-05"],
     "tenors": [{"symbol": "VIX", "tenor_days": 30, "label": "30D"}],
-    "levels": [[23.39]],
+    "levels": [[30.00]],  # made up (amended M1, review A: the value here was a real VIX level of that date)
     "vix_vix3m": [1.05],
     "backwardation": [True],
 }

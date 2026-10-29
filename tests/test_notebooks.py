@@ -21,6 +21,7 @@ sys.path.insert(0, str(TOOLS))
 import build_notebooks  # noqa: E402
 
 M0 = "00_environment_and_contract.ipynb"
+M1 = "01_data_and_eda.ipynb"
 
 
 @pytest.fixture
@@ -46,11 +47,12 @@ def test_check_command_passes_on_the_committed_notebooks(tmp_path):
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 1 notebook(s)")
+    assert result.stdout.startswith("ok: 2 notebook(s)")
 
 
-def test_committed_bytes_equal_generated_bytes():
-    assert (REPO / "notebooks" / M0).read_bytes() == build_notebooks.generate()[M0]
+@pytest.mark.parametrize("name", [M0, M1])
+def test_committed_bytes_equal_generated_bytes(name):
+    assert (REPO / "notebooks" / name).read_bytes() == build_notebooks.generate()[name]
 
 
 # --- what a generated notebook looks like ------------------------------------
@@ -158,3 +160,60 @@ def test_write_then_check_round_trips_in_a_clean_folder(tmp_path, monkeypatch):
     monkeypatch.setattr(build_notebooks, "NOTEBOOKS_DIR", tmp_path / "notebooks")
     assert build_notebooks.main([]) == 0  # no --check: writes (and creates the folder)
     assert build_notebooks.main(["--check"]) == 0
+
+
+# --- milestone 1: the data and EDA notebook ---------------------------------------
+
+
+def test_m1_notebook_runs_top_to_bottom_on_synthetic_data_when_there_is_no_real_data(tmp_path, monkeypatch, capsys, no_network):
+    # An empty VOL_DATA_DIR: no interim tables, so the notebook must fall back to synthetic
+    # data and say so, then run every EDA cell.
+    import matplotlib.pyplot as plt
+
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    # Another test may already have imported pyplot with a GUI backend (DISPLAY is set on a desktop),
+    # and a figure must never open a window from pytest.
+    plt.switch_backend("Agg")
+    notebook = nbformat.reads(build_notebooks.generate()[M1].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    assert all(c.outputs == [] and c.execution_count is None for c in code_cells)
+    namespace: dict = {"__name__": "__notebook__"}
+    for cell in code_cells:
+        exec(compile(cell.source, cell.id, "exec"), namespace)
+    out = capsys.readouterr().out
+    assert namespace["MODE"] == "synthetic"
+    assert "data: SYNTHETIC (seed 20261028)" in out
+    assert "gap policy: OK" in out
+    assert "stationary at 5% (ADF rejects and KPSS does not):" in out
+    assert "contango share" in out
+    # No holdout row reaches the EDA (amended M1, review A).
+    holdout_start = namespace["PROTO"].holdout_start
+    assert max(namespace["DATES"]) < holdout_start
+    assert namespace["EDA_IV"]["date"].max() < holdout_start and namespace["EDA_PRICE"]["date"].max() < holdout_start
+    assert set(namespace["SAMPLES"]) == {"pre_holdout", "burn_in", "dev"}
+    plt.close("all")
+
+
+def test_m1_notebook_can_be_forced_to_synthetic_data(monkeypatch, capsys, no_network):
+    monkeypatch.setenv("IVF_NOTEBOOK_DATA", "synthetic")
+    notebook = nbformat.reads(build_notebooks.generate()[M1].decode(), as_version=4)
+    namespace: dict = {"__name__": "__notebook__"}
+    exec(compile(notebook.cells[1].source, "cell-001", "exec"), namespace)
+    assert namespace["MODE"] == "synthetic"
+
+
+def test_m1_notebook_stops_when_check_reports_violated(monkeypatch, capsys, no_network):
+    # Review B: the notebook printed "gap policy: VIOLATED" and went on to compute every statistic.
+    # Here the synthetic build report says the snapshots were fetched on data_end's own New York day
+    # (15:00 UTC is 11:00 there), so the closes are not settled and the frozen data_end fails.
+    monkeypatch.setenv("IVF_NOTEBOOK_DATA", "synthetic")
+    notebook = nbformat.reads(build_notebooks.generate()[M1].decode(), as_version=4)
+    code_cells = [c for c in notebook.cells if c.cell_type == "code"]
+    namespace: dict = {"__name__": "__notebook__"}
+    exec(compile(code_cells[0].source, code_cells[0].id, "exec"), namespace)
+    for entry in namespace["REPORT"]["files"]:
+        entry["fetched_at"] = "2026-10-26T15:00:00.000000Z"
+    with pytest.raises(RuntimeError, match="check reports VIOLATED"):
+        exec(compile(code_cells[1].source, code_cells[1].id, "exec"), namespace)
+    assert "gap policy: VIOLATED" in capsys.readouterr().out
+    assert "FEATURES" not in namespace  # nothing after the check ran

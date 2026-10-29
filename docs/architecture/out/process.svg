@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1879" height="2344" viewBox="0 0 1879 2344">
+  <title>implied-vol-forecasting milestone process</title>
+  <rect x="0" y="0" width="1879" height="2344" fill="#F8FAFC"/>
+  <text x="32" y="52" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="20" font-weight="700" fill="#0F172A">implied-vol-forecasting milestone process</text>
+  <g id="lane_orchestrator">
+    <rect x="32" y="80" width="735" height="1934" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="48" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">ORCHESTRATOR</text>
+  </g>
+  <g id="lane_implementer">
+    <rect x="795" y="80" width="466" height="2176" rx="14" fill="#EFF6FF" stroke="#DBEAFE" stroke-width="1"/>
+    <text x="811" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">IMPLEMENTER (SUBAGENT)</text>
+  </g>
+  <g id="lane_reviewers">
+    <rect x="1289" y="80" width="558" height="2176" rx="14" fill="#F5F3FF" stroke="#E9E5FD" stroke-width="1"/>
+    <text x="1305" y="100" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">REVIEWERS (ADVERSARIAL, VERIFIER, SECURITY)</text>
+  </g>
+  <g id="lane_learner">
+    <rect x="32" y="2116" width="735" height="140" rx="14" fill="#ECFDF5" stroke="#D1FAE5" stroke-width="1"/>
+    <text x="48" y="2136" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#64748B">LEARNER</text>
+  </g>
+  <g id="edge_0">
+    <path d="M307 200L307 208Q307 216 315 216L1020 216Q1028 216 1028 224L1028 270" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,278 1023.5,269 1032.5,269" fill="#64748B"/>
+  </g>
+  <g id="edge_1">
+    <path d="M1028 348L1028 418" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,426 1023.5,417 1032.5,417" fill="#64748B"/>
+  </g>
+  <g id="edge_2">
+    <path d="M1028 496L1028 566" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,574 1023.5,565 1032.5,565" fill="#64748B"/>
+  </g>
+  <g id="edge_3">
+    <path d="M1028 644L1028 714" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,722 1023.5,713 1032.5,713" fill="#64748B"/>
+  </g>
+  <g id="edge_4">
+    <path d="M1028 792L1028 862" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,870 1023.5,861 1032.5,861" fill="#64748B"/>
+  </g>
+  <g id="edge_5">
+    <path d="M1028 940L1028 992" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1028,1000 1023.5,991 1032.5,991" fill="#64748B"/>
+  </g>
+  <g id="edge_6">
+    <path d="M1028 1070L1028 1078Q1028 1086 1036 1086L1560 1086Q1568 1086 1568 1094L1568 1140" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1568,1148 1563.5,1139 1572.5,1139" fill="#64748B"/>
+  </g>
+  <g id="edge_7">
+    <path d="M1546 1218L1546 1226Q1546 1234 1538 1234L559 1234Q551 1234 551 1242L551 1288" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="551,1296 546.5,1287 555.5,1287" fill="#64748B"/>
+  </g>
+  <g id="edge_8">
+    <path d="M529 1366L529 1386Q529 1394 537 1394L988 1394Q996 1394 996 1402L996 1472" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="996,1480 991.5,1471 1000.5,1471" fill="#64748B"/>
+  </g>
+  <g id="edge_9">
+    <path d="M1060 1480L1060 1402Q1060 1394 1068 1394L1560 1394Q1568 1394 1568 1386L1568 1242Q1568 1234 1576 1234L1586 1234Q1590 1234 1590 1230L1590 1226" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1590,1218 1594.5,1227 1585.5,1227" fill="#64748B"/>
+  </g>
+  <g id="edge_10">
+    <path d="M573 1366L573 1374Q573 1382 581 1382L1548 1382Q1556 1382 1556 1390L1556 1472" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1556,1480 1551.5,1471 1560.5,1471" fill="#64748B"/>
+  </g>
+  <g id="edge_11">
+    <path d="M1568 1550L1568 1558Q1568 1566 1560 1566L466 1566Q458 1566 458 1574L458 1620" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="458,1628 453.5,1619 462.5,1619" fill="#64748B"/>
+  </g>
+  <g id="edge_12">
+    <path d="M480 1698L480 1706Q480 1714 488 1714L1560 1714Q1568 1714 1568 1722L1568 1768" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="1568,1776 1563.5,1767 1572.5,1767" fill="#64748B"/>
+  </g>
+  <g id="edge_13">
+    <path d="M436 1698L436 1706Q436 1714 444 1714L450 1714Q458 1714 458 1722L458 1854Q458 1862 450 1862L444 1862Q436 1862 436 1870L436 1916" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="436,1924 431.5,1915 440.5,1915" fill="#64748B"/>
+  </g>
+  <g id="edge_14">
+    <path d="M1568 1846L1568 1854Q1568 1862 1560 1862L488 1862Q480 1862 480 1870L480 1916" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="480,1924 475.5,1915 484.5,1915" fill="#64748B"/>
+  </g>
+  <g id="edge_15">
+    <path d="M458 1994L458 2022Q458 2030 450 2030L421 2030Q413 2030 413 2038L413 2158" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="413,2166 408.5,2157 417.5,2157" fill="#64748B"/>
+  </g>
+  <g id="edge_16">
+    <path d="M329 2166L329 2038Q329 2030 321 2030L293 2030Q285 2030 285 2022L285 224Q285 216 277 216L267 216Q263 216 263 212L263 208" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linejoin="round"/>
+    <polygon points="263,200 267.5,209 258.5,209" fill="#64748B"/>
+  </g>
+  <g id="node_brief">
+    <rect x="52" y="131" width="466" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="51" y="132" width="468" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="50" y="134" width="470" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="52" y="130" width="466" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="66" y="150" width="30" height="30" rx="8" fill="#F1F5F9"/>
+    <g transform="translate(73 157)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="8" r="6"/>
+      <ellipse cx="8" cy="8" rx="2.6" ry="6"/>
+      <path d="M2 8h12"/>
+    </g>
+    <text x="108" y="150" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#475569">EXTERNAL</text>
+    <text x="108" y="168" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Milestone brief</text>
+    <text x="108" y="184" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">from the approved plan: scope, rules, files the milestone may touch</text>
+  </g>
+  <g id="node_build">
+    <rect x="824" y="279" width="408" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="823" y="280" width="410" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="822" y="282" width="412" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="824" y="278" width="408" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="838" y="298" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(845 305)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="880" y="298" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="880" y="316" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Build the milestone</text>
+    <text x="880" y="332" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">src/ivf, tests with hand-worked values, configs, app views</text>
+  </g>
+  <g id="node_tests">
+    <rect x="815" y="427" width="426" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="814" y="428" width="428" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="813" y="430" width="430" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="815" y="426" width="426" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="829" y="446" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(836 453)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="871" y="446" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="871" y="464" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">pytest + mutation check</text>
+    <text x="871" y="480" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">break the code, watch the test fail, restore; report the counts</text>
+  </g>
+  <g id="node_nb_check">
+    <rect x="889" y="575" width="278" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="888" y="576" width="280" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="887" y="578" width="282" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="889" y="574" width="278" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="903" y="594" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(910 601)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="945" y="594" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="945" y="612" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">build_notebooks.py --check</text>
+    <text x="945" y="628" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">notebooks in sync with src/ivf</text>
+  </g>
+  <g id="node_app_verify">
+    <rect x="884" y="723" width="288" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="883" y="724" width="290" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="882" y="726" width="292" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="884" y="722" width="288" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="898" y="742" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(905 749)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="940" y="742" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="940" y="760" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">app: npm run verify</text>
+    <text x="940" y="776" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">lint, tests, coverage thresholds, build</text>
+  </g>
+  <g id="node_walkthrough">
+    <rect x="825" y="871" width="406" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="824" y="872" width="408" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="823" y="874" width="410" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="825" y="870" width="406" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="839" y="890" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(846 897)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="881" y="890" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="881" y="908" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Milestone walkthrough + concepts</text>
+    <text x="881" y="924" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">docs/milestones/NN-&lt;topic&gt;.md and docs/concepts/*.md</text>
+  </g>
+  <g id="node_questions">
+    <rect x="818" y="1001" width="420" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="817" y="1002" width="422" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="816" y="1004" width="424" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="818" y="1000" width="420" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="832" y="1020" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(839 1027)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="874" y="1020" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="874" y="1038" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Predict-first + explain-it-back</text>
+    <text x="874" y="1054" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">5-8 interview questions; predict-first goes before the results</text>
+  </g>
+  <g id="node_review">
+    <rect x="1309" y="1149" width="518" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1308" y="1150" width="520" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1307" y="1152" width="522" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1309" y="1148" width="518" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1323" y="1168" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(1330 1175)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="1365" y="1168" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="1365" y="1186" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Adversarial review</text>
+    <text x="1365" y="1202" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">evidence-gated-validation; numbered claims; default verdict is broken; Opus</text>
+  </g>
+  <g id="node_refuted">
+    <rect x="355" y="1297" width="392" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="354" y="1298" width="394" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="353" y="1300" width="396" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="355" y="1296" width="392" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="369" y="1316" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(376 1323)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="411" y="1316" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="411" y="1334" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Any claim refuted?</text>
+    <text x="411" y="1350" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">the orchestrator checks a refutation itself before acting</text>
+  </g>
+  <g id="node_fix">
+    <rect x="854" y="1481" width="348" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="853" y="1482" width="350" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="852" y="1484" width="352" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="854" y="1480" width="348" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="868" y="1500" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(875 1507)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="910" y="1500" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="910" y="1518" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Fix</text>
+    <text x="910" y="1534" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">name the refuted claim in the commit message</text>
+  </g>
+  <g id="node_remeasure">
+    <rect x="1345" y="1481" width="446" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1344" y="1482" width="448" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1343" y="1484" width="450" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1345" y="1480" width="446" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1359" y="1500" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(1366 1507)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="1401" y="1500" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="1401" y="1518" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Verifier re-measures the numbers</text>
+    <text x="1401" y="1534" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">counts, coverage, timings, report tables; AGREE or DISAGREE</text>
+  </g>
+  <g id="node_first_push">
+    <rect x="310" y="1629" width="296" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="309" y="1630" width="298" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="308" y="1632" width="300" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="310" y="1628" width="296" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="324" y="1648" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(331 1655)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="366" y="1648" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="366" y="1666" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">First push of this repo?</text>
+    <text x="366" y="1682" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">the security review is a first-push gate</text>
+  </g>
+  <g id="node_security">
+    <rect x="1338" y="1777" width="460" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="1337" y="1778" width="462" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="1336" y="1780" width="464" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="1338" y="1776" width="460" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="1352" y="1796" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(1359 1803)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="1394" y="1796" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="1394" y="1814" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Security review</text>
+    <text x="1394" y="1830" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">secrets, licence-restricted data, vendor files; findings are fixed first</text>
+  </g>
+  <g id="node_push">
+    <rect x="298" y="1925" width="320" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="297" y="1926" width="322" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="296" y="1928" width="324" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="298" y="1924" width="320" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="312" y="1944" width="30" height="30" rx="8" fill="#E0E7FF"/>
+    <g transform="translate(319 1951)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="354" y="1944" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#4338CA">PROCESS</text>
+    <text x="354" y="1962" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">Commit and push</text>
+    <text x="354" y="1978" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">only the orchestrator commits and pushes</text>
+  </g>
+  <g id="node_pause">
+    <rect x="187" y="2167" width="368" height="70" rx="10" fill="#0F172A" fill-opacity="0.05"/>
+    <rect x="186" y="2168" width="370" height="71" rx="11" fill="#0F172A" fill-opacity="0.04"/>
+    <rect x="185" y="2170" width="372" height="72" rx="12" fill="#0F172A" fill-opacity="0.03"/>
+    <rect x="187" y="2166" width="368" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="201" y="2186" width="30" height="30" rx="8" fill="#FCE7F3"/>
+    <g transform="translate(208 2193)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
+      <path d="M1.5 6h13"/>
+      <circle cx="4" cy="4.25" r="0.5"/>
+    </g>
+    <text x="243" y="2186" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.8" fill="#BE185D">UI</text>
+    <text x="243" y="2204" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="14" font-weight="600" fill="#0F172A">PAUSE for the learner</text>
+    <text x="243" y="2220" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="12" font-weight="400" fill="#64748B">one-paragraph recap; waits for continue or a steer</text>
+  </g>
+  <rect x="994.5" y="226" width="67" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1028" y="240.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">delegate</text>
+  <rect x="977.5" y="374" width="101" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1028" y="388.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">code and tests</text>
+  <rect x="975" y="522" width="106" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1028" y="536.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">counts reported</text>
+  <rect x="999" y="670" width="58" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1028" y="684.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">in sync</text>
+  <rect x="985.5" y="818" width="85" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1028" y="832.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">gates green</text>
+  <rect x="1510.5" y="1096" width="115" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1568" y="1110.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">numbered claims</text>
+  <rect x="495.5" y="1244" width="111" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="551" y="1258.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">verdict per claim</text>
+  <rect x="938" y="1404" width="116" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="996" y="1418.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">yes, checked first</text>
+  <rect x="1024.5" y="1428" width="71" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1060" y="1442.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">re-review</text>
+  <rect x="1539.5" y="1404" width="33" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1556" y="1418.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">no</text>
+  <rect x="406" y="1576" width="104" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="458" y="1590.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">numbers agree</text>
+  <rect x="1549" y="1724" width="38" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="1568" y="1738.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">yes</text>
+  <rect x="419.5" y="1872" width="33" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="436" y="1886.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">no</text>
+  <rect x="455.5" y="1872" width="49" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="480" y="1886.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">clean</text>
+  <rect x="388" y="2064" width="50" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="413" y="2078.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">recap</text>
+  <rect x="251.5" y="2040" width="155" height="20" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="329" y="2054.14" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="500" text-anchor="middle" fill="#475569">continue: next milestone</text>
+  <g id="legend">
+    <rect x="32" y="2288" width="20" height="20" rx="6" fill="#E0E7FF"/>
+    <g transform="translate(34 2290)" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 5h11M2.5 11h11"/>
+      <circle cx="6" cy="5" r="1.8" fill="#FFFFFF"/>
+      <circle cx="10.5" cy="11" r="1.8" fill="#FFFFFF"/>
+    </g>
+    <text x="60" y="2302" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">Process</text>
+    <rect x="125.7" y="2288" width="20" height="20" rx="6" fill="#F1F5F9"/>
+    <g transform="translate(127.7 2290)" fill="none" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="8" r="6"/>
+      <ellipse cx="8" cy="8" rx="2.6" ry="6"/>
+      <path d="M2 8h12"/>
+    </g>
+    <text x="153.7" y="2302" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">External</text>
+    <rect x="220.1" y="2288" width="20" height="20" rx="6" fill="#FCE7F3"/>
+    <g transform="translate(222.1 2290)" fill="none" stroke="#DB2777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1.5" y="2.5" width="13" height="11" rx="2"/>
+      <path d="M1.5 6h13"/>
+      <circle cx="4" cy="4.25" r="0.5"/>
+    </g>
+    <text x="248.1" y="2302" font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, 'Liberation Sans', sans-serif" font-size="11.5" font-weight="400" fill="#64748B">UI</text>
+  </g>
+</svg>

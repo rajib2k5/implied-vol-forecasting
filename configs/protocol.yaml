@@ -1,0 +1,36 @@
+# The evaluation protocol for REAL data (ADR 0001 D4; data-model.md section 1).
+#
+# protocol_hash is not typed in here. It is the SHA-256 of the canonical
+# (sorted-key, compact) JSON of everything below, computed by
+# ivf.protocol.load_protocol. Changing any value, data_end included, makes a
+# new protocol_hash and therefore a new run_id (ADR 0001 D3).
+#
+# Dates are quoted on purpose: YAML would otherwise turn 1990-01-02 into a
+# date object, and the hash is defined over JSON types only.
+#
+# data_end is frozen ONCE (ADR 0001 4.6) by
+#     uv run python -m ivf.data check --freeze-data-end
+# which writes the last session with complete core data (a VIX close and a
+# ^GSPC close, both settled before the fetch). It never moves it afterwards.
+train_start: "1990-01-02"   # the first VIX date (verified on the Cboe file in M1)
+dev_start: "2000-01-03"     # first fit has about 10 years of data
+holdout_start: "2024-07-01" # fixed date (ADR 0001 O1, owner default taken in M1)
+data_end: "2026-10-28"
+horizons: [1, 5, 21]
+fold_len: 63                # refit cadence in sessions (ADR 0001 4.5)
+min_cell_n: 20              # local reliability suppression (ADR 0001 4.8)
+vix_regime_edges: [15, 25]  # low < 15 <= mid < 25 <= high (fixed, rule L5)
+holdout_looks: 0            # incremented if a hyper-parameter changes after the holdout is seen
+seed: 20261028              # root of every SeedSequence (ADR 0001 D5)
+race_context_sessions: 252  # dev sessions the model race shows before the holdout
+targets:
+  - target_id: vix_level
+    label: VIX close
+    units: vol_points
+    horizons: [1, 5, 21]
+    definition: "V_d = VIX close on session d"
+  - target_id: rv21
+    label: 21-session realised S&P 500 volatility
+    units: vol_points
+    horizons: [21]
+    definition: "100*sqrt((252/21)*sum_{j=0..20} r_{d-j}^2), r_d = ln(SPX_d/SPX_{d-1}) on the master calendar, no mean removed"

@@ -2,11 +2,14 @@
 
     uv run python tools/export_app_data.py --mode synthetic          # write the fixture
     uv run python tools/export_app_data.py --mode synthetic --check  # CI: is the fixture current?
+    uv run python tools/export_app_data.py --mode real               # ROOT/app-data/real/, never the repo
 
-Milestone 0 produces one file, ``manifest.json``. The data files
-(term_structure, model_race, error_surface, equity_curves) arrive with the
-milestones that compute them, and each one is added to the manifest's ``files``
-list only once it exists (data-model.md 5.1).
+Synthetic mode produces one file, ``manifest.json``, unchanged since milestone 0.
+Real mode (milestone 1) produces ``manifest.json`` and ``term_structure.json``
+from the interim tables and the frozen ``configs/protocol.yaml``. The other data
+files (model_race, error_surface, equity_curves) arrive with the milestones
+that compute them, and each one is added to the manifest's ``files`` list only
+once it exists (data-model.md 5.1).
 
 Two modes, two destinations:
 
@@ -22,7 +25,8 @@ Two modes, two destinations:
   hard link (see ``write_files``).
 
 Exit codes: 0 success, 1 ``--check`` found a difference, 2 bad command line,
-3 refused by the licensing guard, 4 mode not available yet in this milestone,
+3 refused by the licensing guard, 4 the mode cannot run (real mode: the data
+pipeline has not produced its inputs yet; the message says which step to run),
 5 the output folder could not be written (permissions, read-only filesystem,
 disk full; the message says which).
 """
@@ -30,18 +34,18 @@ disk full; the message says which).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import os
-import secrets
 import stat
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from ivf import config, contract
+from ivf import config, contract, repo_guard
 
 MANIFEST = "manifest"
+TERM_STRUCTURE = "term_structure"
 
 # Provenance: facts about *which run* made a file, not about what is in it. They
 # differ on every export, so --check ignores them (ADR 0001 D5, amended M0). The
@@ -50,17 +54,26 @@ MANIFEST = "manifest"
 #   * generated_at, source_commit, source_dirty: envelope fields.
 #   * run_id: manifest payload field. It is a hash of source_commit and
 #     source_dirty (among other things), so it changes whenever they do.
+#   * files[].sha256 and files[].bytes in the manifest (milestone 1): they hash
+#     the listed file's bytes, and those bytes contain the provenance fields
+#     above, so they change on every export. --check compares them with the
+#     files on disk instead (``_manifest_mismatches``).
 ENVELOPE_PROVENANCE = ("generated_at", "source_commit", "source_dirty")
 PAYLOAD_PROVENANCE = ("run_id",)
+FILE_ENTRY_PROVENANCE = ("sha256", "bytes")
 
-EXIT_OK, EXIT_CHECK_FAILED, EXIT_REFUSED, EXIT_UNAVAILABLE, EXIT_WRITE_FAILED = 0, 1, 3, 4, 5
+EXIT_OK, EXIT_CHECK_FAILED, EXIT_UNAVAILABLE, EXIT_WRITE_FAILED = 0, 1, 4, 5
+EXIT_REFUSED = repo_guard.EXIT_REFUSED  # 3, shared with python -m ivf.data
 
-# Milestone 0 stand-in for configs/protocol.synthetic.yaml, which does not exist
-# yet. Only the fields the manifest schema exposes. M1 replaces this dict with
-# the YAML file and computes protocol_hash from the whole file, which changes
-# the hash below. Dates follow ADR 0001 4.6: holdout_start is the proposed
-# 2024-07-01 (open item O1). data_end is a placeholder: the last complete session
-# measured on 2026-10-27. M1 replaces it with the value it freezes.
+# Milestone 0 stand-in for the synthetic protocol. Only the fields the manifest
+# schema exposes. Milestone 1 added configs/protocol.synthetic.yaml for the
+# synthetic *pipeline* but left the committed fixture on this dict on purpose
+# (the brief kept synthetic mode unchanged): switching would change
+# protocol_hash and so the committed manifest. The switch is a separate,
+# reviewable change. Dates follow ADR 0001 4.6: holdout_start is 2024-07-01
+# (O1). data_end is the synthetic placeholder 2026-10-26, which
+# configs/protocol.synthetic.yaml repeats; the real data_end is frozen in
+# configs/protocol.yaml.
 M0_PROTOCOL: dict[str, Any] = {
     "train_start": "1990-01-02",
     "dev_start": "2000-01-03",
@@ -80,16 +93,13 @@ M0_TARGETS: list[dict[str, Any]] = [
 ]
 
 
-class RepoWriteRefused(Exception):
-    """The licensing guard stopped an export.
-
-    Raised for an output folder that is inside a git checkout (real mode), and
-    for an output file that is a symlink or a hard link (any mode).
-    """
+# Raised for an output folder inside a git checkout (real mode) and for an output file that is a
+# symlink or a hard link (any mode). One class, shared with the data pipeline.
+RepoWriteRefused = repo_guard.RepoWriteRefused
 
 
 class ModeUnavailable(Exception):
-    """The requested mode has no implementation in this milestone."""
+    """The requested mode cannot run: it is unknown, or (real mode) its inputs do not exist yet."""
 
 
 # --------------------------------------------------------------------------
@@ -137,12 +147,12 @@ def generate(
 
     Nothing is written here, so ``--check`` can reuse it.
     """
-    if mode != "synthetic":
-        raise ModeUnavailable(
-            f"{mode!r} export is not available in milestone 0: there is no real-data pipeline until milestone 1"
-        )
+    if mode not in contract.DATA_MODES:
+        raise ModeUnavailable(f"unknown mode {mode!r}")
     # One git lookup, shared by the envelope and by run_id, so they cannot disagree.
     git = git if git is not None else contract.git_state()
+    if mode == "real":
+        return generate_real(git=git, generated_at=generated_at)
     envelope = contract.build_envelope(MANIFEST, manifest_payload(git), mode, git=git, generated_at=generated_at)
     blob = contract.serialise(envelope)
     # Validate the bytes we are about to write, parsed back, not the dict we
@@ -152,82 +162,131 @@ def generate(
 
 
 # --------------------------------------------------------------------------
+# Real mode (milestone 1): manifest.json and term_structure.json
+# --------------------------------------------------------------------------
+
+REAL_NOTICE = (
+    "Real data: Cboe index levels (Cboe Global Markets) and S&P 500 prices (Yahoo Finance via yfinance), "
+    "for personal, non-commercial use only; not redistributed. Not financial advice."
+)
+#: Rounding at export (data-model.md section 5): index levels 2 decimals, ratios 4.
+LEVEL_DECIMALS = 2
+RATIO_DECIMALS = 4
+# VIX1Y is 366 days in Cboe's term-index methodology (amended M1, review A).
+TENOR_LABELS = {9: "9D", 30: "30D", 93: "3M", 184: "6M", 366: "1Y"}
+
+
+def _rounded(values, decimals: int) -> list[float | None]:
+    """Rounded floats with NaN as None (JSON null): no new number, only rounding (ADR 0001 D1)."""
+    return [None if value != value else round(float(value), decimals) for value in values]
+
+
+def check_term_structure(payload: dict[str, Any]) -> None:
+    """The invariants the schema cannot express (data-model.md 5.2). Raises ``ValueError``."""
+    dates = payload["dates"]
+    if any(a >= b for a, b in zip(dates, dates[1:])):
+        raise ValueError("term_structure: dates are not strictly increasing")
+    days = [tenor["tenor_days"] for tenor in payload["tenors"]]
+    if days != sorted(days) or len(set(days)) != len(days):
+        raise ValueError("term_structure: tenors are not sorted by tenor_days")
+    if len(payload["levels"]) != len(payload["tenors"]):
+        raise ValueError("term_structure: one levels row per tenor is required")
+    for name, column in [*(("levels", row) for row in payload["levels"]), ("vix_vix3m", payload["vix_vix3m"]), ("backwardation", payload["backwardation"])]:
+        if len(column) != len(dates):
+            raise ValueError(f"term_structure: {name} has {len(column)} values for {len(dates)} dates")
+
+
+def term_structure_payload(protocol, iv) -> dict[str, Any]:
+    """Reshape and round what ``ivf`` computes; compute nothing new (ADR 0001 D1).
+
+    Dates are the sessions of the master calendar from the first session on
+    which every term-structure tenor has a close (VIX9D starts last) to
+    ``data_end``. Gaps inside that span stay null.
+    """
+    from ivf import protocol as protocol_mod
+    from ivf.data import calendar
+    from ivf.features import build
+
+    tenors = protocol_mod.term_structure(protocol_mod.load_iv_indices())
+    symbols = [tenor.symbol for tenor in tenors]
+    firsts = [iv.loc[iv["symbol"] == symbol, "date"].min() for symbol in symbols]
+    if any(first != first or first is None for first in firsts):
+        raise ModeUnavailable("the interim table lacks a term-structure index; run `python -m ivf.data build-interim`")
+    start = max(firsts)
+    data_end = protocol.require_data_end()
+    dates = [d for d in calendar.xnys_sessions(start, data_end)]
+    panel = build.term_structure_panel(dates, iv, symbols)
+    payload = {
+        "dates": [d.isoformat() for d in dates],
+        "tenors": [
+            {"symbol": tenor.symbol, "tenor_days": tenor.tenor_days, "label": TENOR_LABELS.get(tenor.tenor_days, f"{tenor.tenor_days}D")}
+            for tenor in tenors
+        ],
+        "levels": [_rounded(panel["levels"][symbol], LEVEL_DECIMALS) for symbol in symbols],
+        "vix_vix3m": _rounded(panel["vix_vix3m"], RATIO_DECIMALS),
+        "backwardation": [None if flag != flag else bool(flag) for flag in panel["backwardation"]],
+    }
+    check_term_structure(payload)
+    return payload
+
+
+def generate_real(*, git: contract.GitState, generated_at: datetime | None = None) -> dict[str, bytes]:
+    """``manifest.json`` and ``term_structure.json`` from real data under ``ROOT``.
+
+    Inputs: ``ROOT/interim/*.parquet`` (``python -m ivf.data build-interim``) and
+    the frozen ``configs/protocol.yaml``. Without them this raises
+    ``ModeUnavailable`` (exit 4) and says which step to run.
+    """
+    from ivf import protocol as protocol_mod
+    from ivf.data import build_interim
+    from ivf.data.process import run_id_for
+
+    try:
+        protocol = protocol_mod.load_protocol(protocol_mod.protocol_path())
+        protocol.require_data_end()
+        iv, _price, report = build_interim.read_interim(config.data_layout().root)
+    except (protocol_mod.ProtocolError, build_interim.InterimError) as exc:
+        raise ModeUnavailable(f"real export needs the milestone 1 pipeline's output: {exc}") from exc
+    term = contract.build_envelope(TERM_STRUCTURE, term_structure_payload(protocol, iv), "real", git=git, generated_at=generated_at)
+    term_blob = contract.serialise(term)
+    contract.validate_document(json.loads(term_blob))
+    document = protocol.document
+    manifest_payload_real = {
+        "run_id": run_id_for(protocol.protocol_hash, git, "real", [entry["raw_sha256"] for entry in report["files"]]),
+        "notice": REAL_NOTICE,
+        "protocol": {
+            "protocol_hash": protocol.protocol_hash,
+            **{key: document[key] for key in ("train_start", "dev_start", "holdout_start", "data_end", "horizons", "fold_len", "min_cell_n", "holdout_looks", "vix_regime_edges")},
+        },
+        "files": [
+            {
+                "dataset": TERM_STRUCTURE,
+                "path": f"{TERM_STRUCTURE}.json",
+                "sha256": hashlib.sha256(term_blob).hexdigest(),
+                "bytes": len(term_blob),
+                "license_class": "series",
+            }
+        ],
+        "models": [],
+        "targets": [{key: target[key] for key in ("target_id", "label", "units", "horizons")} for target in document["targets"]],
+    }
+    manifest = contract.build_envelope(MANIFEST, manifest_payload_real, "real", git=git, generated_at=generated_at)
+    manifest_blob = contract.serialise(manifest)
+    contract.validate_document(json.loads(manifest_blob))
+    return {f"{MANIFEST}.json": manifest_blob, f"{TERM_STRUCTURE}.json": term_blob}
+
+
+# --------------------------------------------------------------------------
 # The licensing guard
 # --------------------------------------------------------------------------
 
 
-def _identity(path: Path) -> tuple[int, int]:
-    """Which directory ``path`` really is on disk: (device, inode).
-
-    Two spellings of one directory (a bind mount at a second path, or a case
-    variant such as ``.../IVF`` and ``.../ivf`` on a case-insensitive filesystem)
-    have different text but the same pair. Comparing text cannot see that;
-    comparing this can.
-    """
-    info = path.stat()
-    return (info.st_dev, info.st_ino)
-
-
-def _refuse_unreadable(error: OSError) -> None:
-    raise RepoWriteRefused(
-        f"cannot read {error.filename} inside the repository ({error.strerror}), "
-        "so the guard cannot tell whether an output folder is one of the repository's own folders. "
-        "If the repository was changing while the guard looked (a folder deleted or moved), run it again"
-    )
-
-
-def _directories_inside(repo: Path) -> set[tuple[int, int]]:
-    """The identity of ``repo`` and of every folder below it.
-
-    A bind mount of *any* folder of the repo, not only of its root, shows up
-    elsewhere as a folder with one of these identities. Symlinks are not
-    followed: a link inside the repo that points outside it does not make its
-    target part of the repo (git stores the link, not the target's files).
-
-    node_modules, .venv and .git are walked too. The walk takes about 0.07 s on
-    this repo (about 5,900 folders, mostly those three), so skipping them would
-    save nothing worth the hole it leaves.
-
-    A folder that cannot be read, or that disappears between being listed and
-    being looked at (deleted or moved by something else), is refused rather
-    than skipped. Skipping would be harmless for a deleted folder, since nothing
-    can be written into it. But a *moved* folder vanishes from its old path in
-    just the same way and is still there, possibly somewhere the walk never
-    reaches, so its identity would be missing from the set and a mount of it
-    would pass. The two cannot be told apart from here, a rerun costs 0.1 s, and
-    failing closed is what every other case in this guard does.
-    """
-    found = set()
-    for folder, _, _ in os.walk(repo, followlinks=False, onerror=_refuse_unreadable):
-        try:
-            found.add(_identity(Path(folder)))
-        except OSError as error:  # os.walk already listed this folder, so it was there a moment ago
-            _refuse_unreadable(error)
-    return found
-
-
-def _why_inside_a_checkout(directory: Path, repo_dirs: set[tuple[int, int]]) -> str | None:
-    """Why ``directory`` counts as part of a git checkout, or ``None`` if it does not.
-
-    ``repo_dirs`` is ``_directories_inside(repo)``. Walks from ``directory`` up
-    to ``/`` and looks at every folder that exists (the output folder itself may
-    not have been created yet, so the first existing ancestor is where the real
-    answer starts). Two things refuse:
-
-    * the folder is the same directory as the repo or one of its folders (same
-      device and inode), whatever the path text says;
-    * the folder has a ``.git`` entry (a directory, or the file that git
-      worktrees and submodules use). That also refuses any *other* clone or
-      work tree of this project, which ``repo_dirs`` would not contain.
-    """
-    for candidate in (directory, *directory.parents):
-        if not candidate.exists():
-            continue
-        if _identity(candidate) in repo_dirs:
-            return f"it is in the repository: on disk, {candidate} is the same folder as one inside it"
-        if os.path.lexists(candidate / ".git"):
-            return f"it is in a git checkout: {candidate} has a .git entry"
-    return None
+# The guard itself lives in ivf.repo_guard, shared with the data pipeline (amended M1, review A).
+# These names stay so that callers and tests of this tool keep working unchanged.
+_identity = repo_guard.identity
+_refuse_unreadable = repo_guard.refuse_unreadable
+_directories_inside = repo_guard.directories_inside
+_why_inside_a_checkout = repo_guard.why_inside_a_checkout
 
 
 def resolve_output_dir(mode: str, out_dir: Path | None) -> Path:
@@ -279,51 +338,34 @@ def _refuse_unsafe_target(path: Path) -> None:
         raise RepoWriteRefused(f"refusing to write {path}: it has {info.st_nlink} hard links")
 
 
-def _mode_of(path: Path) -> int | None:
-    """The permission bits of the file at ``path``, or ``None`` if there is none."""
-    try:
-        return stat.S_IMODE(path.lstat().st_mode)
-    except FileNotFoundError:
-        return None
-
-
-def write_files(files: dict[str, bytes], directory: Path) -> None:
-    """Write ``files`` into the existing ``directory`` without writing through a link.
+def write_files(files: dict[str, bytes], directory: Path, *, outside_repo: bool = True) -> None:
+    """Write ``files`` into ``directory`` without writing through a link.
 
     Every target is checked before the first byte is written, so a refusal
-    leaves the folder as it was. Each file then goes to a temporary name in the
-    same folder and is moved over the target with ``os.replace``. Replacing a
-    name never follows it: a symlink or hard link planted at the target (after
-    the check above, say) is swapped for the new file, and the file it pointed
-    to is left alone. ``Path.write_bytes`` would have written into that file.
+    leaves the folder as it was. Each file is then written by
+    ``ivf.repo_guard.write_file``, the one write function the data pipeline
+    uses too (amended M1, review B): a temporary file in the same folder (an
+    exclusive create, so a link planted at that name is never followed), moved
+    over the target with ``os.replace``. Replacing a name never follows it: a
+    symlink or hard link planted at the target (after the check above, say) is
+    swapped for the new file, and the file it pointed to is left alone.
+    ``Path.write_bytes`` would have written into that file.
+
+    ``outside_repo`` (the default, and what ``--mode real`` passes) makes
+    ``write_file`` check the folder against the repository *at write time*, and
+    write through the folder it checked. ``--mode synthetic`` writes into the
+    repo's ``app/public/data/synthetic/`` on purpose and passes False.
 
     A file that is replaced keeps its permission bits (a 0o600 file stays 0o600);
     a new file gets what any new file gets, 0o666 minus the umask.
 
-    Residual risk, accepted: the guard in ``resolve_output_dir`` checks the
-    folder, and this function writes into it a moment later. Someone who can
-    swap a parent folder for a symlink in between can still redirect the write.
-    That needs write access to a parent of the output folder, and anyone with
-    that already owns this account, so it is not worth a defence here.
+    Residual risk: ``ivf.repo_guard``'s module docstring states it.
     """
     targets = {directory / name: blob for name, blob in files.items()}
     for target in targets:
         _refuse_unsafe_target(target)
     for target, blob in targets.items():
-        # O_EXCL: the temporary name must be new, so it cannot be a planted link either.
-        # 0o666 is trimmed by the umask, like write_bytes did, instead of mkstemp's private 0o600.
-        existing_mode = _mode_of(target)
-        temporary = target.with_name(f".{target.name}.{secrets.token_hex(8)}.tmp")
-        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
-        try:
-            with os.fdopen(fd, "wb") as handle:
-                handle.write(blob)
-            if existing_mode is not None:
-                os.chmod(temporary, existing_mode)  # the rename would otherwise swap in the umask's mode
-            os.replace(temporary, target)
-        except BaseException:
-            temporary.unlink(missing_ok=True)
-            raise
+        repo_guard.write_file(target, blob, outside_repo=outside_repo)
 
 
 # --------------------------------------------------------------------------
@@ -337,7 +379,26 @@ def _without_provenance(document: dict[str, Any]) -> dict[str, Any]:
     payload = kept.get("payload")
     if isinstance(payload, dict):
         kept["payload"] = {k: v for k, v in payload.items() if k not in PAYLOAD_PROVENANCE}
+        if kept.get("dataset") == MANIFEST and isinstance(payload.get("files"), list):
+            kept["payload"]["files"] = [
+                {k: v for k, v in entry.items() if k not in FILE_ENTRY_PROVENANCE} if isinstance(entry, dict) else entry
+                for entry in payload["files"]
+            ]
     return kept
+
+
+def _manifest_mismatches(manifest: dict[str, Any], directory: Path) -> list[str]:
+    """Each file the manifest lists must exist beside it with exactly the listed sha256 and size."""
+    problems = []
+    for entry in manifest.get("payload", {}).get("files", []):
+        path = directory / entry["path"]
+        if not path.is_file():
+            problems.append(f"differs: {directory / 'manifest.json'} lists {entry['path']}, which is missing")
+            continue
+        blob = path.read_bytes()
+        if hashlib.sha256(blob).hexdigest() != entry["sha256"] or len(blob) != entry["bytes"]:
+            problems.append(f"differs: {directory / 'manifest.json'} lists a sha256 or size for {entry['path']} that the file does not have")
+    return problems
 
 
 def _same_scalar(a: Any, b: Any) -> bool:
@@ -372,10 +433,14 @@ def _first_difference(a: Any, b: Any, path: str = "$") -> str | None:
 def check(expected: dict[str, bytes], directory: Path) -> list[str]:
     """Compare a fresh export with the files in ``directory``. Empty list = match.
 
-    Exact comparison apart from the provenance fields (``ENVELOPE_PROVENANCE``
-    and ``PAYLOAD_PROVENANCE``). ADR 0001 D5 also allows a difference of one unit
-    in the last exported decimal for floats. That tolerance arrives in milestone 1
-    together with the first rounded float field; the milestone 0 manifest has none.
+    Exact comparison apart from the provenance fields (``ENVELOPE_PROVENANCE``,
+    ``PAYLOAD_PROVENANCE`` and, in a manifest, ``FILE_ENTRY_PROVENANCE``, which
+    are checked against the files on disk instead). ADR 0001 D5 also allows a
+    difference of one unit in the last exported decimal for floats. Milestone 1
+    still compares exactly: its only rounded floats are in the real
+    term_structure.json, whose --check is local and reruns on the same interim
+    parquet, so the bytes are deterministic. The tolerance is due when a
+    committed fixture first carries a rounded float.
     """
     problems: list[str] = []
     for name, blob in sorted(expected.items()):
@@ -392,6 +457,8 @@ def check(expected: dict[str, bytes], directory: Path) -> list[str]:
         difference = _first_difference(_without_provenance(committed), _without_provenance(json.loads(blob)))
         if difference:
             problems.append(f"differs: {path} at {difference}")
+        elif name == f"{MANIFEST}.json":  # same content: now its file list must match the files on disk
+            problems += _manifest_mismatches(committed, directory)
     # A file nobody generates any more is stale (for example a dataset that was dropped).
     for path in sorted(directory.glob("*.json")) if directory.is_dir() else []:
         if path.name not in expected:
@@ -431,8 +498,7 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_OK
 
     try:
-        out_dir.mkdir(parents=True, exist_ok=True)
-        write_files(files, out_dir)
+        write_files(files, out_dir, outside_repo=args.mode == "real")
     except RepoWriteRefused as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_REFUSED

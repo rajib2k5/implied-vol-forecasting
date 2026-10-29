@@ -32,6 +32,11 @@ dependencies = [
   # Both were already in the lock as dependencies of nbformat.
   "jsonschema==4.26.0",
   "referencing==0.37.0",
+  # Added in milestone 1: the NYSE (XNYS) session calendar of ADR 0001 D4.1.
+  "exchange-calendars==4.13.2",
+  # Added in milestone 1: ivf.protocol reads configs/*.yaml directly. It was
+  # already in the lock (through jupyter-events) at this exact version.
+  "pyyaml==6.0.3",
 ]
 
 [tool.uv.build-backend]
@@ -51,3 +56,9 @@ torch = { index = "pytorch-cpu" }
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[dependency-groups]
+diagrams = [
+    "pyyaml==6.0.3",
+    "resvg-py==0.5.0",
+]

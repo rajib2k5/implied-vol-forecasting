@@ -2,7 +2,7 @@
 
 Forecast implied volatility (the VIX first) with a random walk, ARIMA, HAR, the GARCH family and an LSTM on identical walk-forward folds, test whether the differences are real, and backtest the forecasts on VXX and SVXY.
 
-> **Status: milestone 0 of 6.** Design, scaffold and app shell. No data has been fetched, no model has been fitted, and there are no results yet. The sections below describe what the project is built to do; each one says which milestone delivers it.
+> **Status: milestone 1 of 6.** Data and EDA: the data pipeline (fetch, raw store, interim tables, the master calendar and its gap check), the features and targets, and the exploratory analysis, on real data locally and on seeded synthetic data in CI. No model has been fitted and no real-data result is published. The sections below describe what the project is built to do; each one says which milestone delivers it. Walkthrough: [milestone 1](docs/milestones/01-data-and-eda.md).
 
 ## What it does, and what it teaches
 
@@ -33,6 +33,17 @@ uv run pytest -q             # the Python tests
 cd app && npm ci && npm run dev
 ```
 
+To build the data on your own machine (it goes to `$VOL_DATA_DIR`, default `~/data/vol-projects`, never into the repo: every step refuses a `$VOL_DATA_DIR` inside the checkout):
+
+```bash
+uv run python -m ivf.data fetch                    # Cboe CSVs and ^GSPC via yfinance, into a SHA-256-named raw store
+uv run python -m ivf.data build-interim            # typed, de-duplicated parquet
+uv run python -m ivf.data verify                   # re-hash every raw file
+uv run python -m ivf.data check                    # the calendar, the gap check and the data_end freeze
+uv run python -m ivf.data eda                      # features, targets and a local EDA report
+uv run python -m ivf.data --synthetic fetch        # the same steps on seeded synthetic data
+```
+
 `npm run verify` (inside `app/`) is the app's full gate: lint, tests with coverage thresholds, a production build, and a deploy guard that fails if real market data could ship. The remaining checks are listed in the [milestone 0 walkthrough](docs/milestones/00-scaffold-and-design.md#10-verification).
 
 ## Data and licensing
@@ -51,7 +62,9 @@ Directories that exist today:
 ```
 README.md  LEARNING_LOG.md  LICENSE  pyproject.toml  uv.lock
 src/ivf/          the Python package; all computation lives here
-                  config.py, contract.py now; data/ features/ models/ evaluation/ backtest/ arrive in M1 to M6
+                  config.py, contract.py, protocol.py, eda.py; data/ and features/ (M1);
+                  models/ evaluation/ backtest/ arrive in M2 to M6
+configs/          protocol.yaml (data_end frozen in M1), protocol.synthetic.yaml, iv_indices.yaml, instruments.yaml
 tests/            pytest, with hand-worked expected values
 notebooks/        generated from tools/build_notebooks.py, never hand-edited
 tools/            build_notebooks.py, export_app_data.py, bench_lstm.py
