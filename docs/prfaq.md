@@ -1,22 +1,22 @@
 # PR/FAQ: implied-vol-forecasting
 
-> **Milestone 0 draft, written working backwards.** Rajib Bahar will edit it; every quote is a draft. **Status today (M0): design, scaffold and app shell only; no data fetched, no model fitted.** Results are bracketed `[RESULT: ...]` placeholders, filled at M5/M6 and re-measured by `verifier`. ADRs: `docs/adr/`; theory: [`docs/concepts/`](concepts/).
+> **Draft for owner review (revised 2026-10-29, after milestone 6).** Written working backwards at milestone 0; revised with what was measured. Rajib Bahar will edit it; every quote is a draft. **Status: milestones 0 to 6 done (code at `7eeae14`); the single guarded holdout look has NOT been taken.** Every number below is from the **synthetic** market (seed 20261028, development period); real results are measured locally and are not published under the current data policy (ADR 0001 D2). Synthetic numbers come from `uv run python tools/results_table.py` or from the milestone walkthrough named beside them. Holdout results stay `[RESULT: ...]` placeholders until the owner takes the look. ADRs: `docs/adr/`; theory: [`docs/concepts/`](concepts/).
 >
 > **Roadmap.** M1 data and EDA; M2 baselines (random walk, historical mean, ARIMA on log-IV, HAR); M3 GARCH family; M4 LSTM; M5 evaluation; M6 trading backtest.
 
 ## 1. Press release
 
-**DRAFT, written in advance. [DATE: Milestone 6 release, a future date]** *None of this has happened yet.*
+**DRAFT, written in advance and revised after milestone 6. [DATE: release, a future date]** *The release has not happened. The synthetic results quoted are measured; every holdout and real-data result is still a placeholder.*
 
 ### A fair race for VIX forecasts: random walk, ARIMA, HAR, GARCH and LSTM on identical folds
 
 *An open-source Python package and React app that forecasts the CBOE VIX at 1-, 5- and 21-day horizons, tests whether model differences are real, and backtests the forecasts on VXX/SVXY.*
 
-**Summary.** Rajib Bahar today released implied-vol-forecasting, a public repository that forecasts the VIX (CBOE's 30-day implied volatility of the S&P 500) with models from a random walk to an LSTM, scored under one protocol. Headline: `[RESULT: lowest-QLIKE model at h=21 on the holdout, and significance of its gap to the random walk — measured at M5]`.
+**Summary.** Rajib Bahar today released implied-vol-forecasting, a public repository that forecasts the VIX (CBOE's 30-day implied volatility of the S&P 500) with models from a random walk to an LSTM, scored under one protocol. Headline (synthetic development period): at h = 21 the lowest-QLIKE VIX model, ARIMA-GARCH on ln VIX, has 0.80444 of the random walk's QLIKE, and for 21-day realised volatility GARCH has 0.645263 of it; at h = 1 the best model gains only 0.5% in RMSE. Holdout headline: `[RESULT: lowest-QLIKE model at h=21 on the holdout, and significance of its gap to the random walk — measured at the one look]`.
 
 **The problem.** Volatility-model comparisons go wrong in predictable ways: scalers or tuning that see test data, GARCH fitted to the VIX level, no check against "tomorrow equals today", and backtests tuned until they look good.
 
-**The solution.** One protocol for every model: identical walk-forward folds, train-only scalers, and error metrics paired with significance tests. The random walk and HAR are the bars to beat. GARCH is fitted to S&P 500 returns; the one place it touches implied volatility is ARIMA-GARCH on log-IV changes. A costed VXX/SVXY backtest reports Sharpe with its Probabilistic and Deflated versions: `[RESULT: DSR of the best forecast-driven rule vs always-long and always-short — measured at M6]`.
+**The solution.** One protocol for every model: identical walk-forward folds, train-only scalers, and error metrics paired with significance tests. The random walk and HAR are the bars to beat. GARCH is fitted to S&P 500 returns; the one place it touches implied volatility is ARIMA-GARCH on log-IV changes. A costed VXX/SVXY backtest reports Sharpe with its Probabilistic and Deflated versions. On the synthetic development period the pre-registered rule has Sharpe -0.2694 at 5 bps, PSR 0.2557 and DSR 0.0319 (5 trials), against -2.0665 for always-long VXX and 2.0658 for always-long SVXY. Holdout: `[RESULT: DSR of the primary rule vs always-long and always-short — measured at the one look]`.
 
 **Author quote.** "I'm learning volatility modelling by building it, so every comparison has to be one I can defend line by line," said Rajib Bahar, project author. "`[DRAFT QUOTE: Rajib to rewrite]`"
 
@@ -35,11 +35,35 @@
 git clone https://github.com/rajib2k5/implied-vol-forecasting.git
 cd implied-vol-forecasting
 uv sync
-uv run [PIPELINE COMMAND — named at M1]
+uv run python -m ivf.data --synthetic fetch          # then build-interim, check, eda (README, "How to run each step")
+uv run python -m ivf.models --synthetic baselines    # then garch, lstm; then ivf.evaluation and ivf.backtest
+uv run python tools/export_app_data.py --mode synthetic
 cd app && npm ci && npm run dev
 ```
 
 Then read `docs/milestones/`.
+
+## What was measured (synthetic, development period)
+
+Each hypothesis below was stated at milestone 0 and is reported whichever way it fell. These are synthetic results: they show that the machinery measures what it should on a market whose truth is known, not what the real VIX does.
+
+| Hypothesis | Synthetic result | Where measured |
+|---|---|---|
+| H1: the random walk is hard to beat at h = 1 | Holds. Best RMSE ratio to the random walk 0.99503 at h = 1 (ARIMA-GARCH; ARIMA 0.995048), 0.90955 at h = 21 | `tools/results_table.py` |
+| H2: implied sits above realised, and raw forecasts fail MZ | Partly. The synthetic VIX sits 4.86 vol points above later `rv21` on average (bias y − ŷ of `vix_implied` = -4.8612) but carries no information about it (MZ beta -0.0041, R² 0: the generator draws the two independently, a limit of the synthetic market). GARCH fails MZ in level space (beta 0.8888, Wald p 0.0008) and passes in variance space, because it forecasts E[v] | `app/public/data/synthetic/evaluation.json` (`losses`, `mz` rows for rv21); [milestone 5](milestones/05-evaluation.md) |
+| H3: the LSTM does not beat HAR significantly | Holds, and more: the LSTM loses to HAR in every panel (RMSE ratio 0.920553 against 0.91263 at VIX h = 21; 0.896785 against 0.889032 on rv21), and each of its five seeds loses to HAR on its own | `tools/results_table.py`; [milestone 4](milestones/04-lstm.md) |
+| H4: after costs no rule has a DSR distinguishable from zero | Holds for the primary rule: DSR 0.0319, Sharpe negative at every cost level (-0.2166 at 0 bps to -0.4272 at 20 bps) | `tools/results_table.py`; [milestone 6](milestones/06-backtest.md) |
+
+The honest null results, kept as findings:
+
+- **The LSTM loses to HAR in all seeds** (above).
+- **ARIMA uses d = 0.** KPSS chose d = 1 on 24-76% of stationary AR(1) series as persistent as ln VIX, and forcing d = 1 raised h = 21 RMSE 17% ([milestone 2](milestones/02-baselines.md)).
+- **GARCH sits within 1.2% of the truth floor** on synthetic `rv21` (QLIKE 0.1396 against 0.1379 for the true conditional variance), so there is little left for any model to find there ([milestone 3](milestones/03-garch-done-right.md)).
+- **Walk-forward bias calibration helps in 0 of 28 cells** under the pre-registered rule ([milestone 5](milestones/05-evaluation.md)).
+- **Significance is not free:** 90 of 168 model pairs differ at Holm-adjusted p < 0.05 with the fixed-b test on this long synthetic sample; the bandwidth choice changes many decisions ([milestone 5](milestones/05-evaluation.md)).
+- **The ln VIX half-life** is 36.8 sessions (95% CI 30.16 to 47.14); the synthetic truth, phi = 0.98, gives ln(0.5)/ln(0.98) = 34.3 sessions, inside the interval.
+
+What is still open: every real-data number, and every holdout number. The holdout look is the owner's single, guarded command (README, "The holdout look").
 
 ## 2. External FAQ
 

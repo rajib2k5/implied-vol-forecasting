@@ -44,7 +44,7 @@ def test_envelope_has_exactly_the_seven_fields_with_the_right_values():
     envelope = example_envelope()
     assert set(envelope) == ENVELOPE_FIELDS
     assert envelope == {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",  # MINOR bump in the final polish: new datasets evaluation and eda (ADR 0001 D1)
         "generated_at": "2026-10-28T09:30:00Z",
         "source_commit": COMMIT,
         "source_dirty": False,
