@@ -70,13 +70,13 @@ export interface Milestone {
 }
 
 export const MILESTONES: Milestone[] = [
-  { id: 0, title: 'Scaffold and design', summary: 'Repository, design documents, diagrams and this app shell with its About, Architecture and 3D placeholder pages.', status: 'current' },
-  { id: 1, title: 'Data and EDA', summary: 'Load the CBOE volatility indices and underlyings; study clustering, persistence, AR(1) half-life, mean reversion and the IV-RV spread.', status: 'planned' },
-  { id: 2, title: 'Baselines', summary: 'Random walk, historical mean, ARIMA on log-IV, and HAR.', status: 'planned' },
-  { id: 3, title: 'GARCH done right', summary: 'GARCH, GJR and EGARCH on underlying returns for 21-day forecasts; ARIMA-GARCH on log-IV changes.', status: 'planned' },
-  { id: 4, title: 'LSTM', summary: 'A PyTorch LSTM on the same walk-forward splits, with scaling fitted on train only, early stopping and several seeds.', status: 'planned' },
-  { id: 5, title: 'Evaluation', summary: 'RMSE, MAE, MAPE and QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz and a regime breakdown.', status: 'planned' },
-  { id: 6, title: 'Trading backtest', summary: 'A forecast-driven VXX/SVXY strategy with costs, compared with always-long and always-short volatility, with PSR and DSR.', status: 'planned' },
+  { id: 0, title: 'Scaffold and design', summary: 'Repository, design documents, diagrams and this app shell with its About, Architecture and 3D placeholder pages.', status: 'done' },
+  { id: 1, title: 'Data and EDA', summary: 'Load the CBOE volatility indices and underlyings; study clustering, persistence, AR(1) half-life, mean reversion and the IV-RV spread.', status: 'done' },
+  { id: 2, title: 'Baselines', summary: 'Random walk, historical mean, ARIMA on log-IV, and HAR.', status: 'done' },
+  { id: 3, title: 'GARCH done right', summary: 'GARCH, GJR and EGARCH on underlying returns for 21-day forecasts; ARIMA-GARCH on log-IV changes.', status: 'done' },
+  { id: 4, title: 'LSTM', summary: 'A PyTorch LSTM on the same walk-forward splits, with scaling fitted on train only, early stopping and several seeds.', status: 'done' },
+  { id: 5, title: 'Evaluation', summary: 'RMSE, MAE, MAPE and QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz and a regime breakdown.', status: 'done' },
+  { id: 6, title: 'Trading backtest', summary: 'A forecast-driven VXX/SVXY strategy with costs, compared with always-long and always-short volatility, with PSR and DSR. Code done (7eeae14); the single guarded holdout look has not been taken.', status: 'current' },
 ]
 
 /** Problems with a roadmap, as readable strings; empty means valid. */

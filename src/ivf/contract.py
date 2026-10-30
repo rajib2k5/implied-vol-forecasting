@@ -43,7 +43,7 @@ from ivf import config
 #: Version of the whole contract (one version for all files, ADR 0001 D1).
 #: envelope.schema.json pins the major part with a pattern, so bumping the
 #: major version means editing that schema on purpose.
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 #: Closed enum (ADR 0001 D1): adding a value is a MAJOR version bump.
 DATA_MODES = ("synthetic", "real")

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/evaluation.schema.json",
+  "title": "evaluation.json",
+  "description": "Milestone 5's whole-period tables for one period: losses per (target, horizon, model) with ratios to the random walk, the primary Diebold-Mariano pairs (fixed-b long-run variance, Holm-adjusted p, lower_loss), the primary Mincer-Zarnowitz rows and the calibration count. license_class: aggregate. Like every real file it is written only outside the repo (ADR 0001 D2). Added in schema 1.1.0 (MINOR: a new dataset). Invariants checked outside the schema: every DM pair names two models with a loss row on the same (target, horizon); lower_loss is one of them. See data-model.md 5.6.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "evaluation" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["period", "source_run_id", "dm_method", "dm_fixed_b", "mz_method", "losses", "dm", "mz", "calibration"],
+      "properties": {
+        "period": { "$ref": "envelope.schema.json#/$defs/period" },
+        "source_run_id": { "type": "string", "pattern": "^[0-9a-f]{12}$(?!\\n)" },
+        "dm_method": { "description": "Long-run variance of the primary DM test (fixed_b).", "$ref": "envelope.schema.json#/$defs/id" },
+        "dm_fixed_b": { "description": "Bandwidth fraction b of the fixed-b test.", "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "mz_method": { "description": "Covariance of the primary MZ Wald test (hansen_hodrick).", "$ref": "envelope.schema.json#/$defs/id" },
+        "losses": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/loss" } },
+        "dm": { "type": "array", "items": { "$ref": "#/$defs/dm" } },
+        "mz": { "type": "array", "items": { "$ref": "#/$defs/mz" } },
+        "calibration": {
+          "description": "Walk-forward bias calibration: in how many (model, target, horizon) cells it lowered QLIKE significantly (Holm).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cells", "helps"],
+          "properties": {
+            "cells": { "type": "integer", "minimum": 0 },
+            "helps": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "loss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "horizon", "model_id", "n", "rmse", "mae", "bias", "mape", "qlike", "rmse_ratio_rw", "qlike_ratio_rw"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "horizon": { "$ref": "envelope.schema.json#/$defs/horizon" },
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "n": { "type": "integer", "minimum": 0 },
+        "rmse": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "mae": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "bias": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "mape": { "description": "Fraction, not percent.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "qlike": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "rmse_ratio_rw": { "description": "rmse / rmse of rw on the same (target, horizon); 1 for rw.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "qlike_ratio_rw": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" }
+      }
+    },
+    "dm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "horizon", "loss", "model_a", "model_b", "n", "dm_stat", "p_value", "p_holm", "lower_loss"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "horizon": { "$ref": "envelope.schema.json#/$defs/horizon" },
+        "loss": { "enum": ["sq_error", "qlike"] },
+        "model_a": { "$ref": "envelope.schema.json#/$defs/id" },
+        "model_b": { "$ref": "envelope.schema.json#/$defs/id" },
+        "n": { "type": "integer", "minimum": 0 },
+        "dm_stat": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "p_value": { "$ref": "envelope.schema.json#/$defs/nullableProbability" },
+        "p_holm": { "description": "Holm-adjusted across the pairs of one (target, horizon, loss).", "$ref": "envelope.schema.json#/$defs/nullableProbability" },
+        "lower_loss": { "description": "The model of the pair with the lower mean loss.", "$ref": "envelope.schema.json#/$defs/id" }
+      }
+    },
+    "mz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "horizon", "model_id", "n", "alpha", "alpha_se", "beta", "beta_se", "r2", "wald_p"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "horizon": { "$ref": "envelope.schema.json#/$defs/horizon" },
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "n": { "type": "integer", "minimum": 0 },
+        "alpha": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "alpha_se": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "beta": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "beta_se": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "r2": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "wald_p": { "description": "Joint test of alpha = 0 and beta = 1.", "$ref": "envelope.schema.json#/$defs/nullableProbability" }
+      }
+    }
+  }
+}

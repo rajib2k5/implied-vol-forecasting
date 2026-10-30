@@ -20,7 +20,8 @@ import pyarrow.parquet as pq
 import pytest
 
 from ivf import protocol
-from ivf.data import build_interim, raw, synthetic
+from ivf.data import build_interim, calendar, process, raw, synthetic
+from ivf.features import build
 
 pytestmark = pytest.mark.usefixtures("no_network")
 
@@ -150,6 +151,19 @@ def test_the_eda_on_synthetic_files_recovers_the_known_truth(pipeline):
     assert 1 <= report["vol_of_vol"]["e6_block"] <= 4
     # The synthetic phi is 0.98, inside the size-checked range (eda.E6_PHI_MAX; M1 final check).
     assert report["vol_of_vol"]["e6_ar1_phi"] <= 0.985 and report["vol_of_vol"]["e6_verdict"] == "not shown"
+
+
+def test_the_app_eda_core_gives_the_m1_reports_own_numbers(pipeline):
+    # ivf.app_results reads eda_core, not the M1 report; both must give the same numbers on the
+    # same interim tables (final polish: eda_core was split out of eda_report).
+    root, _ = pipeline
+    report = json.loads(next((root / "eda").glob("*/eda_report.json")).read_text())
+    proto = protocol.load_protocol(protocol.protocol_path(synthetic=True))
+    iv, price, _ = build_interim.read_interim(root)
+    dates, periods, iv_eda, price_eda = process.eda_inputs(calendar.master_calendar(proto), iv, price, proto.holdout_start)
+    core = process.eda_core(dates, periods, build.build_features(dates, iv_eda, price_eda), iv_eda, proto.holdout_start)
+    assert json.loads(json.dumps({k: core[k] for k in ("clustering", "persistence", "half_life")})) == {
+        k: report[k] for k in ("clustering", "persistence", "half_life")}
 
 
 def test_the_eda_run_id_changes_with_the_inputs():

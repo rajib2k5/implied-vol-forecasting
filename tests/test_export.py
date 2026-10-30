@@ -6,6 +6,7 @@ never recomputed by the code under test.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -24,6 +25,28 @@ TOOLS = REPO / "tools"
 sys.path.insert(0, str(TOOLS))
 
 import export_app_data  # noqa: E402
+from app_store_fixture import tiny_store, write_store  # noqa: E402
+
+#: The exporter's own store loader, kept before the autouse fixture below replaces it.
+REAL_STORE_LOADER = export_app_data.load_synthetic_store
+RESULT_FILES = ["eda.json", "equity_curves.json", "evaluation.json", "manifest.json", "model_race.json"]
+
+
+@pytest.fixture(scope="module")
+def disk_store(tmp_path_factory):
+    """$VOL_DATA_DIR holding the hand-made store on disk, for tests that run the exporter in a subprocess.
+
+    Polish review: these tests used to read the local store and were skipped without one; now they
+    never depend on local data and never skip."""
+    vol_dir = tmp_path_factory.mktemp("vol")
+    write_store(vol_dir)
+    return vol_dir
+
+
+@pytest.fixture(autouse=True)
+def hand_made_store(monkeypatch):
+    """In-process exports read the hand-made store of tests/app_store_fixture.py, never local data."""
+    monkeypatch.setattr(export_app_data, "load_synthetic_store", lambda: tiny_store())
 
 GIT_A = contract.GitState(commit="1" * 40, dirty=False)
 GIT_B = contract.GitState(commit="2" * 40, dirty=True)
@@ -32,14 +55,22 @@ TIME_B = datetime(2027, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 COMMITTED = REPO / "app" / "public" / "data" / "synthetic"
 
 
-def run_cli(*args, cwd=None):
+def run_cli(*args, cwd=None, env=None):
     return subprocess.run(
         [sys.executable, str(TOOLS / "export_app_data.py"), *args],
         cwd=cwd,
+        env=env,
         capture_output=True,
         text=True,
         check=False,
     )
+
+
+def run_main(capsys, *args):
+    """The command line in-process, so it reads the hand-made store; same fields as run_cli's result."""
+    code = export_app_data.main(list(args))
+    out, err = capsys.readouterr()
+    return subprocess.CompletedProcess(args=list(args), returncode=code, stdout=out, stderr=err)
 
 
 def parsed(blob: bytes):
@@ -67,9 +98,13 @@ def fake_repo(tmp_path, monkeypatch):
 # --- the manifest -------------------------------------------------------------
 
 
-def test_synthetic_export_is_one_manifest_that_validates():
+def test_synthetic_export_is_the_manifest_and_four_result_files_that_validate():
     files = export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
-    assert list(files) == ["manifest.json"]
+    assert sorted(files) == RESULT_FILES
+    for name, blob in files.items():
+        result = parsed(blob)
+        contract.validate_document(result)
+        assert (result["dataset"], result["data_mode"], result["schema_version"]) == (name[:-5], "synthetic", "1.1.0")
     document = parsed(files["manifest.json"])
     contract.validate_document(document)  # against manifest.schema.json, $refs resolved locally
     assert document["dataset"] == "manifest"
@@ -78,12 +113,21 @@ def test_synthetic_export_is_one_manifest_that_validates():
     assert document["generated_at"] == "2026-10-28T09:30:00Z"
 
 
-def test_manifest_lists_no_files_because_none_exist_yet():
-    # data-model.md 5.1: a file appears in `files` only once its milestone has
-    # produced it. Milestone 0 produces none.
-    payload = parsed(export_app_data.generate("synthetic")["manifest.json"])["payload"]
-    assert payload["files"] == []
-    assert payload["models"] == []
+def test_manifest_lists_each_result_file_with_its_hash_size_and_class():
+    # data-model.md 5.1: a file appears in `files` once it exists, with the sha256 and size of its bytes.
+    files = export_app_data.generate("synthetic")
+    payload = parsed(files["manifest.json"])["payload"]
+    assert [(f["dataset"], f["path"], f["license_class"]) for f in payload["files"]] == [
+        ("model_race", "model_race.json", "series"), ("evaluation", "evaluation.json", "aggregate"),
+        ("equity_curves", "equity_curves.json", "series"), ("eda", "eda.json", "aggregate")]
+    for entry in payload["files"]:
+        blob = files[entry["path"]]
+        assert (entry["sha256"], entry["bytes"]) == (hashlib.sha256(blob).hexdigest(), len(blob))
+    # The display registry: milestone <= 4 and not retired, in registry order (old_model and future_model are left out).
+    assert [(m["model_id"], m["targets"]) for m in payload["models"]] == [
+        ("rw", ["vix_level", "rv21"]), ("har_log", ["vix_level"]), ("garch", ["rv21"])]
+    assert payload["notice"].startswith("Synthetic data (seed 7), not market data.") and "abcdef012345" not in payload["notice"]
+    assert "holdout has not been looked at" in payload["notice"]
     assert [t["target_id"] for t in payload["targets"]] == ["vix_level", "rv21"]
     assert [t["horizons"] for t in payload["targets"]] == [[1, 5, 21], [21]]
 
@@ -126,19 +170,30 @@ def test_run_id_and_envelope_use_the_same_git_state():
 
 def test_content_does_not_depend_on_git_state_or_time():
     # Only the provenance fields may change between exports: the three envelope
-    # fields and the manifest's run_id (which hashes two of them). Everything else
-    # must be identical, or the committed fixture would go stale with every commit.
-    a = parsed(export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)["manifest.json"])
-    b = parsed(export_app_data.generate("synthetic", git=GIT_B, generated_at=TIME_B)["manifest.json"])
+    # fields, the manifest's run_id (which hashes two of them) and, in the manifest's
+    # file list, each file's sha256 and size (they hash bytes that hold the envelope
+    # fields). Everything else must be identical, or the committed fixture would go
+    # stale with every commit.
+    first = export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
+    second = export_app_data.generate("synthetic", git=GIT_B, generated_at=TIME_B)
+    a, b = parsed(first["manifest.json"]), parsed(second["manifest.json"])
     assert a != b
     assert a["payload"]["run_id"] != b["payload"]["run_id"]
     for field in export_app_data.ENVELOPE_PROVENANCE:
         a.pop(field)
         b.pop(field)
     for field in export_app_data.PAYLOAD_PROVENANCE:
-        a["payload"].pop(field)
-        b["payload"].pop(field)
+        a["payload"].pop(field, None)
+        b["payload"].pop(field, None)
+    for doc in (a, b):
+        doc["payload"]["files"] = [{k: v for k, v in f.items() if k not in ("sha256", "bytes")} for f in doc["payload"]["files"]]
     assert a == b
+    for name in (n for n in RESULT_FILES if n != "manifest.json"):
+        x, y = parsed(first[name]), parsed(second[name])
+        for field in ("generated_at", "source_commit", "source_dirty"):
+            x.pop(field)
+            y.pop(field)
+        assert x == y, name
 
 
 def test_real_mode_without_the_pipeline_output_is_unavailable_and_says_which_step(monkeypatch, tmp_path):
@@ -160,30 +215,81 @@ def test_generate_refuses_to_produce_a_manifest_that_breaks_the_schema(monkeypat
 # --- writing and --check ------------------------------------------------------
 
 
-def test_cli_writes_the_manifest_and_check_passes_on_it(tmp_path):
+def test_cli_writes_the_files_and_check_passes_on_them(tmp_path, capsys):
     out = tmp_path / "fixture"
-    written = run_cli("--mode", "synthetic", "--out-dir", str(out))
+    written = run_main(capsys, "--mode", "synthetic", "--out-dir", str(out))
     assert written.returncode == 0, written.stderr
-    assert [p.name for p in out.iterdir()] == ["manifest.json"]
+    assert sorted(p.name for p in out.iterdir()) == RESULT_FILES
     contract.validate_document(json.loads((out / "manifest.json").read_bytes()))
-    checked = run_cli("--mode", "synthetic", "--check", "--out-dir", str(out))
+    checked = run_main(capsys, "--mode", "synthetic", "--check", "--out-dir", str(out))
     assert checked.returncode == 0, checked.stderr
-    assert checked.stdout.startswith("ok: 1 file(s)")
+    assert checked.stdout.startswith("ok: 5 file(s)")
 
 
-def test_check_mode_never_writes(tmp_path):
+def test_check_mode_never_writes(tmp_path, capsys):
     out = tmp_path / "not-created"
-    result = run_cli("--mode", "synthetic", "--check", "--out-dir", str(out))
+    result = run_main(capsys, "--mode", "synthetic", "--check", "--out-dir", str(out))
     assert result.returncode == 1
     assert "missing:" in result.stderr
     assert not out.exists()
 
 
-def test_check_passes_on_the_committed_fixture():
-    # The same command CI runs.
-    result = run_cli("--mode", "synthetic", "--check", cwd=REPO.parent)
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.startswith("ok: 1 file(s)")
+def test_cli_subprocess_writes_from_a_store_on_disk_and_check_passes(disk_store, tmp_path):
+    # The gate's command line end to end, in a subprocess, against a store on disk.
+    env = {**os.environ, "VOL_DATA_DIR": str(disk_store)}
+    out = tmp_path / "fixture"
+    written = run_cli("--mode", "synthetic", "--out-dir", str(out), cwd=REPO.parent, env=env)
+    assert written.returncode == 0, written.stderr
+    assert sorted(p.name for p in out.iterdir()) == RESULT_FILES
+    checked = run_cli("--mode", "synthetic", "--check", "--out-dir", str(out), cwd=REPO.parent, env=env)
+    assert checked.returncode == 0, checked.stderr
+    assert checked.stdout.startswith("ok: 5 file(s)")
+
+
+def test_the_committed_fixture_is_synthetic_valid_and_its_manifest_matches_its_files():
+    # Without any store: what can be checked of the committed files alone. (That they equal a fresh
+    # export is the gate `export_app_data.py --mode synthetic --check`, which needs the local store.)
+    names = sorted(p.name for p in COMMITTED.glob("*.json"))
+    assert names == RESULT_FILES
+    for name in names:
+        document = parsed((COMMITTED / name).read_bytes())
+        contract.validate_document(document)
+        assert document["data_mode"] == "synthetic"
+    assert export_app_data._manifest_mismatches(parsed((COMMITTED / "manifest.json").read_bytes()), COMMITTED) == []
+
+
+def test_check_ignores_the_store_run_id(exported):
+    # source_run_id hashes the commit that built the store, so a rebuild at a clean commit changes it.
+    for name in ("evaluation.json", "eda.json"):
+        path = exported / name
+        document = parsed(path.read_bytes())
+        document["payload"]["source_run_id"] = "ffffffffffff"
+        path.write_bytes(contract.serialise(document))
+    problems = export_app_data.check(export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A), exported)
+    # Only the manifest's hashes of the two edited files can differ; the content of each file matches.
+    assert problems == [f"differs: {exported / 'manifest.json'} lists a sha256 or size for {n} that the file does not have"
+                        for n in ("evaluation.json", "eda.json")]
+    notice = parsed((exported / "manifest.json").read_bytes())["payload"]["notice"]
+    assert "abcdef012345" not in notice  # the store run id is not pinned in the notice
+
+
+def test_synthetic_mode_without_a_store_is_unavailable_and_names_the_steps(monkeypatch, tmp_path):
+    monkeypatch.setenv("VOL_DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(export_app_data, "load_synthetic_store", REAL_STORE_LOADER)
+    with pytest.raises(export_app_data.ModeUnavailable, match="synthetic dev store.*uv run python tools/build_synthetic_store.py"):
+        export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
+    assert export_app_data.main(["--mode", "synthetic", "--check"]) == export_app_data.EXIT_UNAVAILABLE == 4
+
+
+def test_check_detects_a_changed_result_value(exported):
+    path = exported / "evaluation.json"
+    document = parsed(path.read_bytes())
+    document["payload"]["losses"][1]["rmse_ratio_rw"] = 0.6  # the fixture's value is 0.5
+    path.write_bytes(contract.serialise(document))
+    problems = export_app_data.check(export_app_data.generate("synthetic"), exported)
+    # The content difference, and the manifest's hash of the file no longer matching its bytes.
+    assert problems == [f"differs: {path} at $.payload.losses[1].rmse_ratio_rw: 0.6 vs 0.5",
+                        f"differs: {exported / 'manifest.json'} lists a sha256 or size for evaluation.json that the file does not have"]
 
 
 def test_check_ignores_all_provenance_fields(exported):
@@ -235,7 +341,7 @@ def test_check_detects_an_added_field(exported):
     )
     path.write_bytes(contract.serialise(document))
     problems = export_app_data.check(export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A), exported)
-    assert len(problems) == 1 and "$.payload.files has 1 items vs 0" in problems[0]
+    assert len(problems) == 1 and "$.payload.files has 5 items vs 4" in problems[0]
 
 
 def test_check_treats_15_and_15_point_0_as_the_same_number(exported):
@@ -262,7 +368,7 @@ def test_check_detects_a_missing_file(exported):
 
 def test_check_detects_a_missing_folder(tmp_path):
     problems = export_app_data.check(export_app_data.generate("synthetic"), tmp_path / "no-such-folder")
-    assert len(problems) == 1 and problems[0].startswith("missing:")
+    assert len(problems) == 5 and all(p.startswith("missing:") for p in problems)
 
 
 def test_check_detects_a_file_the_exporter_no_longer_produces(exported):
@@ -287,10 +393,10 @@ def test_check_detects_a_committed_file_that_breaks_the_schema_in_a_provenance_f
     assert len(problems) == 1 and problems[0].startswith("invalid:") and "source_commit" in problems[0]
 
 
-def test_check_command_exits_1_on_drift(exported):
+def test_check_command_exits_1_on_drift(exported, capsys):
     path = exported / "manifest.json"
     path.write_bytes(path.read_bytes().replace(b'"fold_len":63', b'"fold_len":64'))
-    result = run_cli("--mode", "synthetic", "--check", "--out-dir", str(exported))
+    result = run_main(capsys, "--mode", "synthetic", "--check", "--out-dir", str(exported))
     assert result.returncode == 1
     assert "differs:" in result.stderr
 
@@ -691,13 +797,13 @@ def test_replacing_a_file_keeps_its_permission_bits(tmp_path):
 
 @pytest.mark.skipif(os.geteuid() == 0, reason="root ignores folder permissions, so no folder is read-only to it")
 @pytest.mark.parametrize("below", [(), ("new", "folder")], ids=["read-only folder", "new folder under a read-only parent"])
-def test_cli_unwritable_output_folder_exits_5_with_a_message_not_a_traceback(tmp_path, below):
+def test_cli_unwritable_output_folder_exits_5_with_a_message_not_a_traceback(tmp_path, below, capsys):
     parent = tmp_path / "parent"
     parent.mkdir()
     parent.chmod(0o500)  # read and enter, but not write
     out = parent.joinpath(*below)
     try:
-        result = run_cli("--mode", "synthetic", "--out-dir", str(out))
+        result = run_main(capsys, "--mode", "synthetic", "--out-dir", str(out))
     finally:
         parent.chmod(0o700)
     assert result.returncode == export_app_data.EXIT_WRITE_FAILED == 5
@@ -706,19 +812,19 @@ def test_cli_unwritable_output_folder_exits_5_with_a_message_not_a_traceback(tmp
     assert list(parent.iterdir()) == []
 
 
-def test_cli_output_path_that_is_a_file_exits_5(tmp_path):
+def test_cli_output_path_that_is_a_file_exits_5(tmp_path, capsys):
     out = tmp_path / "out"
     out.write_bytes(b"i am a file, not a folder")
-    result = run_cli("--mode", "synthetic", "--out-dir", str(out))
+    result = run_main(capsys, "--mode", "synthetic", "--out-dir", str(out))
     assert result.returncode == 5
     assert result.stderr.startswith("error: cannot write to") and "Traceback" not in result.stderr
 
 
 @pytest.mark.parametrize("kind", ["symlink", "hardlink"])
-def test_cli_refuses_a_linked_output_file_with_exit_3(precious, kind):
+def test_cli_refuses_a_linked_output_file_with_exit_3(precious, kind, capsys):
     outside, out = precious
     make_link(kind, out / "manifest.json", outside)
-    result = run_cli("--mode", "synthetic", "--out-dir", str(out))
+    result = run_main(capsys, "--mode", "synthetic", "--out-dir", str(out))
     assert result.returncode == 3
     assert result.stderr.startswith("error: refusing to write")
     assert outside.read_bytes() == b"precious\n"
@@ -743,7 +849,7 @@ def test_a_simulated_m1_real_export_cannot_overwrite_a_repo_file_through_a_link(
 # --- the documented regenerate command ---------------------------------------
 
 
-def test_documented_regenerate_command_rewrites_the_existing_fixture_folder(tmp_path):
+def test_documented_regenerate_command_rewrites_the_existing_fixture_folder(tmp_path, disk_store):
     # `uv run python tools/export_app_data.py --mode synthetic`, run from a repo whose fixture
     # folder already exists (every time after the first). The copy is a minimal stand-in repo:
     # the package, the schemas, the tool and the committed fixture. PYTHONPATH makes the copy's
@@ -755,7 +861,8 @@ def test_documented_regenerate_command_rewrites_the_existing_fixture_folder(tmp_
     (copy / "tools").mkdir()
     shutil.copy(TOOLS / "export_app_data.py", copy / "tools" / "export_app_data.py")
     shutil.copy(REPO / "pyproject.toml", copy / "pyproject.toml")
-    env = {**os.environ, "PYTHONPATH": str(copy / "src"), "GIT_CEILING_DIRECTORIES": str(tmp_path)}
+    shutil.copytree(REPO / "configs", copy / "configs")  # the synthetic protocol, models and backtest rules
+    env = {**os.environ, "PYTHONPATH": str(copy / "src"), "GIT_CEILING_DIRECTORIES": str(tmp_path), "VOL_DATA_DIR": str(disk_store)}
 
     def in_copy(*args):
         return subprocess.run(args, cwd=copy, env=env, capture_output=True, text=True, check=False)
@@ -778,7 +885,7 @@ def test_documented_regenerate_command_rewrites_the_existing_fixture_folder(tmp_
     assert rewritten["generated_at"] != "2020-01-01T00:00:00Z"  # really rewritten, not left alone
     assert rewritten["source_commit"] == contract.NO_COMMIT  # the copy is not a git repo
     assert rewritten["source_dirty"] is True
-    assert [p.name for p in fixture.parent.iterdir()] == ["manifest.json"]  # no temporary file left behind
+    assert sorted(p.name for p in fixture.parent.iterdir()) == RESULT_FILES  # no temporary file left behind
     checked = in_copy(sys.executable, "tools/export_app_data.py", "--mode", "synthetic", "--check")
     assert checked.returncode == 0, checked.stderr
 
@@ -910,8 +1017,9 @@ def test_real_export_cli_writes_outside_the_repo_and_never_inside(real_root, tmp
     assert not (REPO / "app" / "public" / "data" / "real").exists()
 
 
-def test_synthetic_mode_is_unchanged_by_milestone_1():
-    # Still one manifest listing no files, as in M0.
+def test_synthetic_mode_writes_the_result_files_and_never_the_term_structure():
+    # Final polish: the manifest plus the four result files; term_structure.json stays real-mode only
+    # (the app's ribbon fixture is src/data/term-structure.synthetic.json).
     files = export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
-    assert sorted(files) == ["manifest.json"]
-    assert parsed(files["manifest.json"])["payload"]["files"] == []
+    assert sorted(files) == RESULT_FILES
+    assert [f["dataset"] for f in parsed(files["manifest.json"])["payload"]["files"]] == ["model_race", "evaluation", "equity_curves", "eda"]

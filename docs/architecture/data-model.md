@@ -438,6 +438,42 @@ The source tables are `backtest_daily`, `strategy_summary`, `regime_label` and `
 | summary | object[] | `strategy_id`, `period`, `n_days`, `ann_return`, `ann_vol`, `sharpe_ann`, `psr0`, `dsr`, `n_trials`, `max_drawdown`, `turnover_ann` (number\|null) |
 | caveats | string[] | e.g. the SVXY leverage cut, the VXX series switch, the cost model |
 
+### 5.6 `evaluation.json`: the DM matrix, MZ table and losses (final polish, schema 1.1.0; `license_class: aggregate`)
+
+The source tables are M5's `evaluation/period=dev/` `metric`, `dm_test`, `mz_regression` and
+`calibration_summary`, whole period only (scheme and regime `all`). Built by `ivf.app_results.evaluation_payload`.
+
+| Payload field | Type | Notes |
+|---|---|---|
+| period, source_run_id | `dev`; 12 hex | The store run the tables came from. Provenance: `--check` ignores it, because a run id hashes the commit that built the store |
+| dm_method, dm_fixed_b, mz_method | id, number, id | The primary methods (`fixed_b`, b = 0.1; `hansen_hodrick`) |
+| losses | object[] | `target_id`, `horizon`, `model_id`, `n`, `rmse`, `mae`, `bias`, `mape`, `qlike`, `rmse_ratio_rw`, `qlike_ratio_rw` (forecast `mean`). The two ratios keep **6** decimals, not the 4 of other ratios (amended in the polish review): at 4, ARIMA and ARIMA-GARCH tie at VIX h = 1 and 5 |
+| dm | object[] | The primary pairwise rows (family `pairs`): `loss` (`sq_error`, `qlike`), `model_a`, `model_b`, `n`, `dm_stat`, `p_value`, `p_holm`, `lower_loss` |
+| mz | object[] | Primary rows (level space, forecast `mean`): `alpha`, `alpha_se`, `beta`, `beta_se`, `r2`, `wald_p` |
+| calibration | object | `cells`, `helps`: how many cells the walk-forward bias calibration helped (rule 6) |
+
+Invariants: each DM pair names two models with a loss row on its (target, horizon); `lower_loss` is one of them.
+
+### 5.7 `eda.json`: volatility clustering and the half-life (final polish, schema 1.1.0; `license_class: aggregate`)
+
+Built by `ivf.app_results.eda_payload` from `ivf.data.process.eda_core`, the part of the M1 EDA report
+the view draws (sessions before `holdout_start` only).
+
+| Payload field | Type | Notes |
+|---|---|---|
+| period, source_run_id, first, last, holdout_start, nlags | `pre_holdout`, 12 hex, dates, int | |
+| acf | object[] | `series_id` (`r`, `abs_r`, `r2`, `log_vix`), `label`, `n`, `acf` (lags 1..nlags), `band95` = 1.96/√n, `ljung_box_p_last` |
+| half_life | object[] | Per sample (`pre_holdout`, `burn_in`, `dev`): `phi`, `phi_ci95`, `half_life_sessions`, `half_life_ci95` (null for an unbounded end), `n` |
+
+### Synthetic result files (final polish)
+
+`tools/export_app_data.py --mode synthetic` writes `model_race.json`, `evaluation.json`,
+`equity_curves.json` (with the optional `cost_sensitivity`, schema 1.1.0) and `eda.json` from the synthetic
+dev store, and lists them in the manifest. Measured sizes: 62,814, 40,248, 119,021 and 1,746 bytes. The
+model race shows the last `race_context_sessions` (252) dev origins of each panel; the equity file holds the
+primary rule and the three benchmarks at the default cost. Real versions are not written under the current
+data policy (the hook is described in `ivf.app_results`).
+
 ### Size estimates (to be measured in M1-M6)
 
 The term_structure and model_race session counts are measured on the NYSE calendar. The equity

@@ -4,12 +4,19 @@
     uv run python tools/export_app_data.py --mode synthetic --check  # CI: is the fixture current?
     uv run python tools/export_app_data.py --mode real               # ROOT/app-data/real/, never the repo
 
-Synthetic mode produces one file, ``manifest.json``, unchanged since milestone 0.
+Synthetic mode (final polish, schema 1.1.0) produces ``manifest.json`` and the four result files
+of ``ivf.app_results``: ``model_race.json``, ``evaluation.json``, ``equity_curves.json`` and
+``eda.json``, reshaped from the synthetic dev store under ``ROOT/synthetic/processed/`` (the
+milestone 2-6 pipeline run with ``--synthetic``). The manifest lists each file with its sha256 and
+size (data-model.md 5.1). Without that store, synthetic mode exits 4 and names the steps to run;
+``--check`` therefore needs the store too, and compares the committed files with a fresh export of
+it. The manifest's ``protocol`` block is still the milestone 0 dict below (same dates and settings
+as ``configs/protocol.synthetic.yaml``; only the hash differs), kept so this change does not move
+``protocol_hash``.
 Real mode (milestone 1) produces ``manifest.json`` and ``term_structure.json``
-from the interim tables and the frozen ``configs/protocol.yaml``. The other data
-files (model_race, error_surface, equity_curves) arrive with the milestones
-that compute them, and each one is added to the manifest's ``files`` list only
-once it exists (data-model.md 5.1).
+from the interim tables and the frozen ``configs/protocol.yaml``. The result builders take any
+data layout, so real versions could be written to ``ROOT/app-data/real/`` too; under the current
+data policy that wiring is left to the owner (the hook is ``ivf.app_results``; see its docstring).
 
 Two modes, two destinations:
 
@@ -58,8 +65,11 @@ TERM_STRUCTURE = "term_structure"
 #     the listed file's bytes, and those bytes contain the provenance fields
 #     above, so they change on every export. --check compares them with the
 #     files on disk instead (``_manifest_mismatches``).
+#   * source_run_id: payload field of evaluation.json and eda.json (polish review). It names the
+#     store run the tables came from, and a run id hashes the commit and dirty flag that made the
+#     store (ivf.data.process.run_id_for), so rebuilding the same store at another commit changes it.
 ENVELOPE_PROVENANCE = ("generated_at", "source_commit", "source_dirty")
-PAYLOAD_PROVENANCE = ("run_id",)
+PAYLOAD_PROVENANCE = ("run_id", "source_run_id")
 FILE_ENTRY_PROVENANCE = ("sha256", "bytes")
 
 EXIT_OK, EXIT_CHECK_FAILED, EXIT_UNAVAILABLE, EXIT_WRITE_FAILED = 0, 1, 4, 5
@@ -112,7 +122,54 @@ def synthetic_dir() -> Path:
     return config.repo_root() / "app" / "public" / "data" / "synthetic"
 
 
-def manifest_payload(git: contract.GitState) -> dict[str, Any]:
+#: The result files of synthetic mode: dataset -> (builder, invariant check, license_class).
+RESULT_FILES = ("model_race", "evaluation", "equity_curves", "eda")
+LICENSE_CLASS = {"model_race": "series", "evaluation": "aggregate", "equity_curves": "series", "eda": "aggregate"}
+
+
+def load_synthetic_store():
+    """The synthetic dev store, read once (``ivf.app_results.load_store``). Tests replace this seam."""
+    from ivf import app_results
+    from ivf import protocol as protocol_mod
+
+    protocol = protocol_mod.load_protocol(protocol_mod.protocol_path(synthetic=True))
+    try:
+        return app_results.load_store(config.data_layout(synthetic=True), protocol)
+    except app_results.StoreUnavailable as exc:
+        raise ModeUnavailable(f"synthetic export needs the synthetic dev store: {exc}") from exc
+    except FileNotFoundError as exc:
+        raise ModeUnavailable(f"synthetic export needs the synthetic dev store: {exc}; run: {app_results.STEPS}") from exc
+
+
+def result_documents(store) -> dict[str, dict[str, Any]]:
+    """``{dataset: payload}`` for the four result files, each checked for its out-of-schema invariants."""
+    from ivf import app_results as ar
+
+    payloads = {
+        "model_race": ar.model_race_payload(store),
+        "evaluation": ar.evaluation_payload(store),
+        "equity_curves": ar.equity_curves_payload(store),
+        "eda": ar.eda_payload(store),
+    }
+    ar.check_model_race(payloads["model_race"])
+    ar.check_evaluation(payloads["evaluation"])
+    ar.check_equity_curves(payloads["equity_curves"])
+    return payloads
+
+
+def registry_models(store) -> list[dict[str, Any]]:
+    """The manifest's display registry: milestone 2-4 models, registry order (data-model.md 5.1)."""
+    from ivf import app_results as ar
+
+    return [
+        {"model_id": d.model_id, "label": d.label, "family": d.family, "targets": list(d.targets)}
+        for d in store.models
+        if not d.retired and d.milestone <= ar.MAX_MILESTONE
+    ]
+
+
+def manifest_payload(git: contract.GitState, files: list[dict[str, Any]] | None = None, models: list[dict[str, Any]] | None = None,
+                     notice: str | None = None) -> dict[str, Any]:
     protocol_hash = contract.canonical_json_sha256(M0_PROTOCOL)
     # run_id as in ADR 0001 D3: a hash of the protocol, the code state, the data
     # mode and the input files. M0 has no input files yet, so that list is empty.
@@ -129,13 +186,12 @@ def manifest_payload(git: contract.GitState) -> dict[str, Any]:
     )[:12]
     return {
         "run_id": run_id,
-        "notice": "Synthetic data, not market data. Milestone 0: no data files exist yet.",
+        "notice": notice or "Synthetic data, not market data. Milestone 0: no data files exist yet.",
         "protocol": {"protocol_hash": protocol_hash, **M0_PROTOCOL},
-        # Empty on purpose: a file is listed only once it exists, because each
-        # entry needs the real sha256 and byte size of the file.
-        "files": [],
-        # No model has run yet; the registry fills in from milestone 2.
-        "models": [],
+        # A file is listed only once it exists, because each entry needs the real
+        # sha256 and byte size of the file.
+        "files": files or [],
+        "models": models or [],
         "targets": M0_TARGETS,
     }
 
@@ -153,12 +209,24 @@ def generate(
     git = git if git is not None else contract.git_state()
     if mode == "real":
         return generate_real(git=git, generated_at=generated_at)
-    envelope = contract.build_envelope(MANIFEST, manifest_payload(git), mode, git=git, generated_at=generated_at)
+    store = load_synthetic_store()
+    out: dict[str, bytes] = {}
+    entries = []
+    for dataset, payload in result_documents(store).items():
+        blob = contract.serialise(contract.build_envelope(dataset, payload, mode, git=git, generated_at=generated_at))
+        # Validate the bytes we are about to write, parsed back, not the dict we
+        # built: that is what the app will actually read.
+        contract.validate_document(json.loads(blob))
+        out[f"{dataset}.json"] = blob
+        entries.append({"dataset": dataset, "path": f"{dataset}.json", "sha256": hashlib.sha256(blob).hexdigest(),
+                        "bytes": len(blob), "license_class": LICENSE_CLASS[dataset]})
+    notice = (f"Synthetic data (seed {store.seed}), not market data. Results from the synthetic dev store, "
+              "development period only; the holdout has not been looked at.")
+    envelope = contract.build_envelope(MANIFEST, manifest_payload(git, entries, registry_models(store), notice), mode, git=git,
+                                       generated_at=generated_at)
     blob = contract.serialise(envelope)
-    # Validate the bytes we are about to write, parsed back, not the dict we
-    # built: that is what the app will actually read.
     contract.validate_document(json.loads(blob))
-    return {f"{MANIFEST}.json": blob}
+    return {f"{MANIFEST}.json": blob, **out}
 
 
 # --------------------------------------------------------------------------
@@ -435,12 +503,15 @@ def check(expected: dict[str, bytes], directory: Path) -> list[str]:
 
     Exact comparison apart from the provenance fields (``ENVELOPE_PROVENANCE``,
     ``PAYLOAD_PROVENANCE`` and, in a manifest, ``FILE_ENTRY_PROVENANCE``, which
-    are checked against the files on disk instead). ADR 0001 D5 also allows a
-    difference of one unit in the last exported decimal for floats. Milestone 1
-    still compares exactly: its only rounded floats are in the real
-    term_structure.json, whose --check is local and reruns on the same interim
-    parquet, so the bytes are deterministic. The tolerance is due when a
-    committed fixture first carries a rounded float.
+    are checked against the files on disk instead).
+
+    No float tolerance, on purpose (polish review; ADR 0001 D5 allows one unit in the
+    last decimal, and this check does not use that allowance). ``--check`` re-exports
+    from the same inputs it compares against (the local synthetic store, or the
+    interim tables in real mode), and the export only selects, reshapes and rounds, so
+    the same inputs give the same bytes: two exports from store 85a849917197 differed
+    in the provenance fields only. A last-decimal difference therefore means the
+    inputs changed, which is what ``--check`` must report; the fix is to re-export.
     """
     problems: list[str] = []
     for name, blob in sorted(expected.items()):

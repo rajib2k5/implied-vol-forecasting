@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/eda.schema.json",
+  "title": "eda.json",
+  "description": "Milestone 1's volatility-clustering view: the ACF at lags 1..nlags of r, |r|, r squared and ln VIX with Bartlett's 95% white-noise band, and the AR(1) half-life of ln VIX per sample. Computed on sessions before holdout_start only. license_class: aggregate. Like every real file it is written only outside the repo (ADR 0001 D2). Added in schema 1.1.0 (MINOR: a new dataset). Invariant checked outside the schema: every acf array has nlags values. See data-model.md 5.7.",
+  "$ref": "envelope.schema.json",
+  "type": "object",
+  "properties": {
+    "dataset": { "const": "eda" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["period", "source_run_id", "first", "last", "holdout_start", "nlags", "acf", "half_life"],
+      "properties": {
+        "period": { "const": "pre_holdout" },
+        "source_run_id": { "type": "string", "pattern": "^[0-9a-f]{12}$(?!\\n)" },
+        "first": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "last": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "holdout_start": { "$ref": "envelope.schema.json#/$defs/isoDate" },
+        "nlags": { "type": "integer", "minimum": 1 },
+        "acf": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/acfSeries" } },
+        "half_life": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/halfLife" } }
+      }
+    },
+    "acfSeries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["series_id", "label", "n", "acf", "band95", "ljung_box_p_last"],
+      "properties": {
+        "series_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "label": { "type": "string", "minLength": 1 },
+        "n": { "type": "integer", "minimum": 1 },
+        "acf": { "description": "Autocorrelation at lags 1..nlags.", "type": "array", "items": { "type": ["number", "null"], "minimum": -1, "maximum": 1 } },
+        "band95": { "description": "1.96 / sqrt(n).", "type": "number", "exclusiveMinimum": 0 },
+        "ljung_box_p_last": { "description": "Ljung-Box p-value at lag nlags; null where not computed.", "$ref": "envelope.schema.json#/$defs/nullableProbability" }
+      }
+    },
+    "halfLife": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sample", "phi", "phi_ci95", "half_life_sessions", "half_life_ci95", "n"],
+      "properties": {
+        "sample": { "enum": ["pre_holdout", "burn_in", "dev"] },
+        "phi": { "$ref": "envelope.schema.json#/$defs/nullableNumber" },
+        "phi_ci95": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "envelope.schema.json#/$defs/nullableNumber" } },
+        "half_life_sessions": { "description": "ln(0.5) / ln(phi); null when phi <= 0 or phi >= 1.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "half_life_ci95": { "description": "Null for an unbounded end.", "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" } },
+        "n": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

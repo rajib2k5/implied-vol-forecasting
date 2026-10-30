@@ -128,12 +128,13 @@ def forward_rv21(features: pd.DataFrame) -> np.ndarray:
     return build.forward(features["rv21_back"].to_numpy(), build.RV_WINDOW)
 
 
-def eda_report(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout_start, nlags: int = 21) -> dict[str, Any]:
-    """Every EDA number of the milestone brief, as a JSON-ready dict. Pure: no I/O.
+def eda_core(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout_start, nlags: int = 21) -> dict[str, Any]:
+    """The clustering ACFs, the ln VIX persistence ACF and the AR(1) half-life: the part of
+    ``eda_report`` that the app's EDA view draws (``ivf.app_results.eda_payload``). Pure: no I/O.
 
-    ``dates`` and ``periods`` are the sessions and calendar periods from
-    ``eda_inputs``; ``features`` is ``build.build_features`` on them. Raises
-    ``HoldoutRowRefused`` if any session, period or ``iv`` row is in the holdout.
+    Split out (final polish, 2026-10-29) so the app export reads these numbers from the same code as
+    the M1 report without paying for the report's vol-of-vol bootstrap; ``eda_report`` starts from
+    this dict, so the two cannot disagree. Same inputs and refusals as ``eda_report``.
     """
     late = [d for d in dates if d >= holdout_start] + [d for d in iv["date"] if d >= holdout_start]
     if late or "holdout" in periods:
@@ -146,7 +147,6 @@ def eda_report(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout
     vix = build.align(dates, iv, "symbol", "VIX")
     log_vix = features["log_vix"].to_numpy()
     r = features["r_spx"].to_numpy()
-    rv21_fwd = forward_rv21(features)
     period = np.array(periods, dtype=object)
     samples = {"pre_holdout": np.ones(len(dates), dtype=bool), "burn_in": period == "burn_in", "dev": period == "dev"}
 
@@ -175,14 +175,9 @@ def eda_report(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout
             "n": int(np.sum(~np.isnan(log_vix))),
         },
         "half_life": {},
-        "unit_root": {},
-        "iv_rv_spread": {},
-        "term_structure": {},
     }
-    levels = {s: build.align(dates, iv, "symbol", s) for s in ("VIX9D", "VIX", "VIX3M", "VIX6M", "VIX1Y")}
     for name, mask in samples.items():
-        x = np.where(mask, log_vix, np.nan)
-        hl = eda.ar1_half_life(x)
+        hl = eda.ar1_half_life(np.where(mask, log_vix, np.nan))
         report["half_life"][name] = {
             "phi": hl.phi,
             "phi_se_hc1": hl.phi_se,
@@ -191,6 +186,26 @@ def eda_report(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout
             "half_life_ci95": [_finite(v) for v in hl.half_life_ci],
             "n": hl.n,
         }
+    return report
+
+
+def eda_report(dates, periods, features: pd.DataFrame, iv: pd.DataFrame, holdout_start, nlags: int = 21) -> dict[str, Any]:
+    """Every EDA number of the milestone brief, as a JSON-ready dict. Pure: no I/O.
+
+    ``dates`` and ``periods`` are the sessions and calendar periods from
+    ``eda_inputs``; ``features`` is ``build.build_features`` on them. Raises
+    ``HoldoutRowRefused`` if any session, period or ``iv`` row is in the holdout.
+    Starts from ``eda_core`` (sample, clustering, persistence, half_life).
+    """
+    report = eda_core(dates, periods, features, iv, holdout_start, nlags)
+    report.update({"unit_root": {}, "iv_rv_spread": {}, "term_structure": {}})
+    vix = build.align(dates, iv, "symbol", "VIX")
+    log_vix = features["log_vix"].to_numpy()
+    rv21_fwd = forward_rv21(features)
+    period = np.array(periods, dtype=object)
+    samples = {"pre_holdout": np.ones(len(dates), dtype=bool), "burn_in": period == "burn_in", "dev": period == "dev"}
+    levels = {s: build.align(dates, iv, "symbol", s) for s in ("VIX9D", "VIX", "VIX3M", "VIX6M", "VIX1Y")}
+    for name, mask in samples.items():
         ur = eda.unit_root_tests(np.where(mask, log_vix, np.nan))
         report["unit_root"][name] = {
             "adf_stat": ur.adf_stat,

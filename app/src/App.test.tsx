@@ -26,11 +26,11 @@ describe('App (integration)', () => {
     expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('list', { name: 'Milestones' }).querySelectorAll('li')).toHaveLength(MILESTONES.length)
   })
-  it('offers About, Architecture and the 3D page in the primary nav, with no Metrics or Admin page', () => {
+  it('offers About, Architecture, the EDA, the 3D page and the three result views in the primary nav, with no Metrics or Admin page', () => {
     render(<App />)
     const nav = screen.getByRole('navigation', { name: 'Primary' })
     const labels = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent)
-    expect(labels).toEqual(['About', 'Architecture', 'Term structure 3D'])
+    expect(labels).toEqual(['About', 'Architecture', 'EDA', 'Term structure 3D', 'Model race', 'Evaluation', 'Backtest'])
   })
   it('navigates to Architecture and shows the diagrams', () => {
     render(<App />)

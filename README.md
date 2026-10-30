@@ -1,50 +1,162 @@
 # implied-vol-forecasting
 
-Forecast implied volatility (the VIX first) with a random walk, ARIMA, HAR, the GARCH family and an LSTM on identical walk-forward folds, test whether the differences are real, and backtest the forecasts on VXX and SVXY.
+Forecast implied volatility (the VIX first) with a random walk, historical means, ARIMA, HAR, the GARCH family and an LSTM on identical walk-forward folds; test whether the differences are real (Diebold-Mariano with Holm's correction, Mincer-Zarnowitz); and backtest the forecasts on VXX and SVXY with the Probabilistic and Deflated Sharpe ratios. Python computes, a versioned JSON contract carries the results, and a React app draws them.
 
-> **Status: milestone 1 of 6.** Data and EDA: the data pipeline (fetch, raw store, interim tables, the master calendar and its gap check), the features and targets, and the exploratory analysis, on real data locally and on seeded synthetic data in CI. No model has been fitted and no real-data result is published. The sections below describe what the project is built to do; each one says which milestone delivers it. Walkthrough: [milestone 1](docs/milestones/01-data-and-eda.md).
+> **Status: milestones 0 to 6 done (code at `7eeae14`), plus this final polish.** Every milestone runs on real data locally and on seeded synthetic data in the tests. **The single guarded look at the holdout has not been taken** (see [The holdout look](#the-holdout-look-not-yet-taken)). Under the current data policy, real results are measured locally and are not published; every number and image below is from **synthetic** data.
+
+![The app's model race on synthetic data (dark theme)](docs/images/model-race-dark.png)
 
 ## What it does, and what it teaches
 
-The project is built in milestones, and each milestone has a written walkthrough in [`docs/milestones/`](docs/milestones/). The original requirement: develop and compare models that forecast implied volatility (ARIMA, GARCH, and machine learning such as an LSTM), start with exploratory analysis of volatility clustering and persistence, evaluate with RMSE, MAE and MAPE, and backtest trading strategies driven by the forecasts.
+The original brief: compare models that forecast implied volatility (ARIMA, GARCH and machine learning such as an LSTM), start with an exploratory analysis of volatility clustering and persistence, evaluate with RMSE, MAE and MAPE, and backtest trading strategies driven by the forecasts. Each milestone has a walkthrough in [`docs/milestones/`](docs/milestones/) and a queued checkpoint in [`LEARNING_LOG.md`](LEARNING_LOG.md).
 
-What it teaches, and when it arrives:
+| Milestone | What it adds | Walkthrough |
+|---|---|---|
+| 0 | Design, ADRs, the JSON contract, the app shell | [00](docs/milestones/00-scaffold-and-design.md) |
+| 1 | Data pipeline (raw store, interim tables, calendar, gap check) and EDA: clustering, AR(1) half-life, unit roots, IV-RV spread, vol-of-vol | [01](docs/milestones/01-data-and-eda.md) |
+| 2 | Baselines: random walk, historical means, ARIMA on ln VIX (d = 0), HAR | [02](docs/milestones/02-baselines.md) |
+| 3 | GARCH, GJR and EGARCH on S&P 500 returns for `rv21`; ARIMA-GARCH on ln VIX | [03](docs/milestones/03-garch-done-right.md) |
+| 4 | An LSTM (PyTorch, five seeds) on the same folds and rows | [04](docs/milestones/04-lstm.md) |
+| 5 | Losses by horizon and regime, DM (fixed-b primary, Holm), MZ (Hansen-Hodrick), bias calibration | [05](docs/milestones/05-evaluation.md) |
+| 6 | Pre-registered VXX/SVXY rule with costs, PSR and DSR, and the guarded holdout path | [06](docs/milestones/06-backtest.md) |
 
-- **Volatility clustering and persistence** as the starting point: autocorrelation, the AR(1) half-life, mean reversion, the implied-versus-realised spread (milestone 1).
-- **HAR (Corsi, 2009) as the baseline to beat**, next to the random walk, a historical mean and ARIMA on log-IV (milestone 2).
-- **GARCH done right** (milestone 3). GARCH, GJR and EGARCH are fitted to the S&P 500's *returns* and turned into 21-day variance forecasts, which are compared with implied volatility. Fitting GARCH to the VIX *level* is a category error, and the project says why. ARIMA-GARCH puts a mean-reverting AR on log IV and GARCH on its innovations (amended M3, review A: planned on log-IV changes, which measured worse than the random walk).
-- **An LSTM** on the same folds and rows, with scaling fitted on the training window only, early stopping on a purged validation slice, five seeds averaged, and a retrain every fourth cutoff measured against the time budget (milestone 4, `docs/milestones/04-lstm.md`).
-- **RMSE and QLIKE as the primary losses**, with MAE and MAPE reported beside them because the brief asks for them. Neither is consistent for a mean forecast: MAE favours the median and MAPE favours lower forecasts, so every table flags them. Diebold-Mariano and Mincer-Zarnowitz tests at horizons of 1, 5 and 21 trading days, with the long-run variance chosen by a measured size simulation (fixed-b for DM, Hansen-Hodrick for MZ), Holm's correction across model pairs, losses by regime, and a walk-forward bias calibration kept as a separate variant (milestone 5, `docs/milestones/05-evaluation.md`; dev period only, the holdout is read once at the end of milestone 6).
-- **Identical walk-forward splits and no look-ahead**, with a fixed-date holdout that contains the August 2024 and April 2025 volatility spikes. The proposed start is 2024-07-01; it is still an open decision ([ADR 0001](docs/adr/0001-python-core-versioned-json-app.md), item O1).
-- **A costed VXX/SVXY backtest** against always-long and always-short volatility, with the Probabilistic and Deflated Sharpe ratios (milestone 6).
-- **Engineering habits**: Python computes and a versioned JSON contract carries the result to the app; the app never computes a result; real data stays off the repository; every number is reproducible from a pinned environment.
+RMSE and QLIKE are the primary losses. MAE and MAPE are reported because the brief asks for them, but they are not consistent for a mean forecast (MAE favours the median, MAPE favours low forecasts).
 
-An interactive React app (`app/`) draws the results: a 3D VIX term-structure ribbon, a model race, a 3D error surface and an equity curve. With real data these views run only on your machine; the committed fixture is synthetic. In milestone 0 the app has an About page, an Architecture page and a 3D placeholder driven by that fixture.
+## Screenshots
 
-## Quick start
+All screenshots show **synthetic data** with a visible SYNTHETIC DATA badge. They are made by `tools/screenshots.py` (Playwright and headless Chromium against `vite preview` on 127.0.0.1; every other host is blocked). Light theme versions are the `-corporate.png` files beside each one in [`docs/images/`](docs/images/).
 
-You need [uv](https://docs.astral.sh/uv/) 0.11 (developed with 0.11.25) and Node 22.
+| | |
+|---|---|
+| ![EDA: volatility clustering ACFs and the half-life](docs/images/eda-dark.png) | ![Evaluation: the Diebold-Mariano matrix and MZ table](docs/images/evaluation-dark.png) |
+| EDA: ACF of r, abs(r), r² and ln VIX; AR(1) half-life | Evaluation: DM matrix (fixed-b, Holm) and Mincer-Zarnowitz |
+| ![Backtest: equity curves, PSR, DSR and cost sensitivity](docs/images/backtest-dark.png) | ![The 3D VIX term-structure ribbon](docs/images/term-structure-dark.png) |
+| Backtest: primary rule against always-long VXX, always-long SVXY and cash | Term structure: the three.js ribbon (synthetic fixture) |
+
+**Hero image.** Blender hero renders: not rendered: Blender unreachable. The hero still is a three.js frame of the term-structure ribbon instead: [`docs/images/hero-ribbon-dark.png`](docs/images/hero-ribbon-dark.png) (and `hero-ribbon-corporate.png`).
+
+![Three.js still of the term-structure ribbon](docs/images/hero-ribbon-dark.png)
+
+## How to run each step
+
+You need [uv](https://docs.astral.sh/uv/) 0.11 and Node 22. Data goes to `$VOL_DATA_DIR` (default `~/data/vol-projects`), never into the repository; every step refuses a data folder inside the checkout. Add `--synthetic` (before the subcommand) to run the same code on the seeded synthetic market under `$VOL_DATA_DIR/implied-vol-forecasting/synthetic/`.
 
 ```bash
-git clone https://github.com/rajib2k5/implied-vol-forecasting.git
-cd implied-vol-forecasting
-uv sync                      # Python 3.12 via uv; CPU-only torch (ADR 0002)
-uv run pytest -q             # the Python tests
-cd app && npm ci && npm run dev
+uv sync                                              # Python 3.12, CPU-only torch (ADR 0002)
+uv run pytest -q                                     # the Python tests (no network)
+
+# 1. Data and EDA (milestone 1)
+uv run python -m ivf.data fetch                      # Cboe CSVs and ^GSPC (network), SHA-256-named raw store
+uv run python -m ivf.data build-interim              # typed, de-duplicated parquet
+uv run python -m ivf.data check                      # calendar, gap check, the data_end freeze
+uv run python -m ivf.data eda                        # features, targets, the local EDA report
+
+# 2. Models on the development period (milestones 2 to 4)
+uv run python -m ivf.models baselines
+uv run python -m ivf.models garch
+uv run python -m ivf.models lstm
+
+# 3. Evaluation (milestone 5): losses, DM, MZ, regimes, calibration
+uv run python -m ivf.evaluation report
+
+# 4. Backtest (milestone 6), development period
+uv run python -m ivf.data fetch --symbols VXX SVXY
+uv run python -m ivf.backtest prepare
+uv run python -m ivf.backtest run
+
+# 5. The app
+uv run python tools/export_app_data.py --mode synthetic          # app/public/data/synthetic/ from the synthetic store
+uv run python tools/export_app_data.py --mode synthetic --check  # the committed files match a fresh export
+uv run python tools/export_app_data.py --mode real               # real JSON, written outside the repo only
+cd app && npm ci && npm run verify                               # lint, tests, coverage, build, deploy guard
+npm run dev                                                      # local dev server
 ```
 
-To build the data on your own machine (it goes to `$VOL_DATA_DIR`, default `~/data/vol-projects`, never into the repo: every step refuses a `$VOL_DATA_DIR` inside the checkout):
+The synthetic run of steps 1 to 4 is the same commands with `--synthetic` (for example `uv run python -m ivf.models --synthetic garch`), and one command chains all ten of them: `uv run python tools/build_synthetic_store.py` (`--dry-run` lists them). It has not been timed end to end; the baselines step alone took 1,318 s in the polish review, and the model steps dominate. Run it at a clean commit if the exported JSON is to be committed, because the store's run id hashes the commit. The app ships the synthetic files only. `--mode real` writes the manifest and the term structure to `$VOL_DATA_DIR/implied-vol-forecasting/app-data/real/`; the result builders (`src/ivf/app_results.py`) take any data layout, and wiring them into real mode is left for the owner's data-policy decision.
+
+## The holdout look (not yet taken)
+
+The holdout starts on 2024-07-01 (ADR 0001 4.6) and contains the August 2024 and April 2025 volatility spikes. Every step above reads the development period only. The holdout is read **once**, by the owner, with one command:
 
 ```bash
-uv run python -m ivf.data fetch                    # Cboe CSVs and ^GSPC via yfinance, into a SHA-256-named raw store
-uv run python -m ivf.data build-interim            # typed, de-duplicated parquet
-uv run python -m ivf.data verify                   # re-hash every raw file
-uv run python -m ivf.data check                    # the calendar, the gap check and the data_end freeze
-uv run python -m ivf.data eda                      # features, targets and a local EDA report
-uv run python -m ivf.data --synthetic fetch        # the same steps on seeded synthetic data
+uv run python -m ivf.backtest run --period holdout --preflight-only   # checks every precondition, writes nothing
+uv run python -m ivf.backtest run --period holdout --one-look         # THE look (real data)
 ```
 
-`npm run verify` (inside `app/`) is the app's full gate: lint, tests with coverage thresholds, a production build, and a deploy guard that fails if real market data could ship. The remaining checks are listed in the [milestone 0 walkthrough](docs/milestones/00-scaffold-and-design.md#10-verification).
+The look is guarded. A preflight runs before anything is written: the tree must be clean and pushed, no look record may exist, `holdout_looks` must match the config, the tradable segments must cover the window, and the model choice and inputs must load. A failed preflight leaves no record. Then `ROOT/backtest/holdout_look.json` is created create-only, so a second look finds it and stops. From that point the look is spent, whatever happens next: the frozen models forecast the holdout, milestone 5's report runs on it (DM and MZ descriptive only), and the backtest applies the pre-registered rule and its pre-registered verdict. `--resume` continues a look that failed at a stage, and only with the same commit, protocol, config and inputs. On synthetic data the identical path runs in the tests. **On real data it has not been run** (`holdout_looks: 0`).
+
+## Results (synthetic data only)
+
+Real results are measured locally and are not published under the current data policy (ADR 0001 D2, strict: no real vendor values in tracked files; the owner's change is pending). The tables below are read from `app/public/data/synthetic/`, the JSON that `uv run python tools/export_app_data.py --mode synthetic` regenerates from the synthetic dev store (built by `tools/build_synthetic_store.py`); `--check` on the same command ties the files to the store. Every number is printed by `uv run python tools/results_table.py`, and `uv run python tools/results_table.py --check` fails if this block differs from what those files give.
+
+<!-- results:begin -->
+Synthetic data only (development period; the backtest runs 2018-08-02 to 2024-06-28). Produced by `uv run python tools/results_table.py`.
+
+**RMSE relative to the random walk** (below 1 beats it; lowest in bold; ratios carry 6 decimals so near-ties are told apart):
+
+| Model | VIX h=1 | VIX h=5 | VIX h=21 | rv21 h=21 |
+|---|---:|---:|---:|---:|
+| `rw` | 1.0 | 1.0 | 1.0 | 1.0 |
+| `hist_mean` | 5.019389 | 2.291141 | 1.206408 |  |
+| `hist_mean_252` | 5.441291 | 2.498725 | 1.343429 |  |
+| `arima_log` | 0.995048 | 0.976248 | 0.909972 |  |
+| `har_log` | 0.995484 | 0.97679 | 0.91263 |  |
+| `har_rv` |  |  |  | 0.889032 |
+| `vix_implied` |  |  |  | 1.992155 |
+| `garch` |  |  |  | 0.883892 |
+| `gjr` |  |  |  | 0.885318 |
+| `egarch` |  |  |  | **0.882829** |
+| `arima_garch_log` | **0.99503** | **0.97619** | **0.90955** |  |
+| `lstm_log` | 0.996489 | 0.980383 | 0.920553 | 0.896785 |
+
+**QLIKE relative to the random walk:**
+
+| Model | VIX h=1 | VIX h=5 | VIX h=21 | rv21 h=21 |
+|---|---:|---:|---:|---:|
+| `rw` | 1.0 | 1.0 | 1.0 | 1.0 |
+| `hist_mean` | 27.203339 | 5.544278 | 1.483895 |  |
+| `hist_mean_252` | 33.874576 | 7.008527 | 1.993542 |  |
+| `arima_log` | 0.988504 | 0.94417 | 0.80631 |  |
+| `har_log` | 0.9893 | 0.946066 | 0.811896 |  |
+| `har_rv` |  |  |  | 0.651239 |
+| `vix_implied` |  |  |  | 1.858912 |
+| `garch` |  |  |  | **0.645263** |
+| `gjr` |  |  |  | 0.646624 |
+| `egarch` |  |  |  | 0.653851 |
+| `arima_garch_log` | **0.988304** | **0.943566** | **0.80444** |  |
+| `lstm_log` | 0.990463 | 0.950451 | 0.825578 | 0.704175 |
+
+- Diebold-Mariano (fixed_b, b = 0.1): 90 of 168 model pairs differ at Holm-adjusted p < 0.05.
+- Walk-forward bias calibration helps in 0 of 28 cells.
+- ln VIX half-life (AR(1), sessions before the holdout): 36.8 sessions (95% CI 30.16 to 47.14); ACF at lag 1: |r| 0.1519, r² 0.1736, r -0.009 (white-noise band ±0.021).
+
+**Backtest at 5 bps** (growth of 1; Sharpe annualised as daily Sharpe × √252; PSR against Sharpe 0; DSR deflated for the trials):
+
+| Strategy | Ann. return | Sharpe (annualised) | PSR | DSR | Max drawdown | Trials |
+|---|---:|---:|---:|---:|---:|---:|
+| rv21 forecast vs VIX, band 2 (PRIMARY) | -0.073 | -0.2694 | 0.2557 | 0.0319 | -0.7337 | 5 |
+| always long VXX | -0.9602 | -2.0665 | 0.0 | 0.0 | -0.9987 | 5 |
+| always long SVXY | 0.48 | 2.0658 | 1.0 | 0.9999 | -0.2617 | 5 |
+| cash | 0.0 | n/a | n/a | n/a | 0.0 | 5 |
+
+**Annualised Sharpe ratio by cost level** (bps per unit of turnover):
+
+| Strategy | 0 bps | 5 bps | 10 bps | 20 bps |
+|---|---:|---:|---:|---:|
+| rv21 forecast vs VIX, band 2 (PRIMARY) | -0.2166 | -0.2694 | -0.3221 | -0.4272 |
+| always long VXX | -2.0662 | -2.0665 | -2.0667 | -2.0671 |
+| always long SVXY | 2.0662 | 2.0658 | 2.0654 | 2.0645 |
+| cash | n/a | n/a | n/a | n/a |
+<!-- results:end -->
+
+What the synthetic run shows. Numbers marked "table above" come from `tools/results_table.py`; the others are not produced by it and are cited to the walkthrough section that measured them:
+
+- **The random walk is hard to beat at h = 1**: the best model is 0.5% better in RMSE (table above: 0.99503). At h = 21 mean reversion pays: about 9% better (0.90955).
+- **The LSTM loses to HAR** in every panel (table above), and each of its five seeds loses to HAR on its own ([milestone 4, "What review A found"](docs/milestones/04-lstm.md#what-review-a-found)).
+- **ARIMA uses d = 0**: KPSS chose d = 1 on 24-76% of stationary AR(1) series as persistent as ln VIX, and forcing d = 1 raised h = 21 RMSE 17% (5.006 to 5.845). Both measured in [milestone 2, "What review A found"](docs/milestones/02-baselines.md#what-review-a-found), item 7, and the [M2 review A ledger](docs/validation/M2-review-A-baselines.md).
+- **GARCH is within 1.2% of the truth floor** on synthetic `rv21`: QLIKE 0.1396 against 0.1379 for the true conditional variance, measured in [milestone 3, section 7.2](docs/milestones/03-garch-done-right.md#72-synthetic-data-publishable) (the truth floor is not in the app data).
+- **Bias calibration helps in 0 of 28 cells** (table above; [milestone 5, section 7.4](docs/milestones/05-evaluation.md#74-synthetic-data-publishable)).
+- **The primary trading rule does not survive deflation**: DSR 0.0319 and a negative annualised Sharpe ratio at every cost level, while always-long SVXY earns the roll yield that the synthetic VXX pays by construction (`src/ivf/backtest/data.py`) (table above; [milestone 6](docs/milestones/06-backtest.md)).
 
 ## Data and licensing
 
@@ -57,27 +169,20 @@ uv run python -m ivf.data --synthetic fetch        # the same steps on seeded sy
 
 ## Repo layout
 
-Directories that exist today:
-
 ```
 README.md  LEARNING_LOG.md  LICENSE  pyproject.toml  uv.lock
 src/ivf/          the Python package; all computation lives here
-                  config.py, contract.py, protocol.py, eda.py; data/ and features/ (M1);
-                  models/ evaluation/ backtest/ arrive in M2 to M6
-configs/          protocol.yaml (data_end frozen in M1), protocol.synthetic.yaml, iv_indices.yaml, instruments.yaml
-tests/            pytest, with hand-worked expected values
+                  data/ features/ models/ evaluation/ backtest/; app_results.py (the result views' JSON)
+configs/          protocol.yaml, protocol.synthetic.yaml, models.yaml, backtest.yaml, iv_indices.yaml, instruments.yaml
+tests/            pytest, with hand-worked expected values; no network
 notebooks/        generated from tools/build_notebooks.py, never hand-edited
-tools/            build_notebooks.py, export_app_data.py, bench_lstm.py
-                  licensing/ (probes that test the publication rule, simulated data only), probes/ (small checks)
-schemas/app-data/ the JSON Schemas of the Python-to-app contract
-app/              React 19 + TypeScript + Vite + three.js
-                  src/lib (pure, unit-tested), src/pages, src/data (synthetic fixture),
-                  public/data/synthetic (the committed JSON the exporter writes),
-                  scripts/guardDist.mjs (the deploy guard)
-docs/             prfaq.md, adr/, architecture/, concepts/, milestones/, validation/
+tools/            export_app_data.py, results_table.py, screenshots.py, build_notebooks.py, bench_lstm.py,
+                  diagrams/, licensing/ (probes of the publication rule, simulated data only), probes/
+schemas/app-data/ the JSON Schemas of the Python-to-app contract (schema 1.1.0)
+app/              React 19 + TypeScript + Vite + three.js: About, Architecture, EDA, Term structure 3D,
+                  Model race, Evaluation, Backtest; public/data/synthetic/ holds the committed JSON
+docs/             prfaq.md, adr/, architecture/, concepts/, milestones/, validation/, images/
 ```
-
-Planned, not present yet: `configs/` (protocol, models, strategies), `reports/` (aggregate result tables), `docs/images/` (screenshots). `docs/validation/` holds the adversarial-review ledgers, one per review.
 
 ## Documentation
 
@@ -92,18 +197,6 @@ Planned, not present yet: `configs/` (protocol, models, strategies), `reports/` 
 | Adversarial reviews and what they found | [`docs/validation/`](docs/validation/): [review A, code and numerics](docs/validation/M0-review-A-code-numerics.md); [review B, maths and documents](docs/validation/M0-review-B-maths-docs.md); [review C, the literature brief](docs/validation/M0-review-C-background.md); [review D, the fixes for A and B](docs/validation/M0-review-D-fixes.md); [review E, the final attack](docs/validation/M0-review-E-final.md) |
 | The course index: milestones, questions, answers | [`LEARNING_LOG.md`](LEARNING_LOG.md) |
 
-## Results
-
-Results arrive from milestone 2 onwards. Every number in this README is re-measured by a verifier before it is committed. Real-data results will cover whole periods only (development and holdout), from the single release described under "Data and licensing", and will be ratios to the random walk's loss rather than levels. RMSE and QLIKE are the primary comparisons; MAE and MAPE are not consistent for a mean forecast.
-
-| Model | Target | Horizon | Period | RMSE | MAE | MAPE | QLIKE | n |
-|---|---|---|---|---|---|---|---|---|
-| none yet | | | | | | | | |
-
-## Screenshots
-
-Screenshots arrive from the final milestone. Those of time-series views will show synthetic data with a visible SYNTHETIC badge. A real-data figure may be drawn only from numbers already committed in `reports/`, for example the holdout RMSE ratio by model. The real error surface (which has regime cells), histograms and time plots stay on your machine.
-
 ## Not financial advice
 
 This is a research and learning project. Nothing here is a recommendation or an offer to trade. Backtests are hypothetical, past performance does not predict future results, and volatility exchange-traded products can lose most of their value in a day.
@@ -116,6 +209,6 @@ This is a research and learning project. Nothing here is a recommendation or an 
 
 - **Cboe index data** is used through Cboe's site under Cboe's terms (personal, non-commercial use) and is not redistributed here. Cboe and VIX are trademarks of Cboe Exchange, Inc. This project is independent and is not affiliated with, endorsed by or sponsored by Cboe.
 - **FRED** (Federal Reserve Bank of St. Louis) is the fallback source for the same index series, and **Yahoo Finance**, through the `yfinance` library, supplies underlying and ETP prices. Both are used for personal research only.
-- **`sharpe-observatory`**: the Probabilistic and Deflated Sharpe ratio code (`scripts/metrics.py`) will be reused from the author's own repository under its MIT licence, in milestone 6.
+- **`sharpe-observatory`**: the Probabilistic and Deflated Sharpe ratio code (`scripts/metrics.py`) is reused from the author's own repository under its MIT licence (milestone 6, `src/ivf/backtest/sharpe.py`).
 - **Methods**: HAR is Corsi (2009); QLIKE as a robust loss is Patton (2011); the Diebold-Mariano and Mincer-Zarnowitz tests are the standard forecast-comparison tools.
 - **Libraries**: statsmodels, arch, pmdarima, PyTorch, pandas, numpy, scipy, React, three.js and React Three Fiber.

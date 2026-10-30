@@ -24,7 +24,7 @@ Questions are listed here by title only. The full text is in each milestone's wa
 | 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on ln VIX | Done (8318a1a) | [`docs/milestones/03-garch-done-right.md`](docs/milestones/03-garch-done-right.md) | queued, 0 of 14 answered |
 | 4 | LSTM (PyTorch) on the same walk-forward splits | Done (a481168) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
 | 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (4da5b45) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
-| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | **Current** | Written with the milestone | |
+| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Done (7eeae14) | [`docs/milestones/06-backtest.md`](docs/milestones/06-backtest.md) | queued, 0 of 14 answered |
 
 ## Concepts
 
@@ -55,6 +55,7 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 - Milestone 03 (queued, 0 of 14 answered; code at 8318a1a). Answer in its quiz widget, or say "quiz me on milestone 03" to resume it.
 - Milestone 04 (queued, 0 of 14 answered; code at a481168). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
 - Milestone 05 (queued, 0 of 14 answered; code at 4da5b45). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
+- Milestone 06 (queued, 0 of 14 answered; code at 7eeae14). Answer in its quiz widget, or say "quiz me on milestone 06" to resume it.
 
 ## Defaults taken
 
