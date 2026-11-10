@@ -176,7 +176,7 @@ The architecture spec's `models`, `configs` and `processed` labels were updated;
 
 ### 7.1 The real run (counts and timings only, D2)
 
-Three runs on 2026-10-29 from the repo root, uncommitted M3 code on `ab223f4`, under
+Three runs on 2026-10-29 from the repo root, uncommitted M3 code on `1c47a47`, under
 `/usr/bin/time -v uv run python -m ivf.models garch`, nothing else heavy running.
 
 | Run | Result |

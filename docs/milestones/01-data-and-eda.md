@@ -1137,12 +1137,14 @@ of the data rules?
   raw snapshots against their hashes, and nothing rebuilds interim to compare.
 - **Unverified:** VIX's 16:15 ET close. (`tenor_days` is verified since review A: 9, 30, 93, 184,
   366.)
-- **A real value in the M0 commit (review A).** The M0 commit `43ded87` holds one real VIX level,
+- **A real value in the M0 commit (review A).** The M0 commit `87dc6f8` holds one real VIX level,
   dated, in `tests/test_schemas.py`, and names it in `docs/validation/M0-review-A-code-numerics.md`.
   Both files now hold a made-up value. **Decided by the owner on 2026-10-29:** public history stays
-  as it is (no rewrite, no force-push), so `43ded87` keeps that one value. The rule for every new
+  as it is (no rewrite, no force-push), so `87dc6f8` keeps that one value. The rule for every new
   commit is strict: no real vendor values or data files, made-up values in tests, and the real-data
-  scan at 0 hits before each push. Recorded in ADR 0001 D2.
+  scan at 0 hits before each push. Recorded in ADR 0001 D2. *(Amended 2026-11-10: the 2026-11-09
+  rewrite of the commit messages changed no tree, so the value is still in the M0 commit, now
+  `87dc6f8`. See `docs/validation/history-rewrite-2026-11-09.md`.)*
 - **The first M1 run looked at the holdout (review A).** It printed and stored holdout statistics
   on real data before any model existed. The stored report has since been overwritten by the
   pre-holdout one (same `run_id`), but the terminal output was seen. No hyper-parameter exists yet,

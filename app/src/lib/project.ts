@@ -76,7 +76,7 @@ export const MILESTONES: Milestone[] = [
   { id: 3, title: 'GARCH done right', summary: 'GARCH, GJR and EGARCH on underlying returns for 21-day forecasts; ARIMA-GARCH on log-IV changes.', status: 'done' },
   { id: 4, title: 'LSTM', summary: 'A PyTorch LSTM on the same walk-forward splits, with scaling fitted on train only, early stopping and several seeds.', status: 'done' },
   { id: 5, title: 'Evaluation', summary: 'RMSE, MAE, MAPE and QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz and a regime breakdown.', status: 'done' },
-  { id: 6, title: 'Trading backtest', summary: 'A forecast-driven VXX/SVXY strategy with costs, compared with always-long and always-short volatility, with PSR and DSR. Code done (7eeae14); the single guarded holdout look has not been taken.', status: 'current' },
+  { id: 6, title: 'Trading backtest', summary: 'A forecast-driven VXX/SVXY strategy with costs, compared with always-long and always-short volatility, with PSR and DSR. Code done (47bea1a); the single guarded holdout look has not been taken.', status: 'current' },
 ]
 
 /** Problems with a roadmap, as readable strings; empty means valid. */

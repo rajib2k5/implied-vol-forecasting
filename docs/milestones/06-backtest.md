@@ -189,7 +189,7 @@ The two benchmarks have Sharpe ratios of opposite sign and equal size, as the to
 
 ### 7.2 The real-data steps (counts, dates and timings only, D2)
 
-2026-10-29, uncommitted M6 code on `4da5b45`, `/usr/bin/time`:
+2026-10-29, uncommitted M6 code on `79e1aa1`, `/usr/bin/time`:
 
 | Step | Result |
 |---|---|
@@ -226,7 +226,7 @@ n.d., `docs/concepts/00-background.md`), not by that slope; it was not re-read i
 ### 7.4 The look on the full synthetic model set (review B fix round)
 
 `VOL_DATA_DIR=<copy of review B's pre-look store> uv run python -m ivf.backtest --synthetic run --period
-holdout`, 2026-10-29, `/usr/bin/time`, uncommitted code on `4da5b45`; every M2-M4 model (12 non-LSTM on two
+holdout`, 2026-10-29, `/usr/bin/time`, uncommitted code on `79e1aa1`; every M2-M4 model (12 non-LSTM on two
 tracks, `lstm_log` on both). **exit 0; wall 269.15 s; peak RSS 1,134,504 KB.** Preflight: segment check
 to 2026-10-26 pass. Holdout forecasts 264.4 s: the non-LSTM models re-ran the dev chain from the first
 dev fold, the LSTM one warm-up fold from its last retrain; **146,916 recomputed dev-fold forecasts equal

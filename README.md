@@ -2,7 +2,7 @@
 
 Forecast implied volatility (the VIX first) with a random walk, historical means, ARIMA, HAR, the GARCH family and an LSTM on identical walk-forward folds; test whether the differences are real (Diebold-Mariano with Holm's correction, Mincer-Zarnowitz); and backtest the forecasts on VXX and SVXY with the Probabilistic and Deflated Sharpe ratios. Python computes, a versioned JSON contract carries the results, and a React app draws them.
 
-> **Status: milestones 0 to 6 done (code at `7eeae14`), plus this final polish.** Every milestone runs on real data locally and on seeded synthetic data in the tests. **The single guarded look at the holdout has not been taken** (see [The holdout look](#the-holdout-look-not-yet-taken)). Under the current data policy, real results are measured locally and are not published; every number and image below is from **synthetic** data.
+> **Status: milestones 0 to 6 done (code at `47bea1a`), plus this final polish.** Every milestone runs on real data locally and on seeded synthetic data in the tests. **The single guarded look at the holdout has not been taken** (see [The holdout look](#the-holdout-look-not-yet-taken)). Under the current data policy, real results are measured locally and are not published; every number and image below is from **synthetic** data.
 
 ![The app's model race on synthetic data (dark theme)](docs/images/model-race-dark.png)
 

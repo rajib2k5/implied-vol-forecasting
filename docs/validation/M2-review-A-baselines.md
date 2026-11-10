@@ -4,7 +4,7 @@ by <session scratchpad>; nothing else is changed. The fixes are in docs/mileston
 
 # M2 review A: baselines (ledger)
 
-Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: the uncommitted M2 tree on top of fecf88a.
+Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: the uncommitted M2 tree on top of 76934ca.
 Mode: single-context sequential fallback. The two channels are the ADR, docs and source on one side
 and runtime probes on the other. Statsmodels docs were not consulted (no network). Probes are in
 `<session scratchpad>/m2-review-a/` (not committed). No repo file was modified. The scratch copy's

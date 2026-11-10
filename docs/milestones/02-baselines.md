@@ -182,7 +182,7 @@ tables); the pipeline's shape did not change.
 
 ### 7.1 The real run (counts and timings only, D2)
 
-Two runs on 2026-10-29 from the repo root, uncommitted M2 code on `fecf88a`, after M1's real
+Two runs on 2026-10-29 from the repo root, uncommitted M2 code on `76934ca`, after M1's real
 pipeline. Both wrote the same `run_id` partition (same commit, dirty tree and inputs), so the
 second replaced the first.
 

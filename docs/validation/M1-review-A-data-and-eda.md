@@ -7,7 +7,7 @@ docs/milestones/01-data-and-eda.md, section "What review A found". -->
 
 # M1 review A: adversarial ledger (data and EDA)
 
-Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: uncommitted work on top of 43ded87 in
+Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: uncommitted work on top of 87dc6f8 in
 the repository. Method: evidence-gated validation. Channel A, a
 separate subagent, read documentation and installed source only. Its report is in
 `channel-a.md` here. Channel B, this context, ran the probes only. The claims were pre-registered

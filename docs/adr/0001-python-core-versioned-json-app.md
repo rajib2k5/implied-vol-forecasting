@@ -83,11 +83,15 @@ accepts it. It is an engineering rule, not legal advice; nobody has assessed whe
 vendors' terms.
 
 **Owner decision on history (amended M1, 2026-10-29).** M1 review A found one real, dated VIX
-level in the pushed M0 commit `43ded87` (a test value and its mention in the M0 review-A ledger).
+level in the pushed M0 commit `87dc6f8` (a test value and its mention in the M0 review-A ledger).
 The owner decided: keep the strict rule, with no real vendor values or data files (including
 `prices.json` and `eda.json`) in any new commit and made-up values in tests, and leave public
-history as it is. So `43ded87` is not rewritten or force-pushed. The working tree holds a made-up
+history as it is. So the M0 commit keeps the value: history is not rewritten to remove it. The working tree holds a made-up
 value, and `tools/licensing/scan_real_rows.py` must report 0 hits on the tree before every push.
+
+*(Amended 2026-11-10.)* On 2026-11-09 the owner had every commit message rewritten to remove the
+Claude attribution lines. No tree changed, so the M0 commit, now `87dc6f8`, still holds the value.
+See [the rewrite ledger](../validation/history-rewrite-2026-11-09.md).
 
 **Objective (restated, amended M0, review D).** Nothing committed, including git history, lets
 anyone reconstruct the daily series of any vendor index or ETP (Cboe, FRED, Yahoo), or any material

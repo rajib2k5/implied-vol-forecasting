@@ -204,7 +204,7 @@ liberal: a persistent regressor with overlapping errors needs more than 583 orig
 
 ### 7.3 The real run (counts and timings only, D2)
 
-2026-10-29, uncommitted M5 code on `a481168`, `/usr/bin/time`; re-run after the review A fixes (same rows,
+2026-10-29, uncommitted M5 code on `9e290a1`, `/usr/bin/time`; re-run after the review A fixes (same rows,
 wall 3.67 s, peak RSS 887,596 KB):
 
 | Step | Result |
@@ -280,7 +280,7 @@ on the fixed code with review A's 5 mutants and 10 more: **55 of 55 killed** in 
 
 ### 7.6 Gates
 
-Run on 2026-10-29 after the review A fixes, from the repo root, uncommitted M5 code on `a481168`; the
+Run on 2026-10-29 after the review A fixes, from the repo root, uncommitted M5 code on `9e290a1`; the
 printed last lines:
 
 ```

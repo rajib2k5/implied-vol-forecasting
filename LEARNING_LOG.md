@@ -18,13 +18,13 @@ Questions are listed here by title only. The full text is in each milestone's wa
 
 | # | Milestone | Status | Walkthrough | Checkpoint |
 |---|---|---|---|---|
-| 0 | Scaffold and design | Done (43ded87) | [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-scaffold-and-design.md) | queued, 0 of 16 answered |
-| 1 | Data and EDA: volatility clustering, persistence, AR(1) half-life, mean reversion, IV-RV spread, vol-of-vol | Done (fecf88a) | [`docs/milestones/01-data-and-eda.md`](docs/milestones/01-data-and-eda.md) | queued, 0 of 14 answered |
-| 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Done (ab223f4) | [`docs/milestones/02-baselines.md`](docs/milestones/02-baselines.md) | queued, 0 of 14 answered |
-| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on ln VIX | Done (8318a1a) | [`docs/milestones/03-garch-done-right.md`](docs/milestones/03-garch-done-right.md) | queued, 0 of 14 answered |
-| 4 | LSTM (PyTorch) on the same walk-forward splits | Done (a481168) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
-| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (4da5b45) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
-| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Done (7eeae14) | [`docs/milestones/06-backtest.md`](docs/milestones/06-backtest.md) | queued, 0 of 14 answered |
+| 0 | Scaffold and design | Done (87dc6f8) | [`docs/milestones/00-scaffold-and-design.md`](docs/milestones/00-scaffold-and-design.md) | queued, 0 of 16 answered |
+| 1 | Data and EDA: volatility clustering, persistence, AR(1) half-life, mean reversion, IV-RV spread, vol-of-vol | Done (76934ca) | [`docs/milestones/01-data-and-eda.md`](docs/milestones/01-data-and-eda.md) | queued, 0 of 14 answered |
+| 2 | Baselines: random walk, historical mean, ARIMA on log-IV, HAR | Done (1c47a47) | [`docs/milestones/02-baselines.md`](docs/milestones/02-baselines.md) | queued, 0 of 14 answered |
+| 3 | GARCH done right: GARCH, GJR and EGARCH on underlying returns; ARIMA-GARCH on ln VIX | Done (82a612f) | [`docs/milestones/03-garch-done-right.md`](docs/milestones/03-garch-done-right.md) | queued, 0 of 14 answered |
+| 4 | LSTM (PyTorch) on the same walk-forward splits | Done (9e290a1) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
+| 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (79e1aa1) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
+| 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Done (47bea1a) | [`docs/milestones/06-backtest.md`](docs/milestones/06-backtest.md) | queued, 0 of 14 answered |
 
 ## Concepts
 
@@ -50,12 +50,12 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 ## Queued checkpoints
 
 - Milestone 00 (queued, 0 of 16 answered). Answer in its quiz widget, or say "quiz me on milestone 0" to resume it.
-- Milestone 01 (queued, 0 of 14 answered; code at fecf88a). Answer in its quiz widget, or say "quiz me on milestone 01" to resume it.
-- Milestone 02 (queued, 0 of 14 answered; code at ab223f4). Answer in its quiz widget, or say "quiz me on milestone 02" to resume it.
-- Milestone 03 (queued, 0 of 14 answered; code at 8318a1a). Answer in its quiz widget, or say "quiz me on milestone 03" to resume it.
-- Milestone 04 (queued, 0 of 14 answered; code at a481168). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
-- Milestone 05 (queued, 0 of 14 answered; code at 4da5b45). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
-- Milestone 06 (queued, 0 of 14 answered; code at 7eeae14). Answer in its quiz widget, or say "quiz me on milestone 06" to resume it.
+- Milestone 01 (queued, 0 of 14 answered; code at 76934ca). Answer in its quiz widget, or say "quiz me on milestone 01" to resume it.
+- Milestone 02 (queued, 0 of 14 answered; code at 1c47a47). Answer in its quiz widget, or say "quiz me on milestone 02" to resume it.
+- Milestone 03 (queued, 0 of 14 answered; code at 82a612f). Answer in its quiz widget, or say "quiz me on milestone 03" to resume it.
+- Milestone 04 (queued, 0 of 14 answered; code at 9e290a1). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
+- Milestone 05 (queued, 0 of 14 answered; code at 79e1aa1). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
+- Milestone 06 (queued, 0 of 14 answered; code at 47bea1a). Answer in its quiz widget, or say "quiz me on milestone 06" to resume it.
 
 ## Defaults taken
 

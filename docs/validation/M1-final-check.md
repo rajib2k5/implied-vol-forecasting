@@ -1,6 +1,6 @@
 # M1 final check
 
-An adversarial check of the M1 tree after review B's fixes (uncommitted, on top of `43ded87`),
+An adversarial check of the M1 tree after review B's fixes (uncommitted, on top of `87dc6f8`),
 2026-10-29. It attacked six claims; the orchestrator reproduced claim 1. Every number below comes
 from simulated data or planted stand-ins; no real value appears here.
 

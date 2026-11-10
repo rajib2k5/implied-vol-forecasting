@@ -4,7 +4,7 @@ the review, under "Fix round". -->
 
 # M1 review B: adversarial ledger (fixes made after review A)
 
-Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: the uncommitted tree on top of 43ded87,
+Reviewer: adversarial-reviewer (Opus), 2026-10-29. Target: the uncommitted tree on top of 87dc6f8,
 after the review-A fix round. Method: evidence-gated validation, **mode: single-context sequential
 fallback**. The docs channel was the repo's own docs, the ADR and the installed source. No
 external documentation was retrieved. The runtime channel was the probes below. The claims came from
@@ -84,7 +84,9 @@ Every refutation above was measured again before it was acted on; none was wrong
   holds the half-lives, went to scratch files outside the repo and was not displayed). The E6 verdict on real data is
   a yes/no in a form D2 allows; like the other E-statements, M1 does not publish it.
 
-**Owner decision (2026-10-29).** The real value review A found in the pushed M0 commit `43ded87`
+**Owner decision (2026-10-29).** The real value review A found in the pushed M0 commit `87dc6f8`
 stays in public history: no rewrite, no force-push. New commits carry no real vendor values or data
 files, tests use made-up values, and the real-data scan must show 0 hits before every push. See ADR
-0001 D2, "Owner decision on history".
+0001 D2, "Owner decision on history". *(Amended 2026-11-10: the 2026-11-09 rewrite of the commit
+messages changed no tree, so the value is still in the M0 commit, now `87dc6f8`. See
+[the rewrite ledger](history-rewrite-2026-11-09.md).)*

@@ -200,7 +200,7 @@ Under a lighter load the same run should be faster; it was not re-measured on an
 
 ### 7.2 The real run (counts and timings only, D2)
 
-Two runs on 2026-10-29 from the repo root, uncommitted M4 code on `8318a1a`, each under
+Two runs on 2026-10-29 from the repo root, uncommitted M4 code on `82a612f`, each under
 `/usr/bin/time -v`, while another project's process pool was loading the box (load average 260 at
 the start, 5 at the end):
 
