@@ -82,7 +82,7 @@ nodes:
   - {id: loader, label: "app/src/lib loaders", lane: app, type: process, sublabel: "check envelope and invariants, show the data_mode badge; compute nothing"}
   - {id: page_ribbon, label: "Term-structure ribbon (3D)", lane: app, type: ui, sublabel: "term_structure.json, series"}
   - {id: page_race, label: "Model race", lane: app, type: ui, sublabel: "model_race.json, series"}
-  - {id: page_surface, label: "Error surface (3D)", lane: app, type: ui, sublabel: "error_surface.json, aggregate"}
+  - {id: page_surface, label: "Error surface (3D)", lane: app, type: ui, sublabel: "evaluation.json regime_losses, aggregate"}
   - {id: page_equity, label: "Equity curve", lane: app, type: ui, sublabel: "equity_curves.json, series"}
   - {id: dist_guard, label: "npm run verify", lane: app, type: process, sublabel: "fails if any file in dist/ has data_mode real"}
 

@@ -75,7 +75,7 @@ flowchart TB
         loader["<b>app/src/lib loaders</b><br/><i>check envelope and invariants, show the data_mode badge; compute nothing</i>"]
         page_ribbon("<b>Term-structure ribbon (3D)</b><br/><i>term_structure.json, series</i>")
         page_race("<b>Model race</b><br/><i>model_race.json, series</i>")
-        page_surface("<b>Error surface (3D)</b><br/><i>error_surface.json, aggregate</i>")
+        page_surface("<b>Error surface (3D)</b><br/><i>evaluation.json regime_losses, aggregate</i>")
         page_equity("<b>Equity curve</b><br/><i>equity_curves.json, series</i>")
         dist_guard["<b>npm run verify</b><br/><i>fails if any file in dist/ has data_mode real</i>"]
     end
@@ -236,9 +236,10 @@ These are choices made while drawing, to confirm when the code lands:
 Where a spec keeps the meaning in a comment, `out/` does not show it:
 - **Decision diamonds.** `pair_ok` and `n_check` (data flow) and `refuted` and `first_push`
   (process) are rectangles. Their labels end in `?` and their exits say yes or no.
-- **ERD: every foreign key is an edge.** `out/erd.mmd` has 76 relations: the 55 of the M0 spec plus
-  21 for foreign-key columns the M0 spec declared but did not draw (the `run_id` keys and the other
-  parts of composite keys).
+- **ERD: every foreign key is an edge.** At M0, `out/erd.mmd` had 76 relations: the 55 of the M0 spec
+  plus 21 for foreign-key columns the M0 spec declared but did not draw (the `run_id` keys and the other
+  parts of composite keys). *(amended polish-2)* It now has 79: the 60 relations the spec declares,
+  plus 19 drawn from foreign-key columns.
 - **ERD: the parent end.** The kit draws it from the child column only: exactly one when the column
   is NOT NULL, zero or one when it is nullable. The M0 spec's left-hand multiplicity does not
   show for 13 relations (`target_value` to `forecast`, `forecast` to `metric`, `price_daily` to

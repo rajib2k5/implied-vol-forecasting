@@ -1,9 +1,20 @@
+import { useState } from 'react'
 import { XYChart } from '../lib/XYChart'
-import { colorSlot, parseEquityCurves, show, type Envelope, type EquityCurves } from '../lib/results'
+import { colorSlot, parseEquityCurves, regimeBands, show, type Envelope, type EquityCurves } from '../lib/results'
 import { Gate, ModeBadge, useDataset } from './useDataset'
+
+const SCHEMES: [string, string][] = [
+  ['vix_level', 'VIX level'],
+  ['term_structure', 'term structure'],
+  ['none', 'off'],
+]
 
 function View({ env }: { env: Envelope<EquityCurves> }) {
   const eq = env.payload
+  const [scheme, setScheme] = useState('vix_level')
+  const hasRibbons = eq.regimeSegments.length > 0
+  const ribbons = hasRibbons && scheme !== 'none' ? regimeBands(eq, scheme) : null
+  const schemeLabel = SCHEMES.find(([id]) => id === scheme)?.[1] ?? scheme
   const ids = eq.strategies.map((s) => s.strategyId)
   // Cash is a flat reference line at 1, drawn dashed in the ink colour; the three traded series take
   // slots 1 to 3, the slots validated for every pair in both themes.
@@ -22,6 +33,18 @@ function View({ env }: { env: Envelope<EquityCurves> }) {
         The pre-registered rule trades the 21-day forecast against the VIX: long VXX when the forecast is above it by more than the band, long
         SVXY when below, cash otherwise. Growth of 1 after costs, on a log scale so that a halving and a doubling look the same size.
       </p>
+      {hasRibbons ? (
+        <div className="controls" role="group" aria-label="Regime ribbons">
+          <span className="sub">Regime ribbons:</span>
+          {SCHEMES.map(([id, label]) => (
+            <button key={id} type="button" aria-pressed={id === scheme} className={id === scheme ? 'primary' : ''} onClick={() => setScheme(id)}>
+              {label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="sub">This file has no regime ribbons (a file from before schema 1.2.0, or a real-data export, which keeps regimes on the local machine).</p>
+      )}
       <XYChart
         title={`Equity, ${eq.dates[0]} to ${eq.dates[eq.dates.length - 1]}`}
         x={eq.dates}
@@ -36,7 +59,14 @@ function View({ env }: { env: Envelope<EquityCurves> }) {
         yLabel="growth of 1 (log scale)"
         log
         height={300}
+        bands={ribbons ? { title: `Regime (${schemeLabel})`, ...ribbons } : undefined}
       />
+      {ribbons && (
+        <p className="sub">
+          Shading marks the regime on each date, darker for more stress: the VIX level (low, mid, high, at thresholds set in the protocol) or the term
+          structure (backwardation when the VIX is above VIX3M).
+        </p>
+      )}
       <h2>Is the Sharpe ratio luck?</h2>
       <div className="scroll-x">
         <table aria-label="Backtest summary">

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import equity from '../../public/data/synthetic/equity_curves.json'
 import { serve } from '../test/committedData'
 import BacktestPage from './BacktestPage'
@@ -46,5 +46,49 @@ describe('BacktestPage on the committed synthetic file', () => {
     delete old.payload.cost_sensitivity
     render((serve({ equity_curves: old }), <BacktestPage />))
     expect(await screen.findByText(/no cost-sensitivity table/)).toBeInTheDocument()
+  })
+})
+
+// --- regime ribbons (schema 1.2.0) ---------------------------------------------------
+
+type Segment = (typeof eq.regime_segments)[number]
+const LABEL: Record<string, string> = { low: 'low VIX', mid: 'mid VIX', high: 'high VIX', contango: 'contango', backwardation: 'backwardation' }
+const segmentsOf = (scheme: string) => eq.regime_segments.filter((s: Segment) => s.scheme === scheme)
+
+describe('BacktestPage regime ribbons', () => {
+  it('shades the VIX-level regimes behind the equity lines by default, one band per segment', async () => {
+    const { container } = render((serve(), <BacktestPage />))
+    await screen.findByRole('img')
+    const want = segmentsOf('vix_level')
+    expect(want.length).toBeGreaterThan(0)
+    const rects = Array.from(container.querySelectorAll('rect[data-band]'))
+    expect(rects.map((r) => r.getAttribute('data-band'))).toEqual(want.map((s: Segment) => LABEL[s.regime_id]))
+    // Darker for more stress: low, mid and high VIX take the three steps of the one-hue ramp.
+    const shade = (label: string) => rects.find((r) => r.getAttribute('data-band') === label)!.getAttribute('class')
+    expect([shade('low VIX'), shade('mid VIX'), shade('high VIX')]).toEqual(['viz-shade-fill viz-shade-0', 'viz-shade-fill viz-shade-1', 'viz-shade-fill viz-shade-2'])
+    const legend = screen.getByRole('list', { name: 'Regime (VIX level)' })
+    expect(within(legend).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['low VIX', 'mid VIX', 'high VIX'])
+    expect(screen.getByRole('button', { name: 'VIX level' })).toHaveAttribute('aria-pressed', 'true')
+  })
+  it('switches to the term structure and turns the ribbons off', async () => {
+    const { container } = render((serve(), <BacktestPage />))
+    await screen.findByRole('img')
+    fireEvent.click(screen.getByRole('button', { name: 'term structure' }))
+    const want = segmentsOf('term_structure')
+    expect(Array.from(container.querySelectorAll('rect[data-band]')).map((r) => r.getAttribute('data-band'))).toEqual(want.map((s: Segment) => LABEL[s.regime_id]))
+    expect(within(screen.getByRole('list', { name: 'Regime (term structure)' })).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['contango', 'backwardation'])
+    fireEvent.click(screen.getByRole('button', { name: 'off' }))
+    expect(container.querySelectorAll('rect[data-band]')).toHaveLength(0)
+    expect(screen.queryByRole('list', { name: /^Regime/ })).toBeNull()
+    // The lines do not move when the ribbons change.
+    expect(container.querySelectorAll('polyline')).toHaveLength(eq.strategies.length)
+  })
+  it('says so for a file without ribbons, and offers no ribbon control', async () => {
+    const old = structuredClone(equity) as { payload: Record<string, unknown> }
+    old.payload.regime_segments = []
+    const { container } = render((serve({ equity_curves: old }), <BacktestPage />))
+    expect(await screen.findByText(/no regime ribbons/)).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Regime ribbons' })).toBeNull()
+    expect(container.querySelectorAll('rect[data-band]')).toHaveLength(0)
   })
 })

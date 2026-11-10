@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/evaluation.schema.json",
   "title": "evaluation.json",
-  "description": "Milestone 5's whole-period tables for one period: losses per (target, horizon, model) with ratios to the random walk, the primary Diebold-Mariano pairs (fixed-b long-run variance, Holm-adjusted p, lower_loss), the primary Mincer-Zarnowitz rows and the calibration count. license_class: aggregate. Like every real file it is written only outside the repo (ADR 0001 D2). Added in schema 1.1.0 (MINOR: a new dataset). Invariants checked outside the schema: every DM pair names two models with a loss row on the same (target, horizon); lower_loss is one of them. See data-model.md 5.6.",
+  "description": "Milestone 5's whole-period tables for one period: losses per (target, horizon, model) with ratios to the random walk, the primary Diebold-Mariano pairs (fixed-b long-run variance, Holm-adjusted p, lower_loss), the primary Mincer-Zarnowitz rows and the calibration count. license_class: aggregate. Like every real file it is written only outside the repo (ADR 0001 D2). Added in schema 1.1.0 (MINOR: a new dataset). Optional regime_losses added in 1.2.0 (MINOR; amended polish-2): the same losses per regime cell, for the 3D error surface; synthetic files only, since regimes are cut from VIX levels and a real file keeps them local (ADR 0001 D2). Invariants checked outside the schema: every DM pair names two models with a loss row on the same (target, horizon); lower_loss is one of them; every regime row names a model with a loss row on the same (target, horizon), and no (target, horizon, model, scheme, regime) cell repeats. See data-model.md 5.6.",
   "$ref": "envelope.schema.json",
   "type": "object",
   "properties": {
@@ -21,6 +21,11 @@
         "dm_fixed_b": { "description": "Bandwidth fraction b of the fixed-b test.", "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
         "mz_method": { "description": "Covariance of the primary MZ Wald test (hansen_hodrick).", "$ref": "envelope.schema.json#/$defs/id" },
         "losses": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/loss" } },
+        "regime_losses": {
+          "description": "Optional (added in 1.2.0): losses per regime cell (regime labelled at the forecast origin), forecast mean, with ratios to rw in the same cell. Synthetic files only.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/regimeLoss" }
+        },
         "dm": { "type": "array", "items": { "$ref": "#/$defs/dm" } },
         "mz": { "type": "array", "items": { "$ref": "#/$defs/mz" } },
         "calibration": {
@@ -50,6 +55,24 @@
         "mape": { "description": "Fraction, not percent.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
         "qlike": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
         "rmse_ratio_rw": { "description": "rmse / rmse of rw on the same (target, horizon); 1 for rw.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "qlike_ratio_rw": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" }
+      }
+    },
+    "regimeLoss": {
+      "description": "One regime cell. Null losses and ratios mean suppressed (n < min_cell_n); a ratio is also null where rw's cell is.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "horizon", "model_id", "scheme", "regime", "n", "rmse", "qlike", "rmse_ratio_rw", "qlike_ratio_rw"],
+      "properties": {
+        "target_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "horizon": { "$ref": "envelope.schema.json#/$defs/horizon" },
+        "model_id": { "$ref": "envelope.schema.json#/$defs/id" },
+        "scheme": { "description": "Closed enum: the regime schemes of ADR 0001 4.8.", "enum": ["vix_level", "term_structure"] },
+        "regime": { "description": "Open id: low, mid, high (vix_level); contango, backwardation (term_structure).", "$ref": "envelope.schema.json#/$defs/id" },
+        "n": { "type": "integer", "minimum": 0 },
+        "rmse": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "qlike": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
+        "rmse_ratio_rw": { "description": "rmse / rmse of rw in the same (target, horizon, regime) cell; 1 for rw.", "$ref": "envelope.schema.json#/$defs/nullableNonNegative" },
         "qlike_ratio_rw": { "$ref": "envelope.schema.json#/$defs/nullableNonNegative" }
       }
     },

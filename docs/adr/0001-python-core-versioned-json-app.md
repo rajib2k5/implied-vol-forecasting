@@ -175,7 +175,8 @@ Conditional members:
 - **`*_cal`** is in P only if a non-positive `a + b·G` is handled in a scale-free way, for example a
   floor proportional to the training mean of v. An absolute floor makes it scale-tied.
 - **Strategies** are in P only if driven by in-P models, with any band relative to the level (e.g. a
-  percentage of V_t), never in vol points.
+  percentage of V_t), never in vol points. *(amended polish-2)* The M6 primary rule `fvix_rv21_b2` uses a band of 2 vol
+  points, so it is not in P: under this rule its real results stay local.
 
 | Quantity | Per | Rounding | Note |
 |---|---|---|---|
@@ -717,8 +718,8 @@ walkthrough is `docs/milestones/02-baselines.md`. What M2 settles:
 - **ARIMA order** is re-selected at every cutoff on training data only: (p, q) ∈ {0,1,2}² by
   AIC among converged fits, with **d = 0 and a constant** (an ARMA on ln IV, which reverts to its
   mean); the unit-root case is the random walk's. (amended M2, review A: d was chosen by KPSS at
-  5%, which picked d = 1 on 17-52% of stationary AR(1) series with phi = 0.98 at fold sample sizes
-  and at all 97 real VIX cutoffs; KPSS remains an option, `d_rule: kpss`, not the default.)
+  5%, which picked d = 1 on 24-52% of stationary AR(1) series with phi = 0.98 at fold sample sizes
+  and at all 97 real VIX cutoffs; KPSS remains an option, `d_rule: kpss`, not the default. *Corrected polish-2:* this line said 17-52%, which mixed a count (17 of 60) with a percentage; the measured range at phi = 0.98 is 24-52%, from the M2 review A ledger.)
   **HAR** is direct, one OLS per horizon, with `s² = RSS/(n−4)`.
 - **L2 and window targets (open, M3).** L2 holds by construction in M2 because every value sits
   on the row of the date it is observed. A window target stored on its origin's row (as M1's
@@ -1029,4 +1030,4 @@ log-variance state (φ = 0.98, sd 0.5) with `E[d] = 0`; they are not review B's 
 | O7 (amended M0, review B) | Should real-data **regime** numbers ever be public? D2 P keeps them local. | **No.** Regime cells would need a separate disclosure analysis that P avoids (amended M0, review D). This is the user's call. |
 | O8 (amended M0, review E) | Publish the scale-tied rows (`vix_implied` on `rv21`; uncalibrated `garch`, `gjr`, `egarch` on `vix_level`) in P? | **No (orchestrator default).** Measured leak, on 10 simulated seeds with public SPX (`tools/licensing/p_tie_seeds.py`): the holdout RMS VIX-RV gap to a median 0.053%, and the holdout mean VIX to a median 4.29% (max 13.69%). These are period-level VIX statistics, not daily values. Opting in breaks M2 of the proposed definition (O9). The user's call. |
 | O9 (amended M0, review E) | What is a "material part" of a vendor series (the D2 objective)? | **Adopt the proposed definition in D2:** M1 (a run of 5 or more consecutive values within ±1 vol point or ±1%) and M2 (any level-unit statistic within ±10%), using committed content plus public data other than the series itself. P is argued, not proven, to comply. The user's decision. |
-| O10 (amended M0, review E) | Is `lstm_log` in P? | **Decide in M4** from its inputs, re-probed with `tools/licensing/p_tie.py` (c4). With `iv_rv_spread`, a fixed-threshold flag or an absolute clip, it is scale-tied and stays local. *(amended M4)* **Still open.** M4's inputs are ln VIX and its HAR averages (VIX track), and returns, ln VIX, ln rv5, ln rv21 (rv21 track), standardised per training cutoff, with no `iv_rv_spread`, threshold flag or absolute clip. The `p_tie.py` re-probe (c4) was not run in M4, so `lstm_log` rows stay local. |
+| O10 (amended M0, review E) | Is `lstm_log` in P? | **Decide in M4** from its inputs, re-probed with `tools/licensing/p_tie.py` (c4). With `iv_rv_spread`, a fixed-threshold flag or an absolute clip, it is scale-tied and stays local. *(amended M4)* **Still open.** M4's inputs are ln VIX and its HAR averages (VIX track), and returns, ln VIX, ln rv5, ln rv21 (rv21 track), standardised per training cutoff, with no `iv_rv_spread`, threshold flag or absolute clip. The `p_tie.py` re-probe (c4) was not run in M4, so `lstm_log` rows stay local. *(amended polish-2, 2026-11-09)* **Decided: equivariant.** `tools/licensing/p_tie_lstm.py` runs the real `LstmLog` and `LstmRv` on simulated data with V → cV (c = 0.8, 1.25): 0 of 16 entries changed at 6 s.f. in float32, float64 and a heavier float32 run (largest difference 1.7e-15). Its falsifiers (a raw-level input, a V > 20 flag) changed 15 or 16 of 16 at 6 s.f. in every run. So `lstm_log` rows qualify for P under D2's "Which rows" rule. The production config, the frozen-fit path and the DM/MZ entries were not probed. Ledger: [`docs/validation/O10-lstm-equivariance.md`](../validation/O10-lstm-equivariance.md). |

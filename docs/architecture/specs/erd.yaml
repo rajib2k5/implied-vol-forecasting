@@ -479,20 +479,22 @@ entities:
       - {name: panels_actual, type: "number[]", nullable: true}   # was panels.actual
       - {name: panels_series, type: "object[]"}   # was panels.series
       - {name: panels_mz, type: "object[]"}   # was panels.mz
-  - id: json_error_surface
-    label: error_surface.json (aggregate)
+  - id: json_evaluation
+    label: evaluation.json (aggregate)
     # store: json
+    # Added with schema 1.1.0; regime_losses with 1.2.0 (amended polish-2). It replaces the planned error_surface.json, which was never produced and is retired:
+    # the 3D error surface reads regime_losses, a synthetic-only key (a real file has none: ADR 0001 D2, no regime cells).
     columns:
-      - {name: periods, type: "str[]"}
-      - {name: regimes, type: "object[]"}
-      - {name: surfaces, type: "object[]"}
-      - {name: surfaces_target_id, type: str, fk: target_def.target_id}   # was surfaces.target_id
-      - {name: surfaces_benchmark_model_id, type: str, fk: model_def.model_id}   # was surfaces.benchmark_model_id; amended M0, review B: was missing
-      - {name: surfaces_models, type: "str[]"}   # was surfaces.models
-      - {name: surfaces_horizons, type: "int[]"}   # was surfaces.horizons
-      - {name: surfaces_values, type: object}   # was surfaces.values; required object of metric cubes (cells inside may be null); amended M0, review D: not nullable, as in the schema
-      - {name: surfaces_n, type: cube}   # was surfaces.n
-      - {name: surfaces_dm_p_vs_benchmark, type: object}   # was surfaces.dm_p_vs_benchmark; required object of loss cubes (cells may be null); amended M0, review D
+      - {name: period, type: str}
+      - {name: source_run_id, type: str}
+      - {name: dm_method, type: str}
+      - {name: dm_fixed_b, type: number}
+      - {name: mz_method, type: str}
+      - {name: losses, type: "object[]"}
+      - {name: regime_losses, type: "object[]", nullable: true}   # optional key (schema 1.2.0), synthetic files only
+      - {name: dm, type: "object[]"}
+      - {name: mz, type: "object[]"}
+      - {name: calibration, type: object}
   - id: json_equity_curves
     label: equity_curves.json (series)
     # store: json
@@ -559,7 +561,7 @@ relations:
   - {from: json_manifest.run_id, to: run.run_id, cardinality: "0..1", label: exported as}   # was run -> json_manifest "1:0..1"
   - {from: json_term_structure.dates, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_term_structure "1:0..1"; attaches at the manifest's files list
   - {from: json_model_race.calendar, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_model_race "1:0..1"
-  - {from: json_error_surface.periods, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_error_surface "1:0..1"
+  - {from: json_evaluation.period, to: json_manifest.files, cardinality: "0..1", label: lists}   # attaches at the manifest's files list
   - {from: json_equity_curves.dates, to: json_manifest.files, cardinality: "0..1", label: lists}   # was json_manifest -> json_equity_curves "1:0..1"
   # The next ten were table -> json "L:0..1" with L of 1..* or 0..*. The kit's parent end is only "exactly one" (NOT NULL column) or "zero or one" (nullable column), so L is not drawn.
   - {from: json_term_structure.levels, to: iv_index_daily.close, cardinality: "0..1", label: ribbon levels}   # was iv_index_daily -> json_term_structure "1..*:0..1"
@@ -567,8 +569,10 @@ relations:
   - {from: json_model_race.panels_series, to: forecast.yhat, cardinality: "0..1", label: yhat}   # was forecast -> json_model_race "0..*:0..1"
   - {from: json_model_race.panels_actual, to: target_value.y, cardinality: "0..1", label: actual}   # was target_value -> json_model_race "0..*:0..1"
   - {from: json_model_race.panels_mz, to: mz_regression.model_id, cardinality: "0..1", label: mz}   # was mz_regression -> json_model_race "0..*:0..1"
-  - {from: json_error_surface.surfaces_values, to: metric.model_id, cardinality: "0..1", label: cubes}   # was metric -> json_error_surface "1..*:0..1"
-  - {from: json_error_surface.surfaces_dm_p_vs_benchmark, to: dm_test.p_value, cardinality: "0..1", label: dm p-values}   # was dm_test -> json_error_surface "0..*:0..1"
+  - {from: json_evaluation.losses, to: metric.model_id, cardinality: "0..1", label: losses}   # whole-period metric rows (scheme and regime all)
+  - {from: json_evaluation.regime_losses, to: metric.model_id, cardinality: "0..1", label: regime losses}   # metric rows per regime cell; the 3D error surface reads these
+  - {from: json_evaluation.dm, to: dm_test.p_value, cardinality: "0..1", label: dm}   # primary pairwise rows
+  - {from: json_evaluation.mz, to: mz_regression.model_id, cardinality: "0..1", label: mz}   # primary rows
   - {from: json_equity_curves.strategies, to: backtest_daily.equity, cardinality: "0..1", label: equity}   # was backtest_daily -> json_equity_curves "1..*:0..1"
   - {from: json_equity_curves.summary, to: strategy_summary.strategy_id, cardinality: "0..1", label: summary}   # was strategy_summary -> json_equity_curves "0..*:0..1"
   - {from: json_equity_curves.regime_segments, to: regime_label.regime, cardinality: "0..1", label: regime ribbons}   # was regime_label -> json_equity_curves "0..*:0..1"

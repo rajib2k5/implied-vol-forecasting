@@ -1,10 +1,7 @@
 import { useState } from 'react'
 import { XYChart, type XYSeries } from '../lib/XYChart'
-import { colorSlot, parseEvaluation, parseModelRace, show, slotOrder, targetDates, type Envelope, type Evaluation, type ModelRace } from '../lib/results'
+import { DEFAULT_MODELS, colorSlot, parseEvaluation, parseModelRace, show, slotOrder, targetDates, type Envelope, type Evaluation, type ModelRace } from '../lib/results'
 import { Gate, ModeBadge, useDataset } from './useDataset'
-
-/** Shown first: the random walk, the HAR baseline and the best-known structural model of each target. */
-const DEFAULT_MODELS = ['rw', 'har_log', 'har_rv', 'arima_garch_log', 'garch']
 const TARGET_LABEL: Record<string, string> = { vix_level: 'VIX close', rv21: '21-session realised volatility' }
 
 const panelName = (targetId: string, horizon: number) => `${TARGET_LABEL[targetId] ?? targetId}, h = ${horizon}`

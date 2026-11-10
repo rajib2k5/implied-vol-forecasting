@@ -90,12 +90,45 @@ export function targetDates(race: ModelRace, panel: RacePanel): string[] {
   return Array.from({ length: panel.n }, (_, i) => race.calendar[panel.originIdx0 + i + panel.horizon])
 }
 
+// --- models and regimes shared by the views ------------------------------------
+
+/**
+ * Shown first: the random walk, the HAR baseline and the best-known structural model of each target.
+ * Every view puts these first in its slot order, so they take palette slots 1 to 3 and keep their
+ * colour from page to page.
+ */
+export const DEFAULT_MODELS = ['rw', 'har_log', 'har_rv', 'arima_garch_log', 'garch']
+
+/**
+ * The regimes of M5 (ADR 0001 4.8), in display order: VIX level low < mid < high, then the term
+ * structure. `shade` is the step of the one-hue ordinal ramp the backtest ribbons use (0 calm, 2
+ * stress); a regime id the app does not know is drawn after these, labelled with its id.
+ */
+export const REGIMES: { scheme: string; regime: string; label: string; shade: number }[] = [
+  { scheme: 'vix_level', regime: 'low', label: 'low VIX', shade: 0 },
+  { scheme: 'vix_level', regime: 'mid', label: 'mid VIX', shade: 1 },
+  { scheme: 'vix_level', regime: 'high', label: 'high VIX', shade: 2 },
+  { scheme: 'term_structure', regime: 'contango', label: 'contango', shade: 0 },
+  { scheme: 'term_structure', regime: 'backwardation', label: 'backwardation', shade: 2 },
+]
+
+/** The display label of a regime: the known label, or the id itself. */
+export function regimeLabel(scheme: string, regime: string): string {
+  return REGIMES.find((r) => r.scheme === scheme && r.regime === regime)?.label ?? regime
+}
+
 // --- evaluation --------------------------------------------------------------
 
 export interface LossRow { targetId: string; horizon: number; modelId: string; n: number; rmse: number | null; qlike: number | null; rmseRatioRw: number | null; qlikeRatioRw: number | null }
+/** A loss row of one regime cell (schema 1.2.0): the same losses as LossRow, on the origins in that regime. */
+export interface RegimeLossRow extends LossRow { scheme: string; regime: string }
 export interface DmRow { targetId: string; horizon: number; loss: string; modelA: string; modelB: string; n: number; dmStat: number | null; pValue: number | null; pHolm: number | null; lowerLoss: string }
 export interface MzRow { targetId: string; horizon: number; modelId: string; n: number; alpha: number | null; beta: number | null; r2: number | null; waldP: number | null }
-export interface Evaluation { sourceRunId: string; dmMethod: string; dmFixedB: number; mzMethod: string; losses: LossRow[]; dm: DmRow[]; mz: MzRow[]; calibration: { cells: number; helps: number } }
+export interface Evaluation { sourceRunId: string; dmMethod: string; dmFixedB: number; mzMethod: string; losses: LossRow[]; regimeLosses: RegimeLossRow[]; dm: DmRow[]; mz: MzRow[]; calibration: { cells: number; helps: number } }
+
+function lossRow(o: Obj, w: string): LossRow {
+  return { targetId: str(o, 'target_id', w), horizon: num(o, 'horizon', w), modelId: str(o, 'model_id', w), n: num(o, 'n', w), rmse: numOrNull(o, 'rmse', w), qlike: numOrNull(o, 'qlike', w), rmseRatioRw: numOrNull(o, 'rmse_ratio_rw', w), qlikeRatioRw: numOrNull(o, 'qlike_ratio_rw', w) }
+}
 
 export function parseEvaluation(raw: unknown): Envelope<Evaluation> {
   const env = parseEnvelope(raw, 'evaluation')
@@ -109,9 +142,12 @@ export function parseEvaluation(raw: unknown): Envelope<Evaluation> {
       dmMethod: str(p, 'dm_method', 'evaluation'),
       dmFixedB: num(p, 'dm_fixed_b', 'evaluation'),
       mzMethod: str(p, 'mz_method', 'evaluation'),
-      losses: rows('losses').map((o, i) => {
-        const w = `evaluation.losses[${i}]`
-        return { targetId: str(o, 'target_id', w), horizon: num(o, 'horizon', w), modelId: str(o, 'model_id', w), n: num(o, 'n', w), rmse: numOrNull(o, 'rmse', w), qlike: numOrNull(o, 'qlike', w), rmseRatioRw: numOrNull(o, 'rmse_ratio_rw', w), qlikeRatioRw: numOrNull(o, 'qlike_ratio_rw', w) }
+      losses: rows('losses').map((o, i) => lossRow(o, `evaluation.losses[${i}]`)),
+      // Optional since schema 1.2.0, and synthetic files only: a real export keeps regime cells local
+      // (ADR 0001 D2), and an older file has none. Either way the view says so.
+      regimeLosses: (p.regime_losses === undefined ? [] : rows('regime_losses')).map((o, i) => {
+        const w = `evaluation.regime_losses[${i}]`
+        return { ...lossRow(o, w), scheme: str(o, 'scheme', w), regime: str(o, 'regime', w) }
       }),
       dm: rows('dm').map((o, i) => {
         const w = `evaluation.dm[${i}]`
@@ -153,7 +189,43 @@ export function dmMatrix(ev: Evaluation, targetId: string, horizon: number, loss
 
 export interface Strategy { strategyId: string; label: string; kind: string; modelId: string | null; equity: number[] }
 export interface SummaryRow { strategyId: string; costBps: number | null; nDays: number; annReturn: number | null; sharpe: number | null; psr0: number | null; dsr: number | null; nTrials: number; maxDrawdown: number | null }
-export interface EquityCurves { dates: string[]; costBps: number; strategies: Strategy[]; summary: SummaryRow[]; costSensitivity: SummaryRow[]; caveats: string[] }
+/** A run of consecutive dates in one regime: dates[startIdx..endIdx], both ends included (data-model.md 5.5). */
+export interface RegimeSegment { scheme: string; regimeId: string; startIdx: number; endIdx: number }
+export interface EquityCurves { dates: string[]; costBps: number; strategies: Strategy[]; regimeSegments: RegimeSegment[]; summary: SummaryRow[]; costSensitivity: SummaryRow[]; caveats: string[] }
+
+const index = (o: Obj, key: string, where: string): number => need(Number.isInteger(o[key]) && (o[key] as number) >= 0, `${where}.${key} must be an index`, o[key] as number)
+
+/** The segments of the file, checked: inside the dates, start <= end, and in order without overlap within a scheme. */
+function regimeSegments(raw: Obj[], nDates: number): RegimeSegment[] {
+  const out = raw.map((o, i): RegimeSegment => {
+    const w = `equity_curves.regime_segments[${i}]`
+    const s = { scheme: str(o, 'scheme', w), regimeId: str(o, 'regime_id', w), startIdx: index(o, 'start_idx', w), endIdx: index(o, 'end_idx', w) }
+    need(s.startIdx <= s.endIdx && s.endIdx < nDates, `${w}: needs start_idx <= end_idx < ${nDates} dates`, null)
+    return s
+  })
+  const lastEnd = new Map<string, number>()
+  out.forEach((s, i) => {
+    need(s.startIdx > (lastEnd.get(s.scheme) ?? -1), `equity_curves.regime_segments[${i}] overlaps or precedes the previous ${s.scheme} segment`, null)
+    lastEnd.set(s.scheme, s.endIdx)
+  })
+  return out
+}
+
+export interface RegimeBand { start: number; end: number; shade: number; label: string }
+
+/**
+ * The ribbons of one scheme for the equity chart, and their legend: every regime of the scheme in
+ * display order (REGIMES), whether or not it occurs, then any regime id the app does not know.
+ */
+export function regimeBands(eq: EquityCurves, scheme: string): { bands: RegimeBand[]; legend: { label: string; shade: number }[] } {
+  const known = REGIMES.filter((r) => r.scheme === scheme)
+  const segs = eq.regimeSegments.filter((s) => s.scheme === scheme)
+  const unknown = [...new Set(segs.map((s) => s.regimeId).filter((id) => !known.some((r) => r.regime === id)))]
+  // An unknown regime has no place on the ramp, so it takes the middle step and its own legend entry.
+  const legend = [...known.map((r) => ({ label: r.label, shade: r.shade })), ...unknown.map((id) => ({ label: id, shade: 1 }))]
+  const shadeOf = (id: string) => known.find((r) => r.regime === id)?.shade ?? 1
+  return { bands: segs.map((s) => ({ start: s.startIdx, end: s.endIdx, shade: shadeOf(s.regimeId), label: regimeLabel(scheme, s.regimeId) })), legend }
+}
 
 function summaryRow(o: Obj, w: string): SummaryRow {
   return { strategyId: str(o, 'strategy_id', w), costBps: o.cost_bps === undefined ? null : num(o, 'cost_bps', w), nDays: num(o, 'n_days', w), annReturn: numOrNull(o, 'ann_return', w), sharpe: numOrNull(o, 'sharpe_ann', w), psr0: numOrNull(o, 'psr0', w), dsr: numOrNull(o, 'dsr', w), nTrials: num(o, 'n_trials', w), maxDrawdown: numOrNull(o, 'max_drawdown', w) }
@@ -176,6 +248,8 @@ export function parseEquityCurves(raw: unknown): Envelope<EquityCurves> {
       dates,
       costBps: num(p, 'cost_bps', 'equity_curves'),
       strategies,
+      // Filled since schema 1.2.0, synthetic files only (regimes come from VIX levels: ADR 0001 D2).
+      regimeSegments: regimeSegments(objs('regime_segments'), dates.length),
       summary: objs('summary').map((o, i) => summaryRow(o, `equity_curves.summary[${i}]`)),
       // Optional since schema 1.1.0: a 1.0.x file has none, and the view says so.
       costSensitivity: objs('cost_sensitivity').map((o, i) => summaryRow(o, `equity_curves.cost_sensitivity[${i}]`)),

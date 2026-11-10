@@ -16,7 +16,7 @@ from jsonschema import Draft202012Validator
 from ivf import config, contract
 
 # ADR 0001 / data-model.md name these six files; schema 1.1.0 (final polish) adds evaluation and eda.
-EXPECTED = {"envelope", "manifest", "term_structure", "model_race", "error_surface", "equity_curves", "evaluation", "eda"}
+EXPECTED = {"envelope", "manifest", "term_structure", "model_race", "equity_curves", "evaluation", "eda"}
 DATASETS = sorted(EXPECTED - {"envelope"})
 BASE = "https://github.com/rajib2k5/implied-vol-forecasting/schemas/app-data/"
 
@@ -314,3 +314,39 @@ def test_new_dataset_schemas_reject_out_of_range_values(dataset, change, json_pa
     with pytest.raises(contract.SchemaViolation) as caught:
         contract.validate_document(document_with(dataset, change))
     assert [e.json_path for e in caught.value.errors] == [json_path]
+
+
+# --- schema 1.2.0 additions (amended polish-2) -----------------------------------
+
+REGIME_ROW = {"target_id": "vix_level", "horizon": 1, "model_id": "har_log", "scheme": "vix_level", "regime": "high", "n": 30,
+              "rmse": 2.0, "qlike": 0.1, "rmse_ratio_rw": 0.9, "qlike_ratio_rw": 0.8}
+
+
+def test_evaluation_regime_losses_are_optional_and_a_suppressed_cell_is_all_null():
+    contract.validate_document(base_document("evaluation"))  # 1.1.0 documents without them stay valid (MINOR)
+    contract.validate_document(document_with("evaluation", lambda p: p.update(regime_losses=[dict(REGIME_ROW)])))
+    suppressed = {**REGIME_ROW, "n": 5, "rmse": None, "qlike": None, "rmse_ratio_rw": None, "qlike_ratio_rw": None}
+    contract.validate_document(document_with("evaluation", lambda p: p.update(regime_losses=[suppressed])))
+
+
+@pytest.mark.parametrize(
+    ("row", "json_path"),
+    [
+        ({**REGIME_ROW, "scheme": "all"}, "$.payload.regime_losses[0].scheme"),  # the whole period is `losses`, not a regime cell
+        ({**REGIME_ROW, "rmse_ratio_rw": -0.1}, "$.payload.regime_losses[0].rmse_ratio_rw"),
+        ({k: v for k, v in REGIME_ROW.items() if k != "regime"}, "$.payload.regime_losses[0]"),
+        ({**REGIME_ROW, "mae": 1.0}, "$.payload.regime_losses[0]"),  # additionalProperties: false
+    ],
+)
+def test_evaluation_regime_rows_are_checked(row, json_path):
+    with pytest.raises(contract.SchemaViolation) as caught:
+        contract.validate_document(document_with("evaluation", lambda p: p.update(regime_losses=[row])))
+    assert [e.json_path for e in caught.value.errors] == [json_path]
+
+
+def test_equity_regime_segments_name_a_known_scheme():
+    segment = {"scheme": "vix_level", "regime_id": "high", "start_idx": 0, "end_idx": 0}
+    contract.validate_document(document_with("equity_curves", lambda p: p.update(regime_segments=[segment])))
+    with pytest.raises(contract.SchemaViolation) as caught:
+        contract.validate_document(document_with("equity_curves", lambda p: p.update(regime_segments=[{**segment, "scheme": "all"}])))
+    assert [e.json_path for e in caught.value.errors] == ["$.payload.regime_segments[0].scheme"]

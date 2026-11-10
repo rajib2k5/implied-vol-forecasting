@@ -28,10 +28,10 @@ All screenshots show **synthetic data** with a visible SYNTHETIC DATA badge. The
 
 | | |
 |---|---|
-| ![EDA: volatility clustering ACFs and the half-life](docs/images/eda-dark.png) | ![Evaluation: the Diebold-Mariano matrix and MZ table](docs/images/evaluation-dark.png) |
-| EDA: ACF of r, abs(r), r² and ln VIX; AR(1) half-life | Evaluation: DM matrix (fixed-b, Holm) and Mincer-Zarnowitz |
-| ![Backtest: equity curves, PSR, DSR and cost sensitivity](docs/images/backtest-dark.png) | ![The 3D VIX term-structure ribbon](docs/images/term-structure-dark.png) |
-| Backtest: primary rule against always-long VXX, always-long SVXY and cash | Term structure: the three.js ribbon (synthetic fixture) |
+| ![EDA: volatility clustering ACFs and the half-life](docs/images/eda-dark.png) | ![Evaluation: the Diebold-Mariano matrix, the 3D error surface by regime and the MZ table](docs/images/evaluation-dark.png) |
+| EDA: ACF of r, abs(r), r² and ln VIX; AR(1) half-life | Evaluation: DM matrix (fixed-b, Holm), the 3D error surface (loss ratio to the random walk by model, horizon and regime) and Mincer-Zarnowitz |
+| ![Backtest: equity curves over regime ribbons, PSR, DSR and cost sensitivity](docs/images/backtest-dark.png) | ![The 3D VIX term-structure ribbon](docs/images/term-structure-dark.png) |
+| Backtest: primary rule against always-long VXX, always-long SVXY and cash, over regime ribbons (VIX level or term structure) | Term structure: the three.js ribbon (synthetic fixture) |
 
 **Hero image.** Blender hero renders: not rendered: Blender unreachable. The hero still is a three.js frame of the term-structure ribbon instead: [`docs/images/hero-ribbon-dark.png`](docs/images/hero-ribbon-dark.png) (and `hero-ribbon-corporate.png`).
 
@@ -178,7 +178,7 @@ tests/            pytest, with hand-worked expected values; no network
 notebooks/        generated from tools/build_notebooks.py, never hand-edited
 tools/            export_app_data.py, results_table.py, screenshots.py, build_notebooks.py, bench_lstm.py,
                   diagrams/, licensing/ (probes of the publication rule, simulated data only), probes/
-schemas/app-data/ the JSON Schemas of the Python-to-app contract (schema 1.1.0)
+schemas/app-data/ the JSON Schemas of the Python-to-app contract (schema 1.2.0)
 app/              React 19 + TypeScript + Vite + three.js: About, Architecture, EDA, Term structure 3D,
                   Model race, Evaluation, Backtest; public/data/synthetic/ holds the committed JSON
 docs/             prfaq.md, adr/, architecture/, concepts/, milestones/, validation/, images/

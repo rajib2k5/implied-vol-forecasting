@@ -25,6 +25,7 @@ Questions are listed here by title only. The full text is in each milestone's wa
 | 4 | LSTM (PyTorch) on the same walk-forward splits | Done (9e290a1) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
 | 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (79e1aa1) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
 | 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Done (47bea1a) | [`docs/milestones/06-backtest.md`](docs/milestones/06-backtest.md) | queued, 0 of 14 answered |
+| 7 | Polish: app views, regime ribbons and error surface, README tie, raw-file gate, O10 equivariance | Done (pending push) | [`docs/milestones/07-polish.md`](docs/milestones/07-polish.md) | queued 0 of 14 |
 
 ## Concepts
 
@@ -56,6 +57,7 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 - Milestone 04 (queued, 0 of 14 answered; code at 9e290a1). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
 - Milestone 05 (queued, 0 of 14 answered; code at 79e1aa1). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
 - Milestone 06 (queued, 0 of 14 answered; code at 47bea1a). Answer in its quiz widget, or say "quiz me on milestone 06" to resume it.
+- Milestone 07 (queued, 0 of 14 answered; code at PENDING-PUSH). Answer in its quiz widget, or say "quiz me on milestone 07" to resume it.
 
 ## Defaults taken
 
@@ -76,7 +78,7 @@ On 2026-10-29 the build moved on without waiting for these decisions. Each row i
 | Success (PR/FAQ question 2) | A defended "nothing beats the random walk" counts as a success | `docs/prfaq.md` |
 | Trading rule (PR/FAQ question 3) | Forecast minus current VIX with a dead band first; term-structure slope and a regime filter are variants, each counted as a trial in DSR | M6 |
 
-O5 and O6 settled in M5 by measurement (Hansen-Hodrick for MZ, fixed-b for DM; defaults taken 2026-10-29, owner can override). Still open: O10 (M4).
+O5 and O6 settled in M5 by measurement (Hansen-Hodrick for MZ, fixed-b for DM; defaults taken 2026-10-29, owner can override). O10 decided 2026-11-09 by measurement: `lstm_log` is V-equivariant, so its rows qualify for P (docs/validation/O10-lstm-equivariance.md).
 
 M6 (2026-10-29): the backtest's defaults D1-D11 (primary rule rv21 forecast minus VIX with a 2-point band, the dev-only model-choice rule, costs 5 bp per side, cash at 0, segments, DSR conventions, trial counting, the holdout rule and the guarded one look) are in `docs/milestones/06-backtest.md` section 3; each is a default taken 2026-10-29, owner can override.
 

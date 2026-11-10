@@ -79,7 +79,7 @@ def main() -> int:
                 for section in SECTIONS:
                     page.goto(f"{BASE}#/{section}")
                     page.wait_for_load_state("networkidle")
-                    page.wait_for_timeout(2500 if section == "term-structure" else 1200)  # line draw-in and the WebGL frame
+                    page.wait_for_timeout(2500 if section in ("term-structure", "evaluation") else 1200)  # line draw-in and the WebGL frames
                     target = OUT / f"{section}-{theme}.png"
                     page.screenshot(path=str(target), full_page=True)
                     written.append(target)

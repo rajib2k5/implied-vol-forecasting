@@ -375,17 +375,17 @@ erDiagram
         object[] panels_series
         object[] panels_mz
     }
-    json_error_surface["error#95;surface.json (aggregate)"] {
-        str[] periods
-        object[] regimes
-        object[] surfaces
-        str surfaces_target_id FK
-        str surfaces_benchmark_model_id FK
-        str[] surfaces_models
-        int[] surfaces_horizons
-        object surfaces_values
-        cube surfaces_n
-        object surfaces_dm_p_vs_benchmark
+    json_evaluation["evaluation.json (aggregate)"] {
+        str period
+        str source_run_id
+        str dm_method
+        number dm_fixed_b
+        str mz_method
+        object[] losses
+        object[] regime_losses "nullable"
+        object[] dm
+        object[] mz
+        object calibration
     }
     json_equity_curves["equity#95;curves.json (series)"] {
         isoDate[] dates
@@ -442,15 +442,17 @@ erDiagram
     run ||--o| json_manifest : "exported as"
     json_manifest ||--o| json_term_structure : "lists"
     json_manifest ||--o| json_model_race : "lists"
-    json_manifest ||--o| json_error_surface : "lists"
+    json_manifest ||--o| json_evaluation : "lists"
     json_manifest ||--o| json_equity_curves : "lists"
     iv_index_daily |o--o| json_term_structure : "ribbon levels"
     iv_index_daily |o--o| json_term_structure : "backwardation flag"
     forecast ||--o| json_model_race : "yhat"
     target_value |o--o| json_model_race : "actual"
     mz_regression ||--o| json_model_race : "mz"
-    metric ||--o| json_error_surface : "cubes"
-    dm_test ||--o| json_error_surface : "dm p-values"
+    metric ||--o| json_evaluation : "losses"
+    metric |o--o| json_evaluation : "regime losses"
+    dm_test ||--o| json_evaluation : "dm"
+    mz_regression ||--o| json_evaluation : "mz"
     backtest_daily ||--o| json_equity_curves : "equity"
     strategy_summary ||--o| json_equity_curves : "summary"
     regime_label ||--o| json_equity_curves : "regime ribbons"
@@ -473,5 +475,3 @@ erDiagram
     calendar ||--o{ backtest_daily : ""
     run ||--o{ strategy_summary : ""
     target_def ||--o{ json_model_race : ""
-    target_def ||--o{ json_error_surface : ""
-    model_def ||--o{ json_error_surface : ""

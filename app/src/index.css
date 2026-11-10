@@ -157,3 +157,23 @@ ul.caveats { margin: 0 0 1rem; padding-left: 1.2rem; color: var(--muted); font-s
 tbody th { text-transform: none; letter-spacing: 0; font-size: .8rem; color: var(--ink); font-weight: 500; }
 .dm-matrix thead th { text-transform: none; letter-spacing: 0; }
 .viz-band-label { color: var(--muted); }
+/* Shaded spans behind a line chart (the backtest's regime ribbons): one hue, the stress pole of the
+   diverging pair, at three ordinal steps (0 calm .. 2 stress), so no ribbon is read as a series colour. */
+.viz-shade-fill { fill: var(--div-neg); }
+.viz-shade-fill.viz-shade-0 { fill-opacity: .07; }
+.viz-shade-fill.viz-shade-1 { fill-opacity: .16; }
+.viz-shade-fill.viz-shade-2 { fill-opacity: .32; }
+.swatch.viz-shade-swatch { box-shadow: inset 0 0 0 1px var(--line); }
+.swatch.viz-shade-0 { background: color-mix(in srgb, var(--div-neg) 7%, var(--surface)); }
+.swatch.viz-shade-1 { background: color-mix(in srgb, var(--div-neg) 16%, var(--surface)); }
+.swatch.viz-shade-2 { background: color-mix(in srgb, var(--div-neg) 32%, var(--surface)); }
+.viz-tooltip-shade { color: var(--muted); }
+/* The 3D error surface: its stage, the DOM labels drei places over the canvas, the hover readout. */
+.surface-stage { height: 480px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface2); overflow: hidden; position: relative; }
+.surface-label { font-family: var(--mono); font-size: 10px; color: var(--muted); white-space: nowrap; pointer-events: none; user-select: none; }
+.surface-label.model { color: var(--ink); }
+.surface-label.head { color: var(--ink); font-size: 11px; }
+.surface-anchor { pointer-events: none; }
+.surface-label.end, .surface-label.slant { display: inline-block; transform-origin: 100% 50%; transform: translate(-100%, -50%); }
+.surface-label.slant { transform: translate(-100%, -50%) rotate(-35deg); }
+.surface-readout { font-family: var(--mono); font-size: .78rem; color: var(--ink); min-height: 1.4em; margin: .4rem 0 0; }

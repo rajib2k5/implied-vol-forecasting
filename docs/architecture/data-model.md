@@ -406,10 +406,17 @@ The source tables are `forecast`, `target_value` and `mz_regression`.
 
 Invariant: `origin_idx0 + n − 1 + horizon ≤ m − 1`.
 
-### 5.4 `error_surface.json`: the 3D error surface, model × horizon × regime (M5; `license_class: aggregate`)
+### 5.4 `error_surface.json`: retired, never produced (planned for M5; `license_class: aggregate`)
 
 The source tables are `metric` and `dm_test`. Its real version holds regime cells, so it stays
 local, and no real-data screenshot of it may be committed (ADR D2; amended M0, review B).
+
+**(amended polish-2)** This file is retired: it was never produced and has no schema (the schema file is deleted). The Evaluation view's 3D error surface reads
+`evaluation.json`'s optional `regime_losses` (5.6, schema 1.2.0) instead: the dev period only, RMSE and
+QLIKE with their ratios to `rw` per (target, horizon, model, regime), synthetic files only. The DM
+p-value cubes below have no counterpart there, because regime DM rows are not computed (as built in M5).
+
+The table below is the original plan, kept as history only. No code writes or reads it.
 
 | Payload field | Type | Notes |
 |---|---|---|
@@ -434,11 +441,11 @@ The source tables are `backtest_daily`, `strategy_summary`, `regime_label` and `
 | holdout_start_idx | int\|null | |
 | cost_bps | number | |
 | strategies | object[] | `strategy_id`, `label`, `kind` (`forecast`, `benchmark`), `model_id` (id\|null), `horizon` (int\|null), `equity` number[n] (> 0, starts at 1), `drawdown` number[n] (≤ 0) |
-| regime_segments | object[] | Run-length encoded: `scheme`, `regime_id`, `start_idx`, `end_idx` (inclusive) |
+| regime_segments | object[] | Run-length encoded: `scheme`, `regime_id`, `start_idx`, `end_idx` (inclusive). **(amended polish-2)** Filled from schema 1.2.0, synthetic files only: each scheme's label at every date (`build_regime_labels` on the pre-holdout sessions, M5's rule), one segment per maximal run, ordered by scheme (`vix_level`, `term_structure`) then date; a date with no label of a scheme is in no segment of it. A real file keeps it empty: the regimes are cut from VIX levels (ADR D2). Built by `ivf.app_results.regime_segments`. |
 | summary | object[] | `strategy_id`, `period`, `n_days`, `ann_return`, `ann_vol`, `sharpe_ann`, `psr0`, `dsr`, `n_trials`, `max_drawdown`, `turnover_ann` (number\|null) |
 | caveats | string[] | e.g. the SVXY leverage cut, the VXX series switch, the cost model |
 
-### 5.6 `evaluation.json`: the DM matrix, MZ table and losses (final polish, schema 1.1.0; `license_class: aggregate`)
+### 5.6 `evaluation.json`: the DM matrix, MZ table and losses (final polish, schema 1.1.0; regime losses 1.2.0; `license_class: aggregate`)
 
 The source tables are M5's `evaluation/period=dev/` `metric`, `dm_test`, `mz_regression` and
 `calibration_summary`, whole period only (scheme and regime `all`). Built by `ivf.app_results.evaluation_payload`.
@@ -448,11 +455,13 @@ The source tables are M5's `evaluation/period=dev/` `metric`, `dm_test`, `mz_reg
 | period, source_run_id | `dev`; 12 hex | The store run the tables came from. Provenance: `--check` ignores it, because a run id hashes the commit that built the store |
 | dm_method, dm_fixed_b, mz_method | id, number, id | The primary methods (`fixed_b`, b = 0.1; `hansen_hodrick`) |
 | losses | object[] | `target_id`, `horizon`, `model_id`, `n`, `rmse`, `mae`, `bias`, `mape`, `qlike`, `rmse_ratio_rw`, `qlike_ratio_rw` (forecast `mean`). The two ratios keep **6** decimals, not the 4 of other ratios (amended in the polish review): at 4, ARIMA and ARIMA-GARCH tie at VIX h = 1 and 5 |
+| regime_losses | object[], optional | **(amended polish-2, schema 1.2.0)** The error surface: one row per (target, horizon, race model, regime cell) of M5's `metric` (forecast `mean`, `scheme` ≠ `all`): `scheme` (`vix_level`, `term_structure`), `regime`, `n`, `rmse`, `qlike`, `rmse_ratio_rw`, `qlike_ratio_rw`, the ratios to `rw` in the same cell (6 decimals). A suppressed cell keeps its `n` with null losses and ratios. Order: panel, registry, then `low`, `mid`, `high`, `contango`, `backwardation`. Synthetic files only (`ivf.app_results.regimes_allowed`): a real file has no such key (ADR D2, no regime cells) |
 | dm | object[] | The primary pairwise rows (family `pairs`): `loss` (`sq_error`, `qlike`), `model_a`, `model_b`, `n`, `dm_stat`, `p_value`, `p_holm`, `lower_loss` |
 | mz | object[] | Primary rows (level space, forecast `mean`): `alpha`, `alpha_se`, `beta`, `beta_se`, `r2`, `wald_p` |
 | calibration | object | `cells`, `helps`: how many cells the walk-forward bias calibration helped (rule 6) |
 
-Invariants: each DM pair names two models with a loss row on its (target, horizon); `lower_loss` is one of them.
+Invariants: each DM pair names two models with a loss row on its (target, horizon); `lower_loss` is one of them;
+each regime row names a model with a loss row on its (target, horizon), and no regime cell repeats (amended polish-2).
 
 ### 5.7 `eda.json`: volatility clustering and the half-life (final polish, schema 1.1.0; `license_class: aggregate`)
 
@@ -469,7 +478,9 @@ the view draws (sessions before `holdout_start` only).
 
 `tools/export_app_data.py --mode synthetic` writes `model_race.json`, `evaluation.json`,
 `equity_curves.json` (with the optional `cost_sensitivity`, schema 1.1.0) and `eda.json` from the synthetic
-dev store, and lists them in the manifest. Measured sizes: 62,814, 40,248, 119,021 and 1,746 bytes. The
+dev store, and lists them in the manifest. Measured sizes: 62,814, 40,248, 119,021 and 1,746 bytes. **(amended
+polish-2, schema 1.2.0)** With `regime_losses` (140 rows) and 191 regime segments: 62,814, 66,812, 133,551 and
+1,746 bytes. The
 model race shows the last `race_context_sessions` (252) dev origins of each panel; the equity file holds the
 primary rule and the three benchmarks at the default cost. Real versions are not written under the current
 data policy (the hook is described in `ivf.app_results`).
@@ -483,7 +494,7 @@ count and all byte sizes are estimates.
 |---|---|---|
 | term_structure | ~3,977 × 7 | ~0.2 MB |
 | model_race | ~835 × 4 panels × ~10 series | ~0.2-0.3 MB |
-| error_surface | < 10⁴ | < 0.1 MB |
+| evaluation (with `regime_losses`) | < 10⁴ | < 0.1 MB |
 | equity_curves | ~2,200 × ~6 strategies × 2 | ~0.2 MB |
 
 All of these are well under the 2 MB budget.

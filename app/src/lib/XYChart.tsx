@@ -6,12 +6,14 @@
  * - a legend for two or more series, plus direct labels at the line ends for four or fewer;
  *   all text in text tokens, never the series colour;
  * - a crosshair and tooltip on hover (mouse) and on arrow keys (keyboard focus);
- * - a table view of the same numbers, because some light-theme slots sit below 3:1 contrast.
+ * - a table view of the same numbers, because some light-theme slots sit below 3:1 contrast;
+ * - optional bands behind the lines (the backtest's regime ribbons): one hue at three ordinal steps
+ *   (`viz-shade-0..2`), never a series colour, with their own legend, tooltip line and table column.
  * UI component (a documented exception in app/CLAUDE.md): it uses the DOM, never computes a result.
  */
 import { useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { segments, spreadLabels, strokeFor } from './chartGeom'
-import { linearTicks, logTicks, nearestIndex, show } from './results'
+import { linearTicks, logTicks, nearestIndex, show, type RegimeBand } from './results'
 
 export interface XYSeries {
   id: string
@@ -21,6 +23,13 @@ export interface XYSeries {
   dashed?: boolean
   /** Shorter name for the direct label at the line end; the legend and table use `label`. */
   short?: string
+}
+
+/** Shaded spans of the x axis drawn behind the lines, and what their shades mean. */
+export interface XYBands {
+  title: string
+  bands: RegimeBand[]
+  legend: { label: string; shade: number }[]
 }
 
 const W = 720
@@ -34,6 +43,7 @@ export function XYChart({
   yLabel,
   log = false,
   height = 260,
+  bands,
 }: {
   title: string
   x: string[]
@@ -41,6 +51,7 @@ export function XYChart({
   yLabel: string
   log?: boolean
   height?: number
+  bands?: XYBands
 }) {
   const [hover, setHover] = useState<number | null>(null)
   const [table, setTable] = useState(false)
@@ -68,6 +79,9 @@ export function XYChart({
   })
   const labelYs = spreadLabels(ends, LABEL_GAP)
   const xTicks = [...new Set([0, Math.floor((x.length - 1) / 2), x.length - 1])]
+  // A band covers its dates and half a step either side, so adjacent bands meet without a gap.
+  const half = x.length > 1 ? plotW / (x.length - 1) / 2 : plotW / 2
+  const bandAt = (i: number) => bands?.bands.find((b) => b.start <= i && i <= b.end)
 
   const move = (e: MouseEvent<SVGRectElement>) => {
     const box = e.currentTarget.getBoundingClientRect()
@@ -82,6 +96,16 @@ export function XYChart({
   return (
     <figure className="viz" aria-label={title}>
       <div className="viz-head">
+        {bands && (
+          <ul className="viz-legend" aria-label={bands.title}>
+            {bands.legend.map((b) => (
+              <li key={b.label}>
+                <i className={`swatch viz-shade-swatch viz-shade-${b.shade}`} aria-hidden="true" />
+                {b.label}
+              </li>
+            ))}
+          </ul>
+        )}
         {series.length > 1 && (
           <ul className="viz-legend" aria-label="Legend">
             {series.map((s) => (
@@ -105,6 +129,7 @@ export function XYChart({
             <thead>
               <tr>
                 <th scope="col">Date</th>
+                {bands && <th scope="col">{bands.title}</th>}
                 {series.map((s) => (
                   <th key={s.id} scope="col">{s.label}</th>
                 ))}
@@ -114,6 +139,7 @@ export function XYChart({
               {x.map((d, i) => (
                 <tr key={d + i}>
                   <td className="num">{d}</td>
+                  {bands && <td>{bandAt(i)?.label ?? '–'}</td>}
                   {series.map((s) => (
                     <td key={s.id} className="num">{show(s.values[i])}</td>
                   ))}
@@ -126,6 +152,21 @@ export function XYChart({
         <div className="viz-stage">
           <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={`${title}. ${yLabel}.`} tabIndex={0} onKeyDown={key} onBlur={() => setHover(null)}>
             <text x={4} y={10} className="viz-axis-label">{yLabel}</text>
+            {bands?.bands.map((b) => {
+              const x0 = Math.max(PAD.l, px(b.start) - half)
+              const x1 = Math.min(PAD.l + plotW, px(b.end) + half)
+              return (
+                <rect
+                  key={`${b.start}-${b.end}`}
+                  className={`viz-shade-fill viz-shade-${b.shade}`}
+                  data-band={b.label}
+                  x={x0}
+                  y={PAD.t}
+                  width={Math.max(0, x1 - x0)}
+                  height={height - PAD.t - PAD.b}
+                />
+              )
+            })}
             {ticks.map((v) => (
               <g key={v}>
                 <line className="viz-grid" x1={PAD.l} x2={PAD.l + plotW} y1={py(v)} y2={py(v)} />
@@ -182,6 +223,11 @@ export function XYChart({
           {hover !== null && (
             <div role="tooltip" className="viz-tooltip" style={{ left: `${(px(hover) / W) * 100}%` }}>
               <div className="viz-tooltip-date">{x[hover]}</div>
+              {bands && (
+                <div className="viz-tooltip-shade">
+                  {bands.title}: {bandAt(hover)?.label ?? '–'}
+                </div>
+              )}
               {series.map((s) => (
                 <div key={s.id}>
                   <i className="swatch" style={{ background: strokeFor(s.slot) }} />

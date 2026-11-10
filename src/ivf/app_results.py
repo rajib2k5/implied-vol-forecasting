@@ -6,16 +6,20 @@
 * ``model_race.json``: forecast vs actual for the milestone 2-4 models, one panel per
   (target, horizon), over the last ``race_context_sessions`` dev origins (protocol.synthetic.yaml);
 * ``evaluation.json``: M5's dev losses (RMSE, QLIKE, ...), the primary Diebold-Mariano pairs
-  (fixed-b, Holm, ``lower_loss``), the primary Mincer-Zarnowitz rows and the calibration count;
+  (fixed-b, Holm, ``lower_loss``), the primary Mincer-Zarnowitz rows and the calibration count, and
+  (schema 1.2.0, synthetic only) the losses per regime cell, ``regime_losses``, for the error surface;
 * ``equity_curves.json``: M6's dev backtest, the primary rule against always-long VXX, always-long
-  SVXY and cash, with PSR/DSR and the cost-sensitivity table;
+  SVXY and cash, with PSR/DSR and the cost-sensitivity table, and (schema 1.2.0, synthetic only) the
+  regime ribbons, ``regime_segments``;
 * ``eda.json``: M1's volatility-clustering ACFs and the AR(1) half-life of ln VIX.
 
 Where the numbers come from. Every value is read from the tables the pipeline already wrote under
 ``ROOT/processed/run_id=<id>/`` (``forecast``, ``evaluation/period=dev/*``,
 ``backtest/period=dev/*``), or recomputed by the very functions the pipeline uses (the actuals by
-``ivf.evaluation.report.attach_targets``; the EDA statistics by ``ivf.data.process.eda_core``, the
-part of the M1 EDA report that the view draws). This module only selects, reshapes and rounds.
+``ivf.evaluation.report.attach_targets``; the regime labels by ``ivf.features.build.build_regime_labels``
+on the same pre-holdout inputs M5's report labels its origins with; the EDA statistics by
+``ivf.data.process.eda_core``, the part of the M1 EDA report that the view draws). This module only
+selects, reshapes and rounds.
 
 The dev period only. Nothing dated on or after ``holdout_start`` is read into a payload: the race
 keeps rows whose origin AND target are before it (the dev purge of ADR 0001 4.6), the evaluation and
@@ -31,6 +35,10 @@ current policy the real versions of these files are series or regime-free aggreg
 data and may never enter the repository; ``--mode real`` still writes only ``manifest.json`` and
 ``term_structure.json``, outside the repo. Wiring these builders into ``generate_real`` (they would
 go to ``ROOT/app-data/real/`` like the others) is the owner's change once the policy is decided.
+Regime cells and ribbons stay out of any real payload even then (amended polish-2): the regimes are
+cut from VIX levels, so they would reveal vendor values. ``Store.data_mode`` says which data the
+store holds, and ``regimes_allowed`` lets them into a payload for ``synthetic`` only; a real store
+gets no ``regime_losses`` key and an empty ``regime_segments``.
 """
 
 from __future__ import annotations
@@ -54,6 +62,13 @@ BENCHMARKS = ("bench_long_vxx", "bench_long_svxy", "bench_cash")
 #: (amended in the polish review): at 4, ARIMA and ARIMA-GARCH tie at 0.995 (VIX h = 1) and 0.9762
 #: (h = 5), and a table could not tell which is lower.
 DEC_LEVEL, DEC_STAT, DEC_MAPE, DEC_QLIKE, DEC_EQUITY, DEC_RATIO = 3, 4, 5, 6, 6, 6
+#: M5's regime cells (ADR 0001 4.8) in display order; app/src/lib/results.ts ``REGIMES`` repeats it.
+#: A regime id the store has and this list lacks is exported after these, sorted.
+REGIMES: tuple[tuple[str, str], ...] = (
+    ("vix_level", "low"), ("vix_level", "mid"), ("vix_level", "high"),
+    ("term_structure", "contango"), ("term_structure", "backwardation"),
+)
+SCHEMES = tuple(dict.fromkeys(scheme for scheme, _ in REGIMES))
 
 
 class StoreUnavailable(Exception):
@@ -106,6 +121,7 @@ class Store:
     """Everything the four payloads read, already cut to the dev period."""
 
     run_id: str
+    data_mode: str  # "synthetic" or "real": which data the store was built from (regimes_allowed)
     seed: int  # protocol.synthetic.yaml's root seed (ADR 0001 D5), for the notice
     holdout_start: Any  # datetime.date
     race_sessions: int
@@ -121,10 +137,25 @@ class Store:
     backtest_config: Any  # ivf.backtest.strategy.BacktestConfig
     models: tuple  # registry ModelDefs
     eda: dict[str, Any]
+    regimes: pd.DataFrame  # regime_label rows (date, scheme, regime) on the pre-holdout sessions; no driver
 
 
-def load_store(layout, protocol) -> Store:
-    """Read the chosen run's dev tables and recompute the actuals and the EDA statistics."""
+def regimes_allowed(store: Store) -> bool:
+    """True only for a synthetic store: regime cells and ribbons never enter a real payload (ADR 0001 D2).
+
+    The regimes are cut from VIX levels at fixed thresholds, so a regime cell or a dated run of
+    regimes reveals vendor values (amended polish-2). Anything but exactly ``synthetic`` is refused.
+    """
+    return store.data_mode == "synthetic"
+
+
+def load_store(layout, protocol, *, data_mode: str) -> Store:
+    """Read the chosen run's dev tables and recompute the actuals, the regime labels and the EDA statistics.
+
+    ``data_mode`` is the caller's word for the data under ``layout``. The store's own report and
+    backtest metadata record the mode they were made from; a store that says otherwise is refused,
+    so a real store can never be read as synthetic (and given regime cells).
+    """
     from ivf.data import build_interim, calendar, process
     from ivf.evaluation import report, walkforward
     from ivf.features import build
@@ -142,11 +173,16 @@ def load_store(layout, protocol) -> Store:
     eda = process.eda_core(eda_dates, eda_periods, build.build_features(eda_dates, eda_iv, eda_price), eda_iv, holdout_start)
     evaluation, backtest = folder / "evaluation" / "period=dev", folder / "backtest" / "period=dev"
     report_meta, backtest_meta = (json.loads(p.read_text(encoding="utf-8")) for p in _dev_outputs(folder))
+    stated = {m["data_mode"] for m in (report_meta, backtest_meta) if "data_mode" in m}
+    if stated - {data_mode}:
+        raise StoreUnavailable(f"run {run_id} was made from {sorted(stated)} data, not {data_mode!r}")
+    labels = build.build_regime_labels(dates, iv_read, tuple(protocol.vix_regime_edges))
     from ivf.backtest import strategy as strategy_mod
 
     defs, _ = registry.load_models()
     return Store(
         run_id=run_id,
+        data_mode=data_mode,
         seed=int(protocol.document["seed"]),
         holdout_start=holdout_start,
         race_sessions=int(protocol.document["race_context_sessions"]),
@@ -162,6 +198,7 @@ def load_store(layout, protocol) -> Store:
         backtest_config=strategy_mod.load_config(),
         models=tuple(defs),
         eda=eda,
+        regimes=labels[["date", "scheme", "regime"]],
     )
 
 
@@ -258,8 +295,47 @@ def check_model_race(payload: dict[str, Any]) -> None:
 # --------------------------------------------------------------------------
 
 
+def regime_losses(store: Store) -> list[dict[str, Any]]:
+    """M5's dev losses per regime cell (forecast ``mean``), each with its ratios to ``rw`` in the same cell.
+
+    The error surface's rows: model x horizon x regime for both targets, the race models only. Order:
+    panel (``PANELS``), then registry order, then ``REGIMES``. A suppressed cell (n < min_cell_n) keeps
+    its ``n`` and has null losses and ratios; so does every model's ratio where ``rw``'s cell is null.
+    Callers check ``regimes_allowed`` first: this function does not know the data mode.
+    """
+    metric = store.metric
+    if "scheme" not in metric:
+        return []
+    metric = metric[metric.period.eq("dev") & metric.forecast.eq("mean") & metric.scheme.ne("all")]
+    present = set(zip(metric.scheme, metric.regime))
+    cells = [key for key in REGIMES if key in present] + sorted(present - set(REGIMES))
+    out = []
+    for (target_id, h), group in metric.groupby(["target_id", "horizon"], sort=False):
+        for model_id in race_models(store.models, target_id):
+            for scheme, regime in cells:
+                in_cell = group[group.scheme.eq(scheme) & group.regime.eq(regime)]
+                row, rw = in_cell[in_cell.model_id == model_id], in_cell[in_cell.model_id == "rw"]
+                if row.empty:
+                    continue
+                m = row.iloc[0]
+                rw_rmse = float(rw.rmse.iloc[0]) if len(rw) else math.nan
+                rw_qlike = float(rw.qlike.iloc[0]) if len(rw) else math.nan
+                out.append({
+                    "target_id": target_id, "horizon": int(h), "model_id": model_id, "scheme": scheme, "regime": regime,
+                    "n": int(m.n), "rmse": r(m.rmse, DEC_STAT), "qlike": r(m.qlike, DEC_QLIKE),
+                    "rmse_ratio_rw": r(m.rmse / rw_rmse, DEC_RATIO), "qlike_ratio_rw": r(m.qlike / rw_qlike, DEC_RATIO),
+                })
+    order = {key: i for i, key in enumerate(PANELS)}
+    out.sort(key=lambda x: order.get((x["target_id"], x["horizon"]), len(order)))
+    return out
+
+
 def evaluation_payload(store: Store) -> dict[str, Any]:
-    """M5's dev tables, whole period: losses with ratios to ``rw``, primary DM pairs, primary MZ rows."""
+    """M5's dev tables, whole period: losses with ratios to ``rw``, primary DM pairs, primary MZ rows.
+
+    Plus ``regime_losses`` (schema 1.2.0) for a synthetic store only; a real store's payload has no
+    such key (``regimes_allowed``).
+    """
     metric = _all_dev(store.metric)
     metric = metric[metric.forecast.eq("mean")]
     losses = []
@@ -280,6 +356,7 @@ def evaluation_payload(store: Store) -> dict[str, Any]:
             })
     order = {key: i for i, key in enumerate(PANELS)}
     losses.sort(key=lambda x: order.get((x["target_id"], x["horizon"]), len(order)))
+    regime = {"regime_losses": regime_losses(store)} if regimes_allowed(store) else {}
     dm = _all_dev(store.dm)
     dm = dm[dm.primary & dm.family.eq("pairs")].sort_values(["target_id", "horizon", "loss", "model_a", "model_b"])
     mz = _all_dev(store.mz)
@@ -292,6 +369,7 @@ def evaluation_payload(store: Store) -> dict[str, Any]:
         "dm_fixed_b": float(store.report_meta["fixed_b"]),
         "mz_method": str(store.report_meta["mz_primary"]),
         "losses": losses,
+        **regime,
         "dm": [
             {"target_id": d.target_id, "horizon": int(d.horizon), "loss": d.loss, "model_a": d.model_a, "model_b": d.model_b,
              "n": int(d.n), "dm_stat": r(d.dm_stat, DEC_STAT), "p_value": r(d.p_value, DEC_STAT), "p_holm": r(d.p_holm, DEC_STAT),
@@ -309,8 +387,20 @@ def evaluation_payload(store: Store) -> dict[str, Any]:
 
 
 def check_evaluation(payload: dict[str, Any]) -> None:
-    """Each DM pair names two models with a loss row on the same (target, horizon), and lower_loss is one of them."""
+    """Each DM pair names two models with a loss row on the same (target, horizon), and lower_loss is one of them.
+
+    Each regime row names a model with a whole-period loss row on its (target, horizon), and no
+    (target, horizon, model, scheme, regime) cell appears twice.
+    """
     have = {(x["target_id"], x["horizon"], x["model_id"]) for x in payload["losses"]}
+    seen = set()
+    for x in payload.get("regime_losses", []):
+        if (x["target_id"], x["horizon"], x["model_id"]) not in have:
+            raise ValueError(f"evaluation: regime row for {x['model_id']} has no loss row at {x['target_id']} h={x['horizon']}")
+        cell = (x["target_id"], x["horizon"], x["model_id"], x["scheme"], x["regime"])
+        if cell in seen:
+            raise ValueError(f"evaluation: regime cell {cell} appears twice")
+        seen.add(cell)
     for d in payload["dm"]:
         for model in (d["model_a"], d["model_b"]):
             if (d["target_id"], d["horizon"], model) not in have:
@@ -322,6 +412,31 @@ def check_evaluation(payload: dict[str, Any]) -> None:
 # --------------------------------------------------------------------------
 # equity_curves.json (data-model.md 5.5)
 # --------------------------------------------------------------------------
+
+
+def regime_segments(dates: list, labels: pd.DataFrame) -> list[dict[str, Any]]:
+    """The regime ribbons: each scheme's labels over ``dates``, run-length encoded (data-model.md 5.5).
+
+    One segment per maximal run of consecutive ``dates`` with the same regime, ``end_idx`` inclusive;
+    scheme order ``SCHEMES``, then by date. A date with no label of a scheme (the term structure
+    before VIX3M exists) ends that scheme's run and lies in no segment of it. Labels on other dates
+    are not read. Callers check ``regimes_allowed`` first: this function does not know the data mode.
+    """
+    out = []
+    for scheme in SCHEMES:
+        mapping = labels[labels.scheme == scheme].set_index("date")["regime"].to_dict()
+        run: list | None = None  # [regime, start_idx]
+        for i, d in enumerate(dates):
+            label = mapping.get(d)
+            label = label if isinstance(label, str) else None
+            if run is not None and label == run[0]:
+                continue
+            if run is not None:
+                out.append({"scheme": scheme, "regime_id": run[0], "start_idx": run[1], "end_idx": i - 1})
+            run = [label, i] if label is not None else None
+        if run is not None:
+            out.append({"scheme": scheme, "regime_id": run[0], "start_idx": run[1], "end_idx": len(dates) - 1})
+    return out
 
 
 def _strategy_defs(store: Store) -> dict[str, Any]:
@@ -368,7 +483,7 @@ def equity_curves_payload(store: Store) -> dict[str, Any]:
         "holdout_start_idx": None,
         "cost_bps": cost,
         "strategies": strategies,
-        "regime_segments": [],
+        "regime_segments": regime_segments(dates, store.regimes) if regimes_allowed(store) else [],
         "summary": [row(x) for x in summary.itertuples() if np.isclose(x.cost_bps, cost)],
         "cost_sensitivity": [{**row(x), "cost_bps": float(x.cost_bps)} for x in summary.itertuples()],
         "caveats": [
@@ -382,11 +497,18 @@ def equity_curves_payload(store: Store) -> dict[str, Any]:
 
 
 def check_equity_curves(payload: dict[str, Any]) -> None:
-    """data-model.md 5.5's length invariant and a start at 1 (growth of 1.0)."""
+    """data-model.md 5.5's invariants: one value per date; segments inside the dates, in order, not overlapping within a scheme."""
     n = len(payload["dates"])
     for s in payload["strategies"]:
         if len(s["equity"]) != n or len(s["drawdown"]) != n:
             raise ValueError(f"equity_curves: {s['strategy_id']} does not have one value per date")
+    last_end: dict[str, int] = {}
+    for seg in payload["regime_segments"]:
+        if not 0 <= seg["start_idx"] <= seg["end_idx"] < n:
+            raise ValueError(f"equity_curves: segment {seg} is not inside the {n} dates")
+        if seg["start_idx"] <= last_end.get(seg["scheme"], -1):
+            raise ValueError(f"equity_curves: segment {seg} overlaps or precedes the previous {seg['scheme']} segment")
+        last_end[seg["scheme"]] = seg["end_idx"]
 
 
 # --------------------------------------------------------------------------

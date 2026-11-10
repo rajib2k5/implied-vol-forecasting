@@ -104,7 +104,7 @@ def test_losses_are_whole_period_mean_rows_with_ratios_to_rw(store):
         ("vix_level", 21, "rw"), ("vix_level", 21, "har_log"), ("rv21", 21, "rw"), ("rv21", 21, "garch"),
     ]
     har = losses[1]
-    # rmse 2.0 / rw 4.0 = 0.5; qlike 0.05 / 0.2 = 0.25; the regime (99) and median (77) rows are not used.
+    # rmse 2.0 / rw 4.0 = 0.5; qlike 0.05 / 0.2 = 0.25; the regime (1.0, 6.0) and median (77) rows are not used.
     assert (har["rmse"], har["rmse_ratio_rw"], har["qlike_ratio_rw"]) == (2.0, 0.5, 0.25)
     # bias 0.123456 -> 4 decimals 0.1235; mape 0.0512345 -> 5 decimals 0.05123; mae = rmse / 2 = 1.0.
     assert (har["bias"], har["mape"], har["mae"]) == (0.1235, 0.05123, 1.0)
@@ -137,6 +137,116 @@ def test_check_evaluation_rejects_a_pair_whose_lower_loss_is_neither_model(store
     payload["dm"][0].update(lower_loss="har_log", model_b="garch")  # garch has no vix_level loss row
     with pytest.raises(ValueError, match="no loss row"):
         ar.check_evaluation(payload)
+
+
+# --- regime losses (schema 1.2.0, amended polish-2) ---------------------------------
+
+
+def cell_key(x):
+    return (x["target_id"], x["horizon"], x["model_id"], x["scheme"], x["regime"])
+
+
+def test_regime_losses_are_the_mean_cells_of_the_race_models_in_panel_registry_and_regime_order(store):
+    rows = ar.evaluation_payload(store)["regime_losses"]
+    # 4 panels x 2 race models x 3 cells = 24; future_model (milestone 5) and the median rows are left out.
+    assert len(rows) == 24
+    # The store lists high, backwardation, low; REGIMES puts low, high, backwardation.
+    assert [cell_key(x) for x in rows[:6]] == [
+        ("vix_level", 1, "rw", "vix_level", "low"), ("vix_level", 1, "rw", "vix_level", "high"),
+        ("vix_level", 1, "rw", "term_structure", "backwardation"), ("vix_level", 1, "har_log", "vix_level", "low"),
+        ("vix_level", 1, "har_log", "vix_level", "high"), ("vix_level", 1, "har_log", "term_structure", "backwardation")]
+    assert [(x["target_id"], x["horizon"]) for x in rows[::6]] == [("vix_level", 1), ("vix_level", 5), ("vix_level", 21), ("rv21", 21)]
+    assert [x["model_id"] for x in rows[18:]] == ["rw"] * 3 + ["garch"] * 3
+
+
+def test_regime_ratios_divide_by_rw_in_the_same_cell_and_a_suppressed_cell_stays_null(store):
+    rows = {cell_key(x): x for x in ar.evaluation_payload(store)["regime_losses"]}
+    har_low = rows[("vix_level", 5, "har_log", "vix_level", "low")]
+    # rmse 1.0 / rw's low-cell 2.0 = 0.5 (not / rw's whole-period 4.0); qlike 0.025 / 0.1 = 0.25.
+    assert {k: har_low[k] for k in ("n", "rmse", "qlike", "rmse_ratio_rw", "qlike_ratio_rw")} == \
+        {"n": 100, "rmse": 1.0, "qlike": 0.025, "rmse_ratio_rw": 0.5, "qlike_ratio_rw": 0.25}
+    har_high = rows[("vix_level", 5, "har_log", "vix_level", "high")]
+    assert (har_high["rmse"], har_high["rmse_ratio_rw"], har_high["qlike_ratio_rw"]) == (6.0, 0.75, 0.25)  # 6/8, 0.1/0.4; not the median 55
+    garch_high = rows[("rv21", 21, "garch", "vix_level", "high")]
+    assert (garch_high["rmse_ratio_rw"], garch_high["qlike_ratio_rw"]) == (0.5, 0.75)  # 4/8, 0.3/0.4
+    assert rows[("vix_level", 1, "rw", "vix_level", "high")]["rmse_ratio_rw"] == 1.0
+    backwardation = rows[("vix_level", 1, "har_log", "term_structure", "backwardation")]
+    assert {k: backwardation[k] for k in ("n", "rmse", "qlike", "rmse_ratio_rw", "qlike_ratio_rw")} == \
+        {"n": 5, "rmse": None, "qlike": None, "rmse_ratio_rw": None, "qlike_ratio_rw": None}
+
+
+def test_regime_losses_are_empty_for_a_store_without_regime_cells(store):
+    metric = store.metric[store.metric.scheme.eq("all")]
+    assert ar.evaluation_payload(tiny_store(metric=metric))["regime_losses"] == []
+    assert ar.regime_losses(tiny_store(metric=metric.drop(columns=["scheme", "regime"]))) == []
+
+
+@pytest.mark.parametrize("mode", ["real", "Synthetic", "", None])
+def test_a_store_that_is_not_synthetic_gets_no_regime_cells_and_no_ribbons(store, mode):
+    # ADR 0001 D2 (amended polish-2): regimes are cut from VIX levels, so a real payload holds neither.
+    other = tiny_store(data_mode=mode)
+    assert "regime_losses" not in ar.evaluation_payload(other)
+    assert ar.equity_curves_payload(other)["regime_segments"] == []
+    # The same tables in a synthetic store do give both, so the absence above is the mode's doing.
+    assert ar.evaluation_payload(store)["regime_losses"] and ar.equity_curves_payload(store)["regime_segments"]
+    assert ar.regimes_allowed(store) and not ar.regimes_allowed(other)
+
+
+@pytest.mark.parametrize(
+    ("change", "complaint"),
+    [
+        (lambda p: p["regime_losses"][3].update(model_id="garch"), "has no loss row"),  # garch has no vix_level loss row
+        (lambda p: p["regime_losses"].append(dict(p["regime_losses"][0])), "appears twice"),
+    ],
+)
+def test_check_evaluation_catches_a_broken_regime_row(store, change, complaint):
+    payload = ar.evaluation_payload(store)
+    ar.check_evaluation(payload)  # the unchanged payload passes
+    change(payload)
+    with pytest.raises(ValueError, match=complaint):
+        ar.check_evaluation(payload)
+
+
+# --- regime ribbons (schema 1.2.0, amended polish-2) ---------------------------------
+
+
+def test_regime_segments_run_length_encode_each_scheme_over_the_backtest_dates(store):
+    # vix_level on the three dates: low, low, high; term_structure: contango, no label, contango. The
+    # labels before the first date and on holdout_start are not read; the gap splits the contango run.
+    assert ar.equity_curves_payload(store)["regime_segments"] == [
+        {"scheme": "vix_level", "regime_id": "low", "start_idx": 0, "end_idx": 1},
+        {"scheme": "vix_level", "regime_id": "high", "start_idx": 2, "end_idx": 2},
+        {"scheme": "term_structure", "regime_id": "contango", "start_idx": 0, "end_idx": 0},
+        {"scheme": "term_structure", "regime_id": "contango", "start_idx": 2, "end_idx": 2},
+    ]
+
+
+def test_regime_segments_at_the_boundaries():
+    d = [SESSIONS[0], SESSIONS[1], SESSIONS[2]]
+    labels = pd.DataFrame({"date": d, "scheme": ["vix_level"] * 3, "regime": ["mid"] * 3})
+    assert ar.regime_segments([], labels) == []  # no dates
+    assert ar.regime_segments(d, labels.iloc[0:0]) == []  # no labels
+    assert ar.regime_segments(d[:1], labels) == [{"scheme": "vix_level", "regime_id": "mid", "start_idx": 0, "end_idx": 0}]
+    assert ar.regime_segments(d, labels) == [{"scheme": "vix_level", "regime_id": "mid", "start_idx": 0, "end_idx": 2}]  # one run, to the end
+    gap = labels.assign(regime=["mid", None, "mid"])  # a null label is no label
+    assert [(x["start_idx"], x["end_idx"]) for x in ar.regime_segments(d, gap)] == [(0, 0), (2, 2)]
+
+
+@pytest.mark.parametrize(
+    ("change", "complaint"),
+    [
+        (lambda p: p["regime_segments"][1].update(end_idx=3), "not inside the 3 dates"),
+        (lambda p: p["regime_segments"][1].update(start_idx=2, end_idx=1), "not inside"),
+        (lambda p: p["regime_segments"][1].update(start_idx=1), "overlaps or precedes"),
+        (lambda p: p["regime_segments"].reverse(), "overlaps or precedes"),
+    ],
+)
+def test_check_equity_curves_catches_a_broken_segment(store, change, complaint):
+    payload = ar.equity_curves_payload(store)
+    ar.check_equity_curves(payload)
+    change(payload)
+    with pytest.raises(ValueError, match=complaint):
+        ar.check_equity_curves(payload)
 
 
 # --- equity_curves -------------------------------------------------------------

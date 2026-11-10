@@ -53,6 +53,16 @@ def scored_rows() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+#: Regime cells (forecast mean): (rmse, qlike) per model, the same at every (target, horizon). Written out of
+#: display order (high, backwardation, low) so the export's ordering is what puts them in order. The
+#: backwardation cell is suppressed (n = 5 < min_cell_n): null losses, as M5 writes them.
+REGIME_LOSSES = {
+    ("vix_level", "high"): {"rw": (8.0, 0.4), "har_log": (6.0, 0.1), "garch": (4.0, 0.3)},
+    ("term_structure", "backwardation"): {"rw": (None, None), "har_log": (None, None), "garch": (None, None)},
+    ("vix_level", "low"): {"rw": (2.0, 0.1), "har_log": (1.0, 0.025), "garch": (1.5, 0.05)},
+}
+
+
 def metric_rows() -> pd.DataFrame:
     rows = []
     for target_id, h in (("vix_level", 1), ("vix_level", 5), ("vix_level", 21), ("rv21", 21)):
@@ -62,8 +72,16 @@ def metric_rows() -> pd.DataFrame:
             base = {"model_id": model_id, "target_id": target_id, "horizon": h, "period": "dev", "n": 100, "suppressed": False,
                     "bias": 0.123456, "rmse": rmse, "mae": rmse / 2, "mape": 0.0512345, "qlike": qlike}
             rows.append({**base, "scheme": "all", "regime": "all", "forecast": "mean"})
-            rows.append({**base, "scheme": "vix_level", "regime": "high", "forecast": "mean", "rmse": 99.0})  # a regime cell: not shown
+            for (scheme, regime), cells in REGIME_LOSSES.items():
+                cell_rmse, cell_qlike = cells[model_id]
+                suppressed = cell_rmse is None
+                rows.append({**base, "scheme": scheme, "regime": regime, "forecast": "mean", "n": 5 if suppressed else 100,
+                             "suppressed": suppressed, "rmse": cell_rmse, "mae": None if suppressed else cell_rmse / 2, "qlike": cell_qlike})
+            rows.append({**base, "scheme": "vix_level", "regime": "high", "forecast": "median", "rmse": 55.0})  # a median regime cell: not shown
             rows.append({**base, "scheme": "all", "regime": "all", "forecast": "median", "rmse": 77.0})  # the median variant: not shown
+    # A regime cell of a model the race does not draw (milestone 5): never exported.
+    rows.append({"model_id": "future_model", "target_id": "vix_level", "horizon": 1, "period": "dev", "n": 100, "suppressed": False,
+                 "bias": 0.0, "rmse": 1.0, "mae": 0.5, "mape": 0.01, "qlike": 0.01, "scheme": "vix_level", "regime": "low", "forecast": "mean"})
     return pd.DataFrame(rows)
 
 
@@ -103,6 +121,20 @@ STRATEGIES = (
     StrategyDef("bench_cash", "benchmark", "cash", False, signal=0),
 )
 BACKTEST_DATES = SESSIONS[-3:]
+
+
+def regime_rows() -> pd.DataFrame:
+    """Made-up regime labels (date, scheme, regime) around the three backtest dates.
+
+    vix_level on the backtest dates: low, low, high; term_structure: contango, (none), contango. The
+    label the session before (high) and the one on holdout_start (mid) are outside the backtest dates.
+    Term-structure rows come first so that only the export's scheme order can put vix_level first.
+    """
+    d0, d1, d2 = BACKTEST_DATES
+    rows = [("term_structure", d0, "contango"), ("term_structure", d2, "contango"),
+            ("vix_level", SESSIONS[-4], "high"), ("vix_level", d0, "low"), ("vix_level", d1, "low"), ("vix_level", d2, "high"),
+            ("vix_level", HOLDOUT, "mid")]
+    return pd.DataFrame([{"date": d, "scheme": scheme, "regime": regime} for scheme, d, regime in rows])
 EQUITY = {"fvix_rv21_b2": [1.0, 1.1, 0.99], "fvix_rv21_b0": [1.0, 0.5, 0.25], "bench_long_vxx": [1.0, 0.8, 0.4],
           "bench_long_svxy": [1.0, 1.2, 1.5], "bench_cash": [1.0, 1.0, 1.0]}
 
@@ -147,6 +179,7 @@ EDA = {
 def tiny_store(**changes) -> Store:
     fields = dict(
         run_id="abcdef012345",
+        data_mode="synthetic",
         seed=7,
         holdout_start=HOLDOUT,
         race_sessions=RACE,
@@ -163,6 +196,7 @@ def tiny_store(**changes) -> Store:
                                         tracks={"rv21": {"target_id": "rv21", "horizon": 21}, "vix_level": {"target_id": "vix_level", "horizon": 21}}),
         models=MODELS,
         eda=EDA,
+        regimes=regime_rows(),
     )
     fields.update(changes)
     return Store(**fields)

@@ -84,6 +84,64 @@ describe('XYChart', () => {
   })
 })
 
+describe('XYChart bands (regime ribbons)', () => {
+  const bands = {
+    title: 'Regime (VIX level)',
+    bands: [
+      { start: 0, end: 1, shade: 0, label: 'low VIX' },
+      { start: 2, end: 2, shade: 2, label: 'high VIX' },
+    ],
+    legend: [
+      { label: 'low VIX', shade: 0 },
+      { label: 'mid VIX', shade: 1 },
+      { label: 'high VIX', shade: 2 },
+    ],
+  }
+  const box = (r: Element) => [Number(r.getAttribute('x')), Number(r.getAttribute('width'))]
+
+  it('shades each band from half a step before its first date to half a step after its last, behind the lines', () => {
+    const { container } = render(<XYChart title="T" x={X} series={series} yLabel="vol" bands={bands} />)
+    const rects = Array.from(container.querySelectorAll('rect.viz-shade-fill'))
+    // Plot: x from 56 to 720 - 132 (direct labels) = 588, so 532 wide; 3 dates at 56, 322, 588; half a step = 133.
+    // Band 0..1: from 56 (clamped; 56 - 133 is outside) to 322 + 133 = 455. Band 2..2: 455 to 588 (clamped).
+    expect(rects.map(box)).toEqual([
+      [56, 399],
+      [455, 133],
+    ])
+    expect(rects.map((r) => r.getAttribute('class'))).toEqual(['viz-shade-fill viz-shade-0', 'viz-shade-fill viz-shade-2'])
+    expect(rects.map((r) => r.getAttribute('data-band'))).toEqual(['low VIX', 'high VIX'])
+    const line = container.querySelector('polyline')!
+    expect(rects[1].compareDocumentPosition(line) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy() // drawn first, so behind
+  })
+  it('a single date: the band covers the whole plot', () => {
+    const { container } = render(
+      <XYChart title="T" x={['2024-01-01']} series={[{ id: 'e', label: 'e', values: [1], slot: 1 }]} yLabel="g" bands={{ ...bands, bands: [{ start: 0, end: 0, shade: 1, label: 'mid VIX' }] }} />,
+    )
+    // One series: direct label, plot 56..588; the single date sits in the middle, half = 532 / 2.
+    expect(box(container.querySelector('rect.viz-shade-fill')!)).toEqual([56, 532])
+  })
+  it('has its own legend, a tooltip line and a table column', () => {
+    render(<XYChart title="T" x={X} series={series} yLabel="vol" bands={bands} />)
+    expect(within(screen.getByRole('list', { name: 'Regime (VIX level)' })).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['low VIX', 'mid VIX', 'high VIX'])
+    fireEvent.keyDown(screen.getByRole('img'), { key: 'ArrowRight' })
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Regime (VIX level): low VIX')
+    fireEvent.keyDown(screen.getByRole('img'), { key: 'ArrowRight' })
+    fireEvent.keyDown(screen.getByRole('img'), { key: 'ArrowRight' })
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Regime (VIX level): high VIX')
+    fireEvent.click(screen.getByRole('button', { name: 'Show table' }))
+    const rows = screen.getAllByRole('row').map((r) => Array.from(r.querySelectorAll('td,th')).map((c) => c.textContent))
+    expect(rows.map((r) => r[1])).toEqual(['Regime (VIX level)', 'low VIX', 'low VIX', 'high VIX'])
+  })
+  it('a date outside every band reads as a dash, and no bands draw nothing', () => {
+    const { container, rerender } = render(<XYChart title="T" x={X} series={series} yLabel="vol" bands={{ ...bands, bands: [bands.bands[1]] }} />)
+    fireEvent.keyDown(screen.getByRole('img'), { key: 'ArrowRight' })
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Regime (VIX level): –')
+    rerender(<XYChart title="T" x={X} series={series} yLabel="vol" />)
+    expect(container.querySelectorAll('rect.viz-shade-fill')).toHaveLength(0)
+    expect(screen.queryByRole('list', { name: 'Regime (VIX level)' })).toBeNull()
+  })
+})
+
 describe('BarChart', () => {
   it('draws one bar per finite value from the zero baseline, with the band', () => {
     render(<BarChart title="ACF of |r|" labels={['1', '2', '3']} values={[0.2, -0.05, null]} band={0.02} slot={1} xLabel="lag" />)

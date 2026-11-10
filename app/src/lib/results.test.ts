@@ -12,6 +12,9 @@ import {
   parseEquityCurves,
   parseEvaluation,
   parseModelRace,
+  REGIMES,
+  regimeBands,
+  regimeLabel,
   show,
   slotOrder,
   targetDates,
@@ -129,6 +132,31 @@ describe('parseEvaluation and dmMatrix', () => {
   })
 })
 
+describe('regime losses (schema 1.2.0)', () => {
+  const cell = { target_id: 't', horizon: 1, model_id: 'har', scheme: 'vix_level', regime: 'high', n: 30, rmse: 2, qlike: 0.1, rmse_ratio_rw: 0.9, qlike_ratio_rw: null }
+  it('a file without them (1.1.0, or real) reads as none', () => {
+    expect(parseEvaluation(env('evaluation', EV_PAYLOAD)).payload.regimeLosses).toEqual([])
+  })
+  it('reads each regime cell with its scheme and regime', () => {
+    const ev = parseEvaluation(env('evaluation', { ...EV_PAYLOAD, regime_losses: [cell] })).payload
+    expect(ev.regimeLosses).toEqual([{ targetId: 't', horizon: 1, modelId: 'har', scheme: 'vix_level', regime: 'high', n: 30, rmse: 2, qlike: 0.1, rmseRatioRw: 0.9, qlikeRatioRw: null }])
+  })
+  it.each([
+    [{ ...cell, rmse_ratio_rw: '0.9' }, 'regime_losses[0].rmse_ratio_rw must be a number or null'],
+    [{ ...cell, scheme: undefined }, 'regime_losses[0].scheme must be a string'],
+    [{ ...cell, regime: 3 }, 'regime_losses[0].regime must be a string'],
+    ['row', 'regime_losses[0] must be an object'],
+  ])('refuses %j', (bad, message) => {
+    expect(() => parseEvaluation(env('evaluation', { ...EV_PAYLOAD, regime_losses: [bad] }))).toThrow(message)
+  })
+  it('labels the known regimes in display order and passes an unknown id through', () => {
+    expect(REGIMES.map((r) => r.regime)).toEqual(['low', 'mid', 'high', 'contango', 'backwardation'])
+    expect(regimeLabel('vix_level', 'high')).toBe('high VIX')
+    expect(regimeLabel('term_structure', 'high')).toBe('high') // the scheme matters
+    expect(regimeLabel('vix_level', 'storm')).toBe('storm')
+  })
+})
+
 describe('parseEquityCurves', () => {
   const payload = {
     dates: ['a', 'b'],
@@ -144,6 +172,70 @@ describe('parseEquityCurves', () => {
     expect(eq.strategies[0].equity).toEqual([1, 1.1])
     expect(eq.summary[0]).toMatchObject({ strategyId: 'p', costBps: null, dsr: null, nTrials: 5 })
     expect(eq.costSensitivity).toEqual([])
+  })
+  it('reads regime segments, and none from a file without the key', () => {
+    const segs = [
+      { scheme: 'vix_level', regime_id: 'low', start_idx: 0, end_idx: 0 },
+      { scheme: 'term_structure', regime_id: 'contango', start_idx: 0, end_idx: 1 }, // schemes overlap each other: fine
+      { scheme: 'vix_level', regime_id: 'high', start_idx: 1, end_idx: 1 },
+    ]
+    const eq = parseEquityCurves(env('equity_curves', { ...payload, regime_segments: segs })).payload
+    expect(eq.regimeSegments).toEqual([
+      { scheme: 'vix_level', regimeId: 'low', startIdx: 0, endIdx: 0 },
+      { scheme: 'term_structure', regimeId: 'contango', startIdx: 0, endIdx: 1 },
+      { scheme: 'vix_level', regimeId: 'high', startIdx: 1, endIdx: 1 },
+    ])
+    const without: Record<string, unknown> = structuredClone(payload)
+    delete without.regime_segments
+    expect(parseEquityCurves(env('equity_curves', without)).payload.regimeSegments).toEqual([])
+  })
+  it.each([
+    [[{ scheme: 'vix_level', regime_id: 'low', start_idx: 0, end_idx: 2 }], 'needs start_idx <= end_idx < 2 dates'], // only 2 dates
+    [[{ scheme: 'vix_level', regime_id: 'low', start_idx: 1, end_idx: 0 }], 'needs start_idx <= end_idx'],
+    [[{ scheme: 'vix_level', regime_id: 'low', start_idx: 0.5, end_idx: 1 }], 'start_idx must be an index'],
+    [[{ scheme: 'vix_level', regime_id: 'low', start_idx: -1, end_idx: 1 }], 'start_idx must be an index'],
+    [
+      [
+        { scheme: 'vix_level', regime_id: 'low', start_idx: 0, end_idx: 1 },
+        { scheme: 'vix_level', regime_id: 'high', start_idx: 1, end_idx: 1 },
+      ],
+      'regime_segments[1] overlaps or precedes the previous vix_level segment',
+    ],
+    [
+      [
+        { scheme: 'vix_level', regime_id: 'high', start_idx: 1, end_idx: 1 },
+        { scheme: 'vix_level', regime_id: 'low', start_idx: 0, end_idx: 0 },
+      ],
+      'overlaps or precedes',
+    ],
+  ])('refuses the segments %j', (segs, message) => {
+    expect(() => parseEquityCurves(env('equity_curves', { ...payload, regime_segments: segs }))).toThrow(message)
+  })
+  it('turns one scheme into shaded bands with a legend of every regime of the scheme', () => {
+    const segs = [
+      { scheme: 'vix_level', regime_id: 'low', start_idx: 0, end_idx: 0 },
+      { scheme: 'term_structure', regime_id: 'backwardation', start_idx: 0, end_idx: 1 },
+      { scheme: 'vix_level', regime_id: 'storm', start_idx: 1, end_idx: 1 },
+    ]
+    const eq = parseEquityCurves(env('equity_curves', { ...payload, regime_segments: segs })).payload
+    const vix = regimeBands(eq, 'vix_level')
+    expect(vix.bands).toEqual([
+      { start: 0, end: 0, shade: 0, label: 'low VIX' },
+      { start: 1, end: 1, shade: 1, label: 'storm' }, // an unknown id takes the middle shade
+    ])
+    expect(vix.legend).toEqual([
+      { label: 'low VIX', shade: 0 },
+      { label: 'mid VIX', shade: 1 },
+      { label: 'high VIX', shade: 2 },
+      { label: 'storm', shade: 1 },
+    ])
+    const ts = regimeBands(eq, 'term_structure')
+    expect(ts.bands).toEqual([{ start: 0, end: 1, shade: 2, label: 'backwardation' }])
+    expect(ts.legend).toEqual([
+      { label: 'contango', shade: 0 },
+      { label: 'backwardation', shade: 2 },
+    ])
+    expect(regimeBands(eq, 'none')).toEqual({ bands: [], legend: [] })
   })
   it('reads the cost table when present, and refuses a non-positive equity', () => {
     const withCosts = { ...payload, cost_sensitivity: [{ ...payload.summary[0], cost_bps: 10 }] }

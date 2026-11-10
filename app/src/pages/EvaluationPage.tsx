@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { dmMatrix, parseEvaluation, show, type DmVerdict, type Envelope, type Evaluation } from '../lib/results'
+import { ErrorSurface } from './ErrorSurface'
 import { Gate, ModeBadge, useDataset } from './useDataset'
 
 const PANELS: [string, number][] = [['vix_level', 1], ['vix_level', 5], ['vix_level', 21], ['rv21', 21]]
@@ -80,6 +81,13 @@ function View({ env }: { env: Envelope<Evaluation> }) {
         ))}
       </div>
       <Matrix ev={ev} targetId={targetId} horizon={horizon} loss={loss} />
+      <h2>Error surface: model x horizon x regime</h2>
+      <p className="sub">
+        Where each model beats the random walk: the loss ratio to the random walk in each regime, with the regime fixed at the forecast origin by
+        the VIX level (low, mid, high, at thresholds set in the protocol before any model ran) or by the term structure (backwardation when the
+        VIX is above VIX3M). Regimes from the two schemes overlap; they are slices, not a partition.
+      </p>
+      <ErrorSurface ev={ev} />
       <h2>Mincer-Zarnowitz calibration</h2>
       <p className="sub">
         actual = alpha + beta x forecast; a calibrated forecast has alpha = 0 and beta = 1. Wald p tests both at once ({ev.mzMethod.replace('_', '-')}{' '}

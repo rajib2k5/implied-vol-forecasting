@@ -4,7 +4,8 @@
     uv run python tools/export_app_data.py --mode synthetic --check  # CI: is the fixture current?
     uv run python tools/export_app_data.py --mode real               # ROOT/app-data/real/, never the repo
 
-Synthetic mode (final polish, schema 1.1.0) produces ``manifest.json`` and the four result files
+Synthetic mode (final polish, schema 1.1.0; regime losses and ribbons added in 1.2.0, amended
+polish-2) produces ``manifest.json`` and the four result files
 of ``ivf.app_results``: ``model_race.json``, ``evaluation.json``, ``equity_curves.json`` and
 ``eda.json``, reshaped from the synthetic dev store under ``ROOT/synthetic/processed/`` (the
 milestone 2-6 pipeline run with ``--synthetic``). The manifest lists each file with its sha256 and
@@ -134,7 +135,7 @@ def load_synthetic_store():
 
     protocol = protocol_mod.load_protocol(protocol_mod.protocol_path(synthetic=True))
     try:
-        return app_results.load_store(config.data_layout(synthetic=True), protocol)
+        return app_results.load_store(config.data_layout(synthetic=True), protocol, data_mode="synthetic")
     except app_results.StoreUnavailable as exc:
         raise ModeUnavailable(f"synthetic export needs the synthetic dev store: {exc}") from exc
     except FileNotFoundError as exc:

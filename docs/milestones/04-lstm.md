@@ -42,7 +42,7 @@ because of it says "(amended M4, review A)".
 | C8 the timing table | the first-cutoff VIX row came from a run with the pre-D5 seed | marked, and re-timed with the committed seeds (section 7.1) |
 
 The builder also corrected a label of the brief: the refit-cadence question is ADR 0001 **O2**; ADR
-0001's **O10** is whether `lstm_log` is publishable (still open).
+0001's **O10** is whether `lstm_log` is publishable (decided after M6: yes, see the [O10 ledger](../validation/O10-lstm-equivariance.md)).
 
 ## 1. Predict before you look
 
@@ -352,7 +352,7 @@ the data root is in the repo.
 | # | Question | Default (taken 2026-10-29, owner can override) |
 |---|---|---|
 | O-M4-1 (= ADR 0001 O2; the brief's "O10") | Refit cadence of the LSTM | Every 4th cutoff (`refit_every: 252`), frozen between; measured basis in 7.1 |
-| O-M4-2 (= ADR 0001 O10) | Is `lstm_log` in the publication set P? | Open: the `p_tie.py` re-probe was not run; the rows stay local |
+| O-M4-2 (= ADR 0001 O10) | Is `lstm_log` in the publication set P? | Decided after M6 (2026-11-09): equivariant, so the rows qualify for P ([ledger](../validation/O10-lstm-equivariance.md)) |
 | O-M4-3 | Returns and rv as inputs on the VIX track (D3) | No: VIX only, like `har_log` |
 | O-M4-4 | The LSTM on the secondary indices (VIX9D … VVIX) | No: VIX only (cost, like O-M3-2) |
 | O-M4-5 | The L4 gap: H (taken) or 2H | H: the last training target is dated at the first validation origin |

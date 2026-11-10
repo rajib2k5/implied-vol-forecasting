@@ -104,7 +104,7 @@ def test_synthetic_export_is_the_manifest_and_four_result_files_that_validate():
     for name, blob in files.items():
         result = parsed(blob)
         contract.validate_document(result)
-        assert (result["dataset"], result["data_mode"], result["schema_version"]) == (name[:-5], "synthetic", "1.1.0")
+        assert (result["dataset"], result["data_mode"], result["schema_version"]) == (name[:-5], "synthetic", "1.2.0")
     document = parsed(files["manifest.json"])
     contract.validate_document(document)  # against manifest.schema.json, $refs resolved locally
     assert document["dataset"] == "manifest"
@@ -244,6 +244,35 @@ def test_cli_subprocess_writes_from_a_store_on_disk_and_check_passes(disk_store,
     checked = run_cli("--mode", "synthetic", "--check", "--out-dir", str(out), cwd=REPO.parent, env=env)
     assert checked.returncode == 0, checked.stderr
     assert checked.stdout.startswith("ok: 5 file(s)")
+
+
+def test_the_store_loader_labels_the_regimes_without_their_vix_values(disk_store, monkeypatch):
+    # Amended polish-2: load_store labels the pre-holdout sessions (M5's rule) and keeps no driver column,
+    # so no VIX level or VIX/VIX3M ratio reaches a payload. The disk store's backtest dates are three
+    # sessions of 2024-06, where the synthetic generator has both VIX and VIX3M: each scheme tiles them.
+    from ivf import app_results as ar
+
+    monkeypatch.setenv("VOL_DATA_DIR", str(disk_store))
+    store = REAL_STORE_LOADER()
+    assert store.data_mode == "synthetic"
+    assert list(store.regimes.columns) == ["date", "scheme", "regime"]
+    assert store.regimes["date"].max() < store.holdout_start
+    segments = ar.equity_curves_payload(store)["regime_segments"]
+    for scheme in ("vix_level", "term_structure"):
+        runs = [(s["start_idx"], s["end_idx"]) for s in segments if s["scheme"] == scheme]
+        assert runs[0][0] == 0 and runs[-1][1] == 2
+        assert all(b[0] == a[1] + 1 for a, b in zip(runs, runs[1:]))
+
+
+def test_the_store_loader_refuses_a_store_whose_metadata_names_another_data_mode(disk_store, monkeypatch, tmp_path):
+    # A real store read through the synthetic loader would be given regime cells; its own metadata stops it.
+    copy = tmp_path / "vol"
+    shutil.copytree(disk_store, copy)
+    meta = next((copy / "implied-vol-forecasting" / "synthetic" / "processed").glob("run_id=*/evaluation/period=dev/report_meta.json"))
+    meta.write_text(json.dumps({**json.loads(meta.read_text()), "data_mode": "real"}))
+    monkeypatch.setenv("VOL_DATA_DIR", str(copy))
+    with pytest.raises(export_app_data.ModeUnavailable, match=r"made from \['real'\] data, not 'synthetic'"):
+        REAL_STORE_LOADER()
 
 
 def test_the_committed_fixture_is_synthetic_valid_and_its_manifest_matches_its_files():
@@ -1015,6 +1044,36 @@ def test_real_export_cli_writes_outside_the_repo_and_never_inside(real_root, tmp
     assert sorted(p.name for p in out.iterdir()) == ["manifest.json", "term_structure.json"]
     assert export_app_data.main(["--mode", "real", "--out-dir", str(REPO / "app" / "public" / "data" / "real")]) == export_app_data.EXIT_REFUSED
     assert not (REPO / "app" / "public" / "data" / "real").exists()
+
+
+def regime_content(node, path="$"):
+    """Where a JSON document holds regime data: a regime_losses key, a non-empty regime_segments, or a
+    row with a scheme and a regime. ``vix_regime_edges`` (the protocol's two thresholds) is not regime data."""
+    found = []
+    if isinstance(node, dict):
+        if "scheme" in node and ("regime" in node or "regime_id" in node):
+            found.append(f"{path} is a regime row")
+        for key, value in node.items():
+            if key == "regime_losses":
+                found.append(f"{path}.{key}")
+            elif key == "regime_segments" and value:
+                found.append(f"{path}.{key} has {len(value)} segment(s)")
+            found += regime_content(value, f"{path}.{key}")
+    elif isinstance(node, list):
+        for i, item in enumerate(node):
+            found += regime_content(item, f"{path}[{i}]")
+    return found
+
+
+def test_real_export_holds_no_regime_cell_and_no_ribbon(real_root):
+    # Data policy (ADR 0001 D2, amended polish-2): regimes are cut from VIX levels, so a real file holds
+    # no regime_losses and no regime segments, whatever else it holds.
+    files = export_app_data.generate("real", git=GIT_A, generated_at=TIME_A)
+    assert {name: regime_content(parsed(blob)) for name, blob in files.items()} == {name: [] for name in files}
+    # The same scan does find them in a synthetic export, so an empty result above means something.
+    synthetic = export_app_data.generate("synthetic", git=GIT_A, generated_at=TIME_A)
+    assert any("regime_losses" in x for x in regime_content(parsed(synthetic["evaluation.json"])))
+    assert any("regime_segments has" in x for x in regime_content(parsed(synthetic["equity_curves.json"])))
 
 
 def test_synthetic_mode_writes_the_result_files_and_never_the_term_structure():
