@@ -1,12 +1,11 @@
 # Milestone 7: polish
 
-**Status (2026-11-09): built, tests green, not re-reviewed, Polish-2 not yet committed.** This
-milestone has two parts. **Polish** is in two pushed commits, `cc04558` (app views, screenshots, README
-results block, `tools/build_synthetic_store.py`, schema 1.1.0) and `df9655e` (the synthetic app data
-exported from a store built at `cc04558`). **Polish-2** is the working tree today (`git status`: edits
-to `src/ivf/app_results.py`, `src/ivf/contract.py`, the app and the schemas, plus new files under
-`app/src/` and `tools/licensing/`); it is committed and pushed after this walkthrough, and the quiz
-checkpoint pins that commit then. All data in this milestone is **synthetic**. No real VIX or ETP value
+**Status (2026-11-10): built, tests green, not re-reviewed, pushed.** This milestone has two parts.
+**Polish** is in two pushed commits, `cc04558` (app views, screenshots, README results block,
+`tools/build_synthetic_store.py`, schema 1.1.0) and `df9655e` (the synthetic app data exported from a
+store built at `cc04558`). **Polish-2** is in two pushed commits, `4dfe736` (the code, schemas, app,
+tests and docs) and `85b0511` (the synthetic app data exported from a clean worktree at `4dfe736`). The
+quiz checkpoint pins `85b0511`. All data in this milestone is **synthetic**. No real VIX or ETP value
 appears in this note.
 
 Theory: [16, scale equivariance and publication](../concepts/16-scale-equivariance-and-publication.md).
@@ -69,7 +68,8 @@ Each design below was chosen over the alternative in the third column.
 
 ## 4. Code walkthrough by `file:line`
 
-Line numbers were measured with `grep -n` on 2026-11-09, on the working tree.
+Line numbers were measured with `grep -n` on 2026-11-09, on the working tree that was committed as
+`4dfe736`.
 
 **Python, `src/ivf/app_results.py`**
 - `:67` `REGIMES` and `:71` `SCHEMES`: M5's regime cells in display order; the schemes derived from them.

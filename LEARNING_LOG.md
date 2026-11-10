@@ -25,7 +25,7 @@ Questions are listed here by title only. The full text is in each milestone's wa
 | 4 | LSTM (PyTorch) on the same walk-forward splits | Done (9e290a1) | [`docs/milestones/04-lstm.md`](docs/milestones/04-lstm.md) | queued, 0 of 14 answered |
 | 5 | Evaluation: RMSE, MAE, MAPE, QLIKE at horizons 1, 5 and 21; Diebold-Mariano, Mincer-Zarnowitz, regimes | Done (79e1aa1) | [`docs/milestones/05-evaluation.md`](docs/milestones/05-evaluation.md) | queued, 0 of 14 answered |
 | 6 | Forecast-driven VXX/SVXY backtest with costs; PSR and DSR | Done (47bea1a) | [`docs/milestones/06-backtest.md`](docs/milestones/06-backtest.md) | queued, 0 of 14 answered |
-| 7 | Polish: app views, regime ribbons and error surface, README tie, raw-file gate, O10 equivariance | Done (pending push) | [`docs/milestones/07-polish.md`](docs/milestones/07-polish.md) | queued 0 of 14 |
+| 7 | Polish: app views, regime ribbons and error surface, README tie, raw-file gate, O10 equivariance | Done (85b0511) | [`docs/milestones/07-polish.md`](docs/milestones/07-polish.md) | queued 0 of 14 |
 
 ## Concepts
 
@@ -57,7 +57,7 @@ Theory notes in [`docs/concepts/`](docs/concepts/): the maths, the assumptions, 
 - Milestone 04 (queued, 0 of 14 answered; code at 9e290a1). Answer in its quiz widget, or say "quiz me on milestone 04" to resume it.
 - Milestone 05 (queued, 0 of 14 answered; code at 79e1aa1). Answer in its quiz widget, or say "quiz me on milestone 05" to resume it.
 - Milestone 06 (queued, 0 of 14 answered; code at 47bea1a). Answer in its quiz widget, or say "quiz me on milestone 06" to resume it.
-- Milestone 07 (queued, 0 of 14 answered; code at PENDING-PUSH). Answer in its quiz widget, or say "quiz me on milestone 07" to resume it.
+- Milestone 07 (queued, 0 of 14 answered; code at 85b0511). Answer in its quiz widget, or say "quiz me on milestone 07" to resume it.
 
 ## Defaults taken
 
